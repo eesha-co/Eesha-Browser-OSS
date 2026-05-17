@@ -41,7 +41,7 @@
     .greeting {
         font-size: 22px;
         font-weight: 700;
-        margin-bottom: 12px;
+        margin-bottom: 4px;
         letter-spacing: -0.3px;
     }
 
@@ -49,7 +49,7 @@
         font-size: 13px;
         color: var(--text-secondary);
         font-weight: 400;
-        margin-top: 2px;
+        margin-bottom: 12px;
     }
 
     /* Search Bar */
@@ -135,6 +135,71 @@
     /* Content Area */
     .content {
         padding: 0 16px 100px;
+    }
+
+    /* Quick Links */
+    .quick-links {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .quick-link {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding: 12px 4px;
+        border-radius: 14px;
+        background: var(--card-bg);
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+        -webkit-user-select: none;
+        border: 1px solid var(--divider);
+        transition: transform 0.15s ease;
+    }
+
+    .quick-link:active {
+        transform: scale(0.95);
+    }
+
+    .quick-link-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+
+    .quick-link-label {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--text-secondary);
+        text-align: center;
+        line-height: 1.2;
+    }
+
+    /* News Section Header */
+    .section-header {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        letter-spacing: -0.2px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .section-header .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+        display: inline-block;
     }
 
     /* News Card */
@@ -270,7 +335,7 @@
         to { transform: rotate(360deg); }
     }
 
-    /* Error State */
+    /* Error / Offline State */
     .error-state {
         text-align: center;
         padding: 40px 20px;
@@ -284,49 +349,21 @@
         opacity: 0.4;
     }
 
-    /* Quick Links */
-    .quick-links {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-
-    .quick-link {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 6px;
-        padding: 12px 4px;
-        border-radius: 14px;
-        background: var(--card-bg);
+    .retry-btn {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 8px 20px;
+        border-radius: 20px;
+        background: var(--accent);
+        color: white;
+        font-size: 13px;
+        font-weight: 600;
+        border: none;
         cursor: pointer;
-        text-decoration: none;
-        color: inherit;
-        -webkit-user-select: none;
-        border: 1px solid var(--divider);
     }
 
-    .quick-link:active {
-        opacity: 0.7;
-    }
-
-    .quick-link-icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 18px;
-    }
-
-    .quick-link-label {
-        font-size: 11px;
-        font-weight: 500;
-        color: var(--text-secondary);
-        text-align: center;
-        line-height: 1.2;
+    .retry-btn:active {
+        opacity: 0.8;
     }
 </style>
 
@@ -360,15 +397,39 @@
 </div>
 
 <div class="content" id="content">
-    <div class="loading">
-        <div class="loading-spinner"></div>
-        Loading news...
+    <!-- Quick Links always visible -->
+    <div class="quick-links" id="quickLinks">
+        <a class="quick-link" href="https://eesha-search.onrender.com">
+            <div class="quick-link-icon" style="background:rgba(255,107,107,0.12);color:#FF6B6B;">&#128269;</div>
+            <span class="quick-link-label">Eesha Search</span>
+        </a>
+        <a class="quick-link" href="https://en.wikipedia.org">
+            <div class="quick-link-icon" style="background:rgba(59,130,246,0.12);color:#3B82F6;">&#128218;</div>
+            <span class="quick-link-label">Wikipedia</span>
+        </a>
+        <a class="quick-link" href="https://www.bbc.com/news">
+            <div class="quick-link-icon" style="background:rgba(16,185,129,0.12);color:#10B981;">&#128240;</div>
+            <span class="quick-link-label">BBC News</span>
+        </a>
+        <a class="quick-link" href="https://www.youtube.com">
+            <div class="quick-link-icon" style="background:rgba(239,68,68,0.12);color:#EF4444;">&#9654;</div>
+            <span class="quick-link-label">YouTube</span>
+        </a>
+    </div>
+
+    <div class="section-header"><span class="dot"></span> Latest News</div>
+    <div id="newsContainer">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            Loading news...
+        </div>
     </div>
 </div>
 
 <script type="text/javascript">
     var BASE_URL = "${BASE_URL}";
     var currentCategory = "top";
+    var newsCache = {};
 
     // Search function
     function search() {
@@ -393,7 +454,7 @@
         var dateStr = days[d.getDay()] + ", " + months[d.getMonth()] + " " + d.getDate();
 
         document.getElementById("greeting").textContent = greeting;
-        document.getElementById("greetingSub").textContent = dateStr + " — Stay informed";
+        document.getElementById("greetingSub").textContent = dateStr + " \u2014 Stay informed";
     }
 
     // RSS Feed URLs by category
@@ -470,17 +531,17 @@
             .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').trim();
     }
 
-    // Fetch and parse RSS feed
+    // Fetch and parse RSS feed via rss2json
     function fetchFeed(url) {
         return new Promise(function(resolve) {
             var apiUrl = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(url) + "&count=15";
             var xhr = new XMLHttpRequest();
             xhr.open("GET", apiUrl, true);
-            xhr.timeout = 8000;
+            xhr.timeout = 10000;
             xhr.onload = function() {
                 try {
                     var data = JSON.parse(xhr.responseText);
-                    if (data.status === "ok" && data.items) {
+                    if (data.status === "ok" && data.items && data.items.length > 0) {
                         resolve(data.items.map(function(item) {
                             return {
                                 title: cleanHtml(item.title),
@@ -488,8 +549,7 @@
                                 source: (data.feed && data.feed.title) ? data.feed.title : "News",
                                 date: item.pubDate || "",
                                 desc: cleanHtml(item.description || ""),
-                                image: item.thumbnail || item.enclosure && item.enclosure.link || extractImage(item.description || ""),
-                                thumbnail: item.thumbnail || extractImage(item.description || "")
+                                image: item.thumbnail || (item.enclosure && item.enclosure.link) || extractImage(item.description || "")
                             };
                         }));
                     } else {
@@ -507,13 +567,14 @@
 
     // Render news articles
     function renderNews(articles) {
-        var container = document.getElementById("content");
+        var container = document.getElementById("newsContainer");
 
         if (!articles || articles.length === 0) {
             container.innerHTML = '<div class="error-state">' +
                 '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2"/></svg>' +
                 '<p>Unable to load news right now</p>' +
-                '<p style="font-size:12px;margin-top:4px">Check your internet connection</p></div>';
+                '<p style="font-size:12px;margin-top:4px">Check your internet connection</p>' +
+                '<button class="retry-btn" onclick="loadCategory(currentCategory)">Retry</button></div>';
             return;
         }
 
@@ -563,23 +624,38 @@
     // Load news for a category
     function loadCategory(category) {
         currentCategory = category;
-        var container = document.getElementById("content");
+
+        // Return cached data if available
+        if (newsCache[category]) {
+            renderNews(newsCache[category]);
+            return;
+        }
+
+        var container = document.getElementById("newsContainer");
         container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Loading news...</div>';
 
         var feedUrls = feeds[category] || feeds.top;
         var allArticles = [];
         var completed = 0;
+        var hasAnyData = false;
 
         feedUrls.forEach(function(url) {
             fetchFeed(url).then(function(items) {
+                if (items.length > 0) hasAnyData = true;
                 allArticles = allArticles.concat(items);
                 completed++;
                 if (completed === feedUrls.length) {
-                    // Sort by date
-                    allArticles.sort(function(a, b) {
-                        return new Date(b.date) - new Date(a.date);
-                    });
-                    renderNews(allArticles);
+                    if (allArticles.length === 0) {
+                        renderNews([]);
+                    } else {
+                        // Sort by date
+                        allArticles.sort(function(a, b) {
+                            return new Date(b.date) - new Date(a.date);
+                        });
+                        // Cache the result
+                        newsCache[category] = allArticles;
+                        renderNews(allArticles);
+                    }
                 }
             });
         });
