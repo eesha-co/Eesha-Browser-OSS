@@ -7,7 +7,7 @@ import acr.browser.lightning.browser.search.SearchBoxModel
 import acr.browser.lightning.browser.ui.TabConfiguration
 import acr.browser.lightning.browser.view.RenderingMode
 import acr.browser.lightning.constant.DEFAULT_ENCODING
-import acr.browser.lightning.constant.SCHEME_BOOKMARKS
+import acr.browser.lightning.constant.SCHEME_HOMEPAGE
 import acr.browser.lightning.device.ScreenSize
 import acr.browser.lightning.preference.delegates.booleanPreference
 import acr.browser.lightning.preference.delegates.enumPreference
@@ -79,7 +79,7 @@ class UserPreferences @Inject constructor(
     /**
      * The URL of the selected homepage.
      */
-    var homepage by preferences.stringPreference(HOMEPAGE, SCHEME_BOOKMARKS)
+    var homepage by preferences.stringPreference(HOMEPAGE, SCHEME_HOMEPAGE)
 
     /**
      * True if cookies should be enabled in incognito mode, false otherwise.

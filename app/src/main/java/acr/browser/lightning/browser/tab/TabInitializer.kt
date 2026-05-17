@@ -73,13 +73,37 @@ class HomePageInitializer @Inject constructor(
 
 /**
  * An initializer that displays the start page.
+ * Uses loadDataWithBaseURL for the homepage to allow XHR/fetch from the news hub.
  */
 @Reusable
 class StartPageInitializer @Inject constructor(
-    homePageFactory: HomePageFactory,
+    private val homePageFactory: HomePageFactory,
     @DiskScheduler diskScheduler: Scheduler,
     @MainScheduler foregroundScheduler: Scheduler
-) : HtmlPageFactoryInitializer(homePageFactory, diskScheduler, foregroundScheduler)
+) : TabInitializer {
+
+    override fun initialize(webView: WebView, headers: Map<String, String>) {
+        homePageFactory
+            .buildPage()
+            .subscribeOn(diskScheduler)
+            .observeOn(foregroundScheduler)
+            .subscribeBy(onSuccess = { url ->
+                if (url.startsWith(HomePageFactory.SCHEME_DATA)) {
+                    val html = url.substring(HomePageFactory.SCHEME_DATA.length)
+                    webView.loadDataWithBaseURL(
+                        "https://eesha-search.onrender.com",
+                        html,
+                        "text/html",
+                        "UTF-8",
+                        null
+                    )
+                } else {
+                    webView.loadUrl(url, headers)
+                }
+            })
+    }
+
+}
 
 /**
  * An initializer that displays the bookmark page.

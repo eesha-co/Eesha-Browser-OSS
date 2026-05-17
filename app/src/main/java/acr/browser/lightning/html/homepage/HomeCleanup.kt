@@ -10,13 +10,17 @@ import javax.inject.Inject
 class HomeCleanup @Inject constructor(
     private val application: Application
 ) : Cleanup.Action {
-    override val versionCode: Int = 101
+    override val versionCode: Int = 102
 
     override suspend fun execute() {
         withContext(Dispatchers.IO) {
-            application.filesDir.listFiles()
-                ?.filter { it.endsWith(HomePageFactory.FILENAME) }
-                ?.forEach(File::delete)
+            // Clean up old generated homepage files from previous versions
+            val generatedHtml = File(application.filesDir, "generated-html")
+            if (generatedHtml.exists()) {
+                generatedHtml.listFiles()
+                    ?.filter { it.name.endsWith(".html") }
+                    ?.forEach(File::delete)
+            }
         }
     }
 }

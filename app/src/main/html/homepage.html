@@ -1,127 +1,604 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-
+<html lang="en">
 <head>
-    <meta content="en-us" http-equiv="Content-Language"/>
-    <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>${TITLE}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <style>
     :root {
         --body-bg: {COLOR}
-        --box-bg: {COLOR}
-        --box-txt: {COLOR}
+        --card-bg: {COLOR}
+        --text-primary: {COLOR}
+        --accent: #FF6B6B
+        --accent-light: rgba(255,107,107,0.12)
+        --divider: rgba(128,128,128,0.12)
+        --shadow: rgba(0,0,0,0.06)
+        --text-secondary: rgba(0,0,0,0.5)
     }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
         background: var(--body-bg);
-        text-align: center;
-        margin: 0px;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: var(--text-primary);
+        -webkit-tap-highlight-color: transparent;
+        overflow-x: hidden;
     }
 
-    input {
-        color: var(--box-txt);
+    /* Header */
+    .header {
+        padding: 16px 16px 0;
+        position: sticky;
+        top: 0;
+        background: var(--body-bg);
+        z-index: 100;
     }
-    
-    #search_input {
-        height: 35px;
-        width: 100%;
-        outline: none;
+
+    .greeting {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        letter-spacing: -0.3px;
+    }
+
+    .greeting-sub {
+        font-size: 13px;
+        color: var(--text-secondary);
+        font-weight: 400;
+        margin-top: 2px;
+    }
+
+    /* Search Bar */
+    .search-container {
+        position: relative;
+        margin-bottom: 12px;
+    }
+
+    .search-bar {
+        display: flex;
+        align-items: center;
+        background: var(--card-bg);
+        border-radius: 28px;
+        padding: 0 16px;
+        height: 48px;
+        box-shadow: 0 1px 3px var(--shadow);
+        border: 1px solid var(--divider);
+    }
+
+    .search-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+        opacity: 0.4;
+        flex-shrink: 0;
+    }
+
+    .search-bar input {
+        flex: 1;
         border: none;
-        font-size: 16px;
-        background-color: transparent;
+        outline: none;
+        font-size: 15px;
+        background: transparent;
+        color: var(--text-primary);
+        font-family: 'Inter', sans-serif;
     }
-    
-    span {
-        display: block;
+
+    .search-bar input::placeholder {
+        color: var(--text-secondary);
+    }
+
+    /* Category Tabs */
+    .tabs-scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 12px;
+    }
+
+    .tabs-scroll::-webkit-scrollbar { display: none; }
+
+    .tabs {
+        display: flex;
+        gap: 8px;
+        padding: 0 16px;
+        list-style: none;
+    }
+
+    .tab {
+        padding: 8px 18px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        background: var(--card-bg);
+        color: var(--text-secondary);
+        -webkit-user-select: none;
+        user-select: none;
+    }
+
+    .tab.active {
+        background: var(--accent);
+        color: white;
+    }
+
+    .tab:not(.active):active {
+        opacity: 0.7;
+    }
+
+    /* Content Area */
+    .content {
+        padding: 0 16px 100px;
+    }
+
+    /* News Card */
+    .news-card {
+        display: flex;
+        gap: 12px;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--divider);
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+        -webkit-user-select: none;
+    }
+
+    .news-card:active {
+        opacity: 0.7;
+    }
+
+    .news-card-text {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .news-source {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+    }
+
+    .news-title {
+        font-size: 15px;
+        font-weight: 600;
+        line-height: 1.35;
+        letter-spacing: -0.2px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
         overflow: hidden;
-        padding-left: 5px;
-        vertical-align: middle;
+        margin-bottom: 6px;
     }
-    
-    .search_bar {
-        display: table;
-        vertical-align: middle;
-        width: 90%;
+
+    .news-meta {
+        font-size: 12px;
+        color: var(--text-secondary);
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .news-thumb {
+        width: 96px;
+        height: 72px;
+        border-radius: 12px;
+        object-fit: cover;
+        background: var(--card-bg);
+        flex-shrink: 0;
+    }
+
+    /* Featured Card */
+    .featured-card {
+        border-radius: 16px;
+        overflow: hidden;
+        margin-bottom: 16px;
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        box-shadow: 0 2px 8px var(--shadow);
+        -webkit-user-select: none;
+    }
+
+    .featured-card:active {
+        opacity: 0.9;
+    }
+
+    .featured-image {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        display: block;
+        background: var(--card-bg);
+    }
+
+    .featured-content {
+        padding: 14px 16px 16px;
+        background: var(--card-bg);
+    }
+
+    .featured-source {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 6px;
+    }
+
+    .featured-title {
+        font-size: 17px;
+        font-weight: 700;
+        line-height: 1.3;
+        letter-spacing: -0.3px;
+        margin-bottom: 8px;
+    }
+
+    .featured-meta {
+        font-size: 12px;
+        color: var(--text-secondary);
+    }
+
+    /* Loading State */
+    .loading {
+        text-align: center;
+        padding: 40px 0;
+        color: var(--text-secondary);
+        font-size: 14px;
+    }
+
+    .loading-spinner {
+        width: 28px;
+        height: 28px;
+        border: 3px solid var(--divider);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin: 0 auto 12px;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Error State */
+    .error-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--text-secondary);
+    }
+
+    .error-state svg {
+        width: 40px;
         height: 40px;
-        max-width: 500px;
-        margin: 0 auto;
-        background-color: var(--box-bg);
-        font-family: Arial;
-        color: var(--box-txt);
-        -moz-border-radius: 8px;
-        -webkit-border-radius: 8px;
-        border-radius: 8px;
-    }
-    
-    #search_submit {
-        outline: none;
-        height: 37px;
-        float: right;
-        color: var(--box-txt);
-        font-size: 16px;
-        font-weight: bold;
-        border: none;
-        background-color: transparent;
-    }
-    
-    .outer {
-        display: table;
-        position: absolute;
-        height: 100%;
-        width: 100%;
-    }
-    
-    .middle {
-        display: table-cell;
-        vertical-align: middle;
-    }
-    
-    .inner {
-        margin-left: auto;
-        margin-right: auto;
-        margin-bottom: 10%;
-        width: 100%;
-    }
-    
-    img.smaller {
-        width: 50%;
-        max-width: 300px;
+        margin-bottom: 12px;
+        opacity: 0.4;
     }
 
+    /* Quick Links */
+    .quick-links {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 20px;
+    }
 
+    .quick-link {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding: 12px 4px;
+        border-radius: 14px;
+        background: var(--card-bg);
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+        -webkit-user-select: none;
+        border: 1px solid var(--divider);
+    }
+
+    .quick-link:active {
+        opacity: 0.7;
+    }
+
+    .quick-link-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+
+    .quick-link-label {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--text-secondary);
+        text-align: center;
+        line-height: 1.2;
+    }
 </style>
 
 <body>
-<div class="outer">
-    <div class="middle">
-        <div class="inner">
-            <img id="image_url" class="smaller" src="${IMAGE}">
-            </br>
-            </br>
-            <form onsubmit="return search()" class="search_bar" autocomplete="off">
-                <input type="submit" id="search_submit" value="Search">
-                <span>
-                        <input class="search" type="text" value="" id="search_input"/>
-                    </span>
-            </form>
-            </br>
-            </br>
+<div class="header">
+    <div class="greeting" id="greeting">Good morning</div>
+    <div class="greeting-sub" id="greetingSub">Stay informed with the latest updates</div>
+
+    <form onsubmit="return search()" class="search-container" autocomplete="off">
+        <div class="search-bar">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+            </svg>
+            <input type="text" id="search_input" placeholder="Search the web..."/>
         </div>
+    </form>
+
+    <div class="tabs-scroll">
+        <ul class="tabs" id="tabs">
+            <li class="tab active" data-category="top">For You</li>
+            <li class="tab" data-category="politics">Politics</li>
+            <li class="tab" data-category="education">Education</li>
+            <li class="tab" data-category="sports">Sports</li>
+            <li class="tab" data-category="tech">Technology</li>
+            <li class="tab" data-category="business">Business</li>
+            <li class="tab" data-category="entertainment">Entertainment</li>
+            <li class="tab" data-category="health">Health</li>
+            <li class="tab" data-category="science">Science</li>
+        </ul>
     </div>
 </div>
+
+<div class="content" id="content">
+    <div class="loading">
+        <div class="loading-spinner"></div>
+        Loading news...
+    </div>
+</div>
+
 <script type="text/javascript">
-        function search() {
-            if (document.getElementById("search_input").value != "") {
-                window.location.href = "${BASE_URL}" + document.getElementById("search_input").value;
-                document.getElementById("search_input").value = "";
-            }
-            return false;
+    var BASE_URL = "${BASE_URL}";
+    var currentCategory = "top";
+
+    // Search function
+    function search() {
+        var q = document.getElementById("search_input").value.trim();
+        if (q !== "") {
+            window.location.href = BASE_URL + encodeURIComponent(q);
+            document.getElementById("search_input").value = "";
+        }
+        return false;
+    }
+
+    // Time-based greeting
+    function updateGreeting() {
+        var hour = new Date().getHours();
+        var greeting = "Good evening";
+        if (hour < 12) greeting = "Good morning";
+        else if (hour < 17) greeting = "Good afternoon";
+
+        var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+        var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+        var d = new Date();
+        var dateStr = days[d.getDay()] + ", " + months[d.getMonth()] + " " + d.getDate();
+
+        document.getElementById("greeting").textContent = greeting;
+        document.getElementById("greetingSub").textContent = dateStr + " — Stay informed";
+    }
+
+    // RSS Feed URLs by category
+    var feeds = {
+        top: [
+            "https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en",
+            "https://feeds.bbci.co.uk/news/rss.xml"
+        ],
+        politics: [
+            "https://news.google.com/rss/topics/CAAqIggKIhxDQkFTRHdvSkwyMHZNRGxqTVhZU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en",
+            "https://feeds.bbci.co.uk/news/politics/rss.xml"
+        ],
+        education: [
+            "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGRqTVhZU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en",
+            "https://feeds.bbci.co.uk/news/education/rss.xml"
+        ],
+        sports: [
+            "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRFp1ZEdvU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en",
+            "https://feeds.bbci.co.uk/sport/rss.xml"
+        ],
+        tech: [
+            "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGRqTVhZU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en",
+            "https://feeds.bbci.co.uk/news/technology/rss.xml",
+            "https://www.theverge.com/rss/index.xml"
+        ],
+        business: [
+            "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en",
+            "https://feeds.bbci.co.uk/news/business/rss.xml"
+        ],
+        entertainment: [
+            "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNREpxYW5RU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en",
+            "https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml"
+        ],
+        health: [
+            "https://news.google.com/rss/topics/CAAqIQgKIhtDQkFTRGdvSUwyMHZNR3QwTlRFU0FtVnVLQUFQAQ?hl=en-US&gl=US&ceid=US:en",
+            "https://feeds.bbci.co.uk/news/health/rss.xml"
+        ],
+        science: [
+            "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRFp0Y1RjU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en",
+            "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml"
+        ]
+    };
+
+    // Time ago helper
+    function timeAgo(dateStr) {
+        try {
+            var d = new Date(dateStr);
+            var now = new Date();
+            var diff = Math.floor((now - d) / 1000);
+            if (diff < 60) return "Just now";
+            if (diff < 3600) return Math.floor(diff / 60) + "m ago";
+            if (diff < 86400) return Math.floor(diff / 3600) + "h ago";
+            if (diff < 604800) return Math.floor(diff / 86400) + "d ago";
+            return d.toLocaleDateString();
+        } catch(e) {
+            return "";
+        }
+    }
+
+    // Extract image from RSS item description
+    function extractImage(desc) {
+        if (!desc) return "";
+        var imgMatch = desc.match(/<img[^>]+src="([^"]+)"/);
+        if (imgMatch) return imgMatch[1];
+        var srcMatch = desc.match(/src="([^"]+\.(jpg|jpeg|png|gif|webp)[^"]*)"/i);
+        if (srcMatch) return srcMatch[1];
+        return "";
+    }
+
+    // Clean HTML from text
+    function cleanHtml(html) {
+        if (!html) return "";
+        return html.replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&")
+            .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').trim();
+    }
+
+    // Fetch and parse RSS feed
+    function fetchFeed(url) {
+        return new Promise(function(resolve) {
+            var apiUrl = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(url) + "&count=15";
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", apiUrl, true);
+            xhr.timeout = 8000;
+            xhr.onload = function() {
+                try {
+                    var data = JSON.parse(xhr.responseText);
+                    if (data.status === "ok" && data.items) {
+                        resolve(data.items.map(function(item) {
+                            return {
+                                title: cleanHtml(item.title),
+                                link: item.link || "",
+                                source: (data.feed && data.feed.title) ? data.feed.title : "News",
+                                date: item.pubDate || "",
+                                desc: cleanHtml(item.description || ""),
+                                image: item.thumbnail || item.enclosure && item.enclosure.link || extractImage(item.description || ""),
+                                thumbnail: item.thumbnail || extractImage(item.description || "")
+                            };
+                        }));
+                    } else {
+                        resolve([]);
+                    }
+                } catch(e) {
+                    resolve([]);
+                }
+            };
+            xhr.onerror = function() { resolve([]); };
+            xhr.ontimeout = function() { resolve([]); };
+            xhr.send();
+        });
+    }
+
+    // Render news articles
+    function renderNews(articles) {
+        var container = document.getElementById("content");
+
+        if (!articles || articles.length === 0) {
+            container.innerHTML = '<div class="error-state">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2"/></svg>' +
+                '<p>Unable to load news right now</p>' +
+                '<p style="font-size:12px;margin-top:4px">Check your internet connection</p></div>';
+            return;
         }
 
+        // Deduplicate by title
+        var seen = {};
+        var unique = [];
+        articles.forEach(function(a) {
+            if (!seen[a.title] && a.title.length > 10) {
+                seen[a.title] = true;
+                unique.push(a);
+            }
+        });
+        articles = unique.slice(0, 20);
+
+        var html = "";
+
+        // Featured card (first article with image)
+        var featured = articles.find(function(a) { return a.image; });
+        if (featured) {
+            html += '<a class="featured-card" href="' + featured.link + '">' +
+                '<img class="featured-image" src="' + featured.image + '" onerror="this.style.display=\'none\'" alt=""/>' +
+                '<div class="featured-content">' +
+                '<div class="featured-source">' + featured.source + '</div>' +
+                '<div class="featured-title">' + featured.title + '</div>' +
+                '<div class="featured-meta">' + timeAgo(featured.date) + '</div>' +
+                '</div></a>';
+            articles = articles.filter(function(a) { return a.title !== featured.title; });
+        }
+
+        // Remaining articles
+        articles.forEach(function(a) {
+            var imgHtml = "";
+            if (a.image) {
+                imgHtml = '<img class="news-thumb" src="' + a.image + '" onerror="this.style.display=\'none\'" alt=""/>';
+            }
+            html += '<a class="news-card" href="' + a.link + '">' +
+                '<div class="news-card-text">' +
+                '<div class="news-source">' + a.source + '</div>' +
+                '<div class="news-title">' + a.title + '</div>' +
+                '<div class="news-meta"><span>' + timeAgo(a.date) + '</span></div>' +
+                '</div>' + imgHtml + '</a>';
+        });
+
+        container.innerHTML = html;
+    }
+
+    // Load news for a category
+    function loadCategory(category) {
+        currentCategory = category;
+        var container = document.getElementById("content");
+        container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Loading news...</div>';
+
+        var feedUrls = feeds[category] || feeds.top;
+        var allArticles = [];
+        var completed = 0;
+
+        feedUrls.forEach(function(url) {
+            fetchFeed(url).then(function(items) {
+                allArticles = allArticles.concat(items);
+                completed++;
+                if (completed === feedUrls.length) {
+                    // Sort by date
+                    allArticles.sort(function(a, b) {
+                        return new Date(b.date) - new Date(a.date);
+                    });
+                    renderNews(allArticles);
+                }
+            });
+        });
+    }
+
+    // Tab click handling
+    document.getElementById("tabs").addEventListener("click", function(e) {
+        if (e.target && e.target.classList.contains("tab")) {
+            document.querySelectorAll(".tab").forEach(function(t) {
+                t.classList.remove("active");
+            });
+            e.target.classList.add("active");
+            loadCategory(e.target.getAttribute("data-category"));
+        }
+    });
+
+    // Initialize
+    updateGreeting();
+    loadCategory("top");
 </script>
 </body>
-
 </html>

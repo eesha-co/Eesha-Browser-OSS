@@ -2,7 +2,6 @@ package acr.browser.lightning.html.homepage
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.theme.ThemeProvider
-import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.constant.UTF8
 import acr.browser.lightning.html.HtmlPageFactory
 import acr.browser.lightning.html.jsoup.andBuild
@@ -16,12 +15,12 @@ import acr.browser.lightning.html.jsoup.title
 import acr.browser.lightning.search.SearchEngineProvider
 import android.app.Application
 import io.reactivex.rxjava3.core.Single
-import java.io.File
-import java.io.FileWriter
 import javax.inject.Inject
 
 /**
  * A factory for the home page.
+ * Returns HTML content with a special scheme prefix so the initializer
+ * can use loadDataWithBaseURL for proper XHR/fetch support.
  */
 class HomePageFactory @Inject constructor(
     private val application: Application,
@@ -68,26 +67,12 @@ class HomePageFactory @Inject constructor(
                 }
             }
         }
-        .map { content -> Pair(createHomePage(), content) }
-        .doOnSuccess { (page, content) ->
-            FileWriter(page, false).use {
-                it.write(content)
-            }
-        }
-        .map { (page, _) -> "$FILE$page" }
-
-    /**
-     * Create the home page file.
-     */
-    fun createHomePage(): File {
-        val generatedHtml = File(application.filesDir, "generated-html")
-        generatedHtml.mkdirs()
-        return File(generatedHtml, FILENAME)
-    }
+        .map { content -> SCHEME_DATA + content }
 
     companion object {
 
         const val FILENAME = "homepage.html"
+        const val SCHEME_DATA = "data:eesha-homepage,"
 
     }
 
