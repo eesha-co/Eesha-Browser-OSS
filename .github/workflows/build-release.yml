@@ -28,19 +28,60 @@ jobs:
       - name: Build Debug APK
         run: ./gradlew assembleLightningPlusDebug --no-daemon
 
-      - name: Rename APK
+      - name: Build Release APK
+        run: ./gradlew assembleLightningPlusRelease --no-daemon
+
+      - name: Generate version info
+        id: version
         run: |
-          APK_PATH=$(find app/build/outputs/apk -name '*.apk' | head -1)
-          mv "$APK_PATH" eesha-browser-debug.apk
+          VERSION_NAME=$(grep 'versionName' app/build.gradle.kts | head -1 | sed 's/.*versionName.*=.*"\(.*\)".*/\1/')
+          VERSION_CODE=$(grep 'versionCode' app/build.gradle.kts | head -1 | sed 's/.*versionCode.*=.*\([0-9]*\).*/\1/')
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
+          echo "short_sha=$SHORT_SHA" >> $GITHUB_OUTPUT
+          echo "timestamp=$TIMESTAMP" >> $GITHUB_OUTPUT
+          TAG="v${VERSION_NAME}-build${TIMESTAMP}-${SHORT_SHA}"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Rename APKs
+        run: |
+          DEBUG_APK=$(find app/build/outputs/apk -name '*debug*.apk' | head -1)
+          RELEASE_APK=$(find app/build/outputs/apk -name '*release*.apk' | head -1)
+          cp "$DEBUG_APK" eesha-browser-debug.apk
+          cp "$RELEASE_APK" eesha-browser-release.apk || true
+          ls -lh *.apk
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.0-${{ github.sha }}
-          name: "Eesha Browser Build ${{ github.sha }}"
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: "Eesha Browser ${{ steps.version.outputs.version_name }} (${{ steps.version.outputs.short_sha }})"
           body: |
-            Auto-built from commit ${{ github.sha }}
+            ## Eesha Browser ${{ steps.version.outputs.version_name }}
+
+            **Commit**: ${{ steps.version.outputs.short_sha }}
+            **Built**: ${{ steps.version.outputs.timestamp }}
+
+            ### Downloads
+            - **eesha-browser-release.apk** - Optimized release build
+            - **eesha-browser-debug.apk** - Debug build with logging
+
+            ---
+            *Auto-built by GitHub Actions*
+          draft: false
+          prerelease: false
           files: |
+            eesha-browser-release.apk
             eesha-browser-debug.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload APKs as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: eesha-browser-apks
+          path: |
+            eesha-browser-release.apk
+            eesha-browser-debug.apk
