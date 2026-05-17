@@ -12,6 +12,7 @@ import acr.browser.lightning.browser.tab.TabModel
 import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.isBookmarkUrl
 import acr.browser.lightning.utils.isDownloadsUrl
+import acr.browser.lightning.utils.isHomePageUrl
 import acr.browser.lightning.utils.isHistoryUrl
 import acr.browser.lightning.utils.isSearchEngineUrl
 import acr.browser.lightning.utils.isSpecialUrl
@@ -74,11 +75,12 @@ class DefaultBundleStore @Inject constructor(
             val savedUrl = bundle.getString(URL_KEY)
             return@map savedUrl?.let { url ->
                 when {
+                    url.isHomePageUrl() -> homePageInitializer        // eesha://home
                     url.isBookmarkUrl() -> bookmarkPageInitializer
                     url.isDownloadsUrl() -> downloadPageInitializer
                     url.isStartPageUrl() -> homePageInitializer
                     url.isHistoryUrl() -> historyPageInitializer
-                    url.isSearchEngineUrl() -> homePageInitializer  // Redirect search engine tabs to homepage
+                    url.isSearchEngineUrl() -> homePageInitializer   // Redirect search engine tabs to homepage
                     else -> FreezableBundleInitializer(bundle, title ?: application.getString(R.string.tab_frozen), id)
                 }
             } ?: FreezableBundleInitializer(

@@ -106,7 +106,7 @@ class StartPageInitializer @Inject constructor(
                     if (url.startsWith(HomePageFactory.SCHEME_DATA)) {
                         val html = url.substring(HomePageFactory.SCHEME_DATA.length)
                         webView.loadDataWithBaseURL(
-                            "https://eesha-search.onrender.com",
+                            HomePageFactory.HOMEPAGE_BASE_URL,
                             html,
                             "text/html",
                             "UTF-8",
@@ -128,7 +128,7 @@ class StartPageInitializer @Inject constructor(
                         </body></html>
                     """.trimIndent()
                     webView.loadDataWithBaseURL(
-                        "https://eesha-search.onrender.com",
+                        HomePageFactory.HOMEPAGE_BASE_URL,
                         fallbackHtml,
                         "text/html",
                         "UTF-8",

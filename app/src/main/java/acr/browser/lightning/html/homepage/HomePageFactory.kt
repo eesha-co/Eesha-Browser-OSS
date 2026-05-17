@@ -79,6 +79,13 @@ class HomePageFactory @Inject constructor(
         const val FILENAME = "homepage.html"
         const val SCHEME_DATA = "data:eesha-homepage,"
 
+        /**
+         * The base URL used when loading the homepage via loadDataWithBaseURL.
+         * This is NOT a real server — it's a custom scheme that identifies the page
+         * as the Eesha homepage. SearXNG is only used for actual search queries.
+         */
+        const val HOMEPAGE_BASE_URL = "eesha://home"
+
     }
 
 }

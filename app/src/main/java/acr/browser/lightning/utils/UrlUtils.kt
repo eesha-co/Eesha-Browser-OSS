@@ -77,11 +77,12 @@ fun String?.isFileUrl(): Boolean = this != null && this.startsWith(FILE)
  */
 fun String?.isSpecialUrl(): Boolean =
     this != null
-        && this.startsWith(FILE)
+        && (this.startsWith(FILE)
         && (this.endsWith(BookmarkPageFactory.FILENAME)
         || this.endsWith(DownloadPageFactory.FILENAME)
         || this.endsWith(HistoryPageFactory.FILENAME)
         || this.endsWith(HomePageFactory.FILENAME))
+        || this == HomePageFactory.HOMEPAGE_BASE_URL)
 
 /**
  * Determines if the url is a url for the bookmark page.
@@ -113,7 +114,15 @@ fun String?.isHistoryUrl(): Boolean =
  * @return true if the url is a start page url, false otherwise.
  */
 fun String?.isStartPageUrl(): Boolean =
-    this != null && this.startsWith(FILE) && this.endsWith(HomePageFactory.FILENAME)
+    this != null && (this.startsWith(FILE) && this.endsWith(HomePageFactory.FILENAME)
+        || this == HomePageFactory.HOMEPAGE_BASE_URL)
+
+/**
+ * Determines if the url is the Eesha custom homepage loaded via loadDataWithBaseURL.
+ * This uses our custom eesha://home scheme, NOT SearXNG.
+ */
+fun String?.isHomePageUrl(): Boolean =
+    this != null && this == HomePageFactory.HOMEPAGE_BASE_URL
 
 /**
  * Determines if the url is a search engine URL that should not be used as a homepage.
@@ -126,8 +135,7 @@ fun String?.isSearchEngineUrl(): Boolean =
         this.contains("searx") ||
         this.contains("google.com/search") ||
         this.contains("bing.com/search") ||
-        this.contains("duckduckgo.com") ||
-        this.startsWith("data:eesha-homepage")
+        this.contains("duckduckgo.com")
     )
 
 private val ACCEPTED_URI_SCHEMA =
