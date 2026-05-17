@@ -15,6 +15,7 @@ import acr.browser.lightning.preference.delegates.intPreference
 import acr.browser.lightning.preference.delegates.nullableStringPreference
 import acr.browser.lightning.preference.delegates.stringPreference
 import acr.browser.lightning.search.SearchEngineProvider
+import acr.browser.lightning.search.engine.EeshaSearch
 import acr.browser.lightning.search.engine.GoogleSearch
 import acr.browser.lightning.utils.FileUtils
 import android.content.SharedPreferences
@@ -121,12 +122,12 @@ class UserPreferences @Inject constructor(
      *
      * @see SearchEngineProvider
      */
-    var searchChoice by preferences.intPreference(SEARCH, 1)
+    var searchChoice by preferences.intPreference(SEARCH, 12)
 
     /**
      * The custom URL which should be used for making searches.
      */
-    var searchUrl by preferences.stringPreference(SEARCH_URL, GoogleSearch().queryUrl)
+    var searchUrl by preferences.stringPreference(SEARCH_URL, EeshaSearch().queryUrl)
 
     /**
      * True if the browser should attempt to reflow the text on a web page after zooming in or out

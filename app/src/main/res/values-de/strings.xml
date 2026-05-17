@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
 
-    <string name="app_name">Lightning</string>
+    <string name="app_name">Eesha</string>
     <string name="action_new_tab">Neuer Tab</string>
     <string name="action_share">Teilen</string>
     <string name="action_history">Verlauf</string>
@@ -229,9 +229,9 @@
     <string name="message_added_to_homescreen">Verknüpfung wurde zum Startbildschirm hinzugefügt</string>
     <string name="shortcut_message_failed_to_add">Ihr Launcher unterstützt keine Verknüpfungen!</string>
     <string name="action_delete_all_bookmarks">Alle Lesezeichen löschen</string>
-    <string name="upsell_plus_version">Upgrade auf Lightning Plus um Werbung zu blockieren!</string>
+    <string name="upsell_plus_version">Upgrade auf Eesha Plus um Werbung zu blockieren!</string>
     <string name="message_open_download_fail">Diese Datei existiert nicht mehr</string>
-	
+        
     <string name="faq">FAQ</string>
     <string name="faq_description">Häufig gestellte Fragen</string>
 
@@ -240,7 +240,7 @@
     <string name="debug_leak_canary">LeakCanary</string>
     <string name="app_restart">Bitte schließen Sie die App um die Änderungen anzuwenden.</string>
 
-	<!-- Dialogs -->
+        <!-- Dialogs -->
     <string name="dialog_open_new_tab">In neuem Tab öffnen</string>
     <string name="dialog_open_background_tab">In Hintergrund-Tab öffnen</string>
     <string name="dialog_open_incognito_tab">In Inkognito-Tab öffnen</string>
@@ -254,7 +254,7 @@
     <string name="dialog_title_close_browser">Browser schließen</string>
     <string name="dialog_delete_download">Download löschen</string>
     <string name="dialog_delete_all_downloads">Alle Downloads löschen</string>
-	
+        
     <!-- Search Engines -->
     <string name="search_engine_custom">Benutzerdefinierte URL</string>
     <string name="search_engine_google">Google</string>
@@ -268,7 +268,7 @@
     <string name="search_engine_baidu">Baidu</string>
     <string name="search_engine_yandex">Yandex</string>
 
-	<!-- Notifications -->
+        <!-- Notifications -->
     <plurals name="notification_incognito_running_title">
         <item quantity="one">%1$d Inkognito-Tab geöffnet</item>
         <item quantity="other">%1$d Inkognito-Tabs geöffnet</item>

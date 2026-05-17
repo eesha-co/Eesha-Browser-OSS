@@ -13,7 +13,7 @@ android {
     defaultConfig {
         minSdk = 26
         targetSdk = 36
-        versionName = "5.1.0"
+        versionName = "1.0.0"
         vectorDrawables.useSupportLibrary = true
     }
 
@@ -68,16 +68,16 @@ android {
         create("lightningPlus") {
             dimension = "capabilities"
             buildConfigField("boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")")
-            applicationId = "acr.browser.lightning"
-            versionCode = 101
+            applicationId = "org.eesha.browser"
+            versionCode = 1
         }
 
         if (!isCi) {
             create("lightningLite") {
                 dimension = "capabilities"
                 buildConfigField("boolean", "FULL_VERSION", "Boolean.parseBoolean(\"false\")")
-                applicationId = "acr.browser.barebones"
-                versionCode = 102
+                applicationId = "org.eesha.browser.lite"
+                versionCode = 2
             }
         }
     }
@@ -89,7 +89,7 @@ android {
     lint {
         abortOnError = true
     }
-    namespace = "acr.browser.lightning"
+    namespace = "org.eesha.browser"
 }
 
 dependencies {

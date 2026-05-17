@@ -10,6 +10,7 @@ import acr.browser.lightning.search.engine.BingSearch
 import acr.browser.lightning.search.engine.CustomSearch
 import acr.browser.lightning.search.engine.DuckLiteSearch
 import acr.browser.lightning.search.engine.DuckSearch
+import acr.browser.lightning.search.engine.EeshaSearch
 import acr.browser.lightning.search.engine.GoogleSearch
 import acr.browser.lightning.search.engine.NaverSearch
 import acr.browser.lightning.search.engine.StartPageMobileSearch
@@ -72,6 +73,7 @@ class SearchEngineProvider @Inject constructor(
             9 -> BaiduSearch()
             10 -> YandexSearch()
             11 -> NaverSearch()
+            12 -> EeshaSearch()
             else -> GoogleSearch()
         }
 
@@ -92,6 +94,7 @@ class SearchEngineProvider @Inject constructor(
             is BaiduSearch -> 9
             is YandexSearch -> 10
             is NaverSearch -> 11
+            is EeshaSearch -> 12
             else -> throw UnsupportedOperationException("Unknown search engine provided: " + searchEngine.javaClass)
         }
 
@@ -110,7 +113,8 @@ class SearchEngineProvider @Inject constructor(
         DuckLiteSearch(),
         BaiduSearch(),
         YandexSearch(),
-        NaverSearch()
+        NaverSearch(),
+        EeshaSearch()
     )
 
 }
