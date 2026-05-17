@@ -25,14 +25,23 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Decode Keystore
+        run: |
+          mkdir -p app/keystore
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > app/keystore/eesha-release.jks
+
       - name: Build Release APK
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew assembleLightningPlusRelease --no-daemon
 
       - name: Generate version info
         id: version
         run: |
           VERSION_NAME=$(grep 'versionName' app/build.gradle.kts | head -1 | sed 's/.*versionName.*=.*"\(.*\)".*/\1/')
-          VERSION_CODE=$(grep 'versionCode' app/build.gradle.kts | head -1 | sed 's/.*versionCode.*=.*\([0-9]*\).*/\1/')
+          VERSION_CODE=$(grep 'versionCode' app/build.gradle.kts | head -1 | sed 's/.*versionCode.*=\([0-9]*\).*/\1/')
           SHORT_SHA=$(git rev-parse --short HEAD)
           TIMESTAMP=$(date +%Y%m%d-%H%M%S)
           echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
@@ -60,7 +69,7 @@ jobs:
             **Built**: ${{ steps.version.outputs.timestamp }}
 
             ### Download
-            - **eesha-browser.apk** - Install this on your Android device
+            - **eesha-browser.apk** - Install on Android
 
             ---
             *Auto-built by GitHub Actions*
