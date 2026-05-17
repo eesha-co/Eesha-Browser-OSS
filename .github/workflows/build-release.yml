@@ -25,9 +25,6 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build Debug APK
-        run: ./gradlew assembleLightningPlusDebug --no-daemon
-
       - name: Build Release APK
         run: ./gradlew assembleLightningPlusRelease --no-daemon
 
@@ -42,16 +39,14 @@ jobs:
           echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
           echo "short_sha=$SHORT_SHA" >> $GITHUB_OUTPUT
           echo "timestamp=$TIMESTAMP" >> $GITHUB_OUTPUT
-          TAG="v${VERSION_NAME}-build${TIMESTAMP}-${SHORT_SHA}"
+          TAG="v${VERSION_NAME}-${TIMESTAMP}-${SHORT_SHA}"
           echo "tag=$TAG" >> $GITHUB_OUTPUT
 
-      - name: Rename APKs
+      - name: Rename APK
         run: |
-          DEBUG_APK=$(find app/build/outputs/apk -name '*debug*.apk' | head -1)
-          RELEASE_APK=$(find app/build/outputs/apk -name '*release*.apk' | head -1)
-          cp "$DEBUG_APK" eesha-browser-debug.apk
-          cp "$RELEASE_APK" eesha-browser-release.apk || true
-          ls -lh *.apk
+          APK_PATH=$(find app/build/outputs/apk -name '*release*.apk' | head -1)
+          cp "$APK_PATH" eesha-browser.apk
+          ls -lh eesha-browser.apk
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -64,24 +59,20 @@ jobs:
             **Commit**: ${{ steps.version.outputs.short_sha }}
             **Built**: ${{ steps.version.outputs.timestamp }}
 
-            ### Downloads
-            - **eesha-browser-release.apk** - Optimized release build
-            - **eesha-browser-debug.apk** - Debug build with logging
+            ### Download
+            - **eesha-browser.apk** - Install this on your Android device
 
             ---
             *Auto-built by GitHub Actions*
           draft: false
           prerelease: false
           files: |
-            eesha-browser-release.apk
-            eesha-browser-debug.apk
+            eesha-browser.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload APKs as artifacts
+      - name: Upload APK as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: eesha-browser-apks
-          path: |
-            eesha-browser-release.apk
-            eesha-browser-debug.apk
+          name: eesha-browser-apk
+          path: eesha-browser.apk
