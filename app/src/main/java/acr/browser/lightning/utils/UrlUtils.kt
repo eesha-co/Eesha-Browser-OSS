@@ -115,6 +115,21 @@ fun String?.isHistoryUrl(): Boolean =
 fun String?.isStartPageUrl(): Boolean =
     this != null && this.startsWith(FILE) && this.endsWith(HomePageFactory.FILENAME)
 
+/**
+ * Determines if the url is a search engine URL that should not be used as a homepage.
+ * Search engines like SearXNG, Google, DuckDuckGo etc. make poor homepages because
+ * they lack the news/updates content the custom homepage provides.
+ */
+fun String?.isSearchEngineUrl(): Boolean =
+    this != null && (
+        this.contains("eesha-search") ||
+        this.contains("searx") ||
+        this.contains("google.com/search") ||
+        this.contains("bing.com/search") ||
+        this.contains("duckduckgo.com") ||
+        this.startsWith("data:eesha-homepage")
+    )
+
 private val ACCEPTED_URI_SCHEMA =
     Pattern.compile("(?i)((?:http|https|file)://|(?:inline|data|about|javascript):|(?:.*:.*@))(.*)")
 const val QUERY_PLACE_HOLDER = "%s"

@@ -13,6 +13,7 @@ import acr.browser.lightning.utils.FileUtils
 import acr.browser.lightning.utils.isBookmarkUrl
 import acr.browser.lightning.utils.isDownloadsUrl
 import acr.browser.lightning.utils.isHistoryUrl
+import acr.browser.lightning.utils.isSearchEngineUrl
 import acr.browser.lightning.utils.isSpecialUrl
 import acr.browser.lightning.utils.isStartPageUrl
 import android.app.Application
@@ -37,7 +38,10 @@ class DefaultBundleStore @Inject constructor(
 
         tabs.withIndex().forEach { (index, tab) ->
             if (!tab.url.isSpecialUrl()) {
-                outState.putBundle(BUNDLE_KEY + index, tab.freeze())
+                val frozenBundle = tab.freeze()
+                // Always save the URL alongside the WebView state so we can check it on restore
+                frozenBundle.putString(URL_KEY, tab.url)
+                outState.putBundle(BUNDLE_KEY + index, frozenBundle)
                 outState.putString(TAB_TITLE_KEY + index, tab.title)
                 outState.putInt(TAB_ID_KEY + index, tab.id)
             } else {
@@ -66,13 +70,16 @@ class DefaultBundleStore @Inject constructor(
                     }
                 }
         }?.map { (bundle, title, id) ->
-            return@map bundle.getString(URL_KEY)?.let { url ->
+            // Check URL_KEY — it's now saved for ALL tabs, not just special ones
+            val savedUrl = bundle.getString(URL_KEY)
+            return@map savedUrl?.let { url ->
                 when {
                     url.isBookmarkUrl() -> bookmarkPageInitializer
                     url.isDownloadsUrl() -> downloadPageInitializer
                     url.isStartPageUrl() -> homePageInitializer
                     url.isHistoryUrl() -> historyPageInitializer
-                    else -> homePageInitializer
+                    url.isSearchEngineUrl() -> homePageInitializer  // Redirect search engine tabs to homepage
+                    else -> FreezableBundleInitializer(bundle, title ?: application.getString(R.string.tab_frozen), id)
                 }
             } ?: FreezableBundleInitializer(
                 bundle = bundle,

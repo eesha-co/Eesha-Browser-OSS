@@ -13,7 +13,7 @@ android {
     defaultConfig {
         minSdk = 26
         targetSdk = 36
-        versionName = "1.2.1"
+        versionName = "1.3.0"
         vectorDrawables.useSupportLibrary = true
     }
 
@@ -88,7 +88,7 @@ android {
             dimension = "capabilities"
             buildConfigField("boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")")
             applicationId = "org.eesha.browser"
-            versionCode = 23
+            versionCode = 24
         }
 
         if (!isCi) {
