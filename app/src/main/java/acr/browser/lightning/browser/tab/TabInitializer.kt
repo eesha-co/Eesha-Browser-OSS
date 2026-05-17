@@ -62,10 +62,24 @@ class HomePageInitializer @Inject constructor(
     override fun initialize(webView: WebView, headers: Map<String, String>) {
         val homepage = userPreferences.homepage
 
-        when (homepage) {
+        // If homepage is set to a search engine URL, redirect to the custom news page
+        // Search engines make bad homepages — the custom homepage has search + news
+        val effectiveHomepage = if (homepage.contains("eesha-search") ||
+            homepage.contains("searx") ||
+            homepage.contains("google.com/search") ||
+            homepage.contains("bing.com/search") ||
+            homepage.contains("duckduckgo.com")
+        ) {
+            userPreferences.homepage = SCHEME_HOMEPAGE
+            SCHEME_HOMEPAGE
+        } else {
+            homepage
+        }
+
+        when (effectiveHomepage) {
             SCHEME_HOMEPAGE -> startPageInitializer
             SCHEME_BOOKMARKS -> bookmarkPageInitializer
-            else -> UrlInitializer(homepage)
+            else -> UrlInitializer(effectiveHomepage)
         }.initialize(webView, headers)
     }
 
