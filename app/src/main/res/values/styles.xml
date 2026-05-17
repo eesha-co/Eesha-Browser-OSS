@@ -40,7 +40,7 @@
     </style>
 
     <!-- Base Themes -->
-    <style name="Theme.BaseLightTheme" parent="Theme.AppCompat.Light">
+    <style name="Theme.BaseLightTheme" parent="Theme.Material3.Light.NoActionBar">
 
         <!-- Theme Colors -->
         <item name="colorPrimary">@color/primary_color</item>
@@ -68,9 +68,14 @@
         <!-- Alert dialogs -->
         <item name="alertDialogTheme">@style/AppCompatDialogStyle.Light</item>
 
+        <!-- Material3 color attributes -->
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/black</item>
+        <item name="colorSurfaceVariant">#E8E0F0</item>
+
     </style>
 
-    <style name="Theme.BaseDarkTheme" parent="Theme.AppCompat">
+    <style name="Theme.BaseDarkTheme" parent="Theme.Material3.Dark.NoActionBar">
 
         <!-- Theme colors -->
         <item name="colorPrimary">@color/primary_color_dark</item>
@@ -97,9 +102,14 @@
 
         <!-- Alert dialogs -->
         <item name="alertDialogTheme">@style/AppCompatDialogStyle.Dark</item>
+
+        <!-- Material3 color attributes -->
+        <item name="colorSurface">@color/primary_color_dark</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="colorSurfaceVariant">#2B2930</item>
     </style>
 
-    <style name="Theme.BaseBlackTheme" parent="Theme.AppCompat">
+    <style name="Theme.BaseBlackTheme" parent="Theme.Material3.Dark.NoActionBar">
 
         <!-- Theme Colors -->
         <item name="colorPrimary">@color/black</item>
@@ -126,23 +136,28 @@
 
         <!-- Alert dialogs -->
         <item name="alertDialogTheme">@style/AppCompatDialogStyle.Black</item>
+
+        <!-- Material3 color attributes -->
+        <item name="colorSurface">@color/black</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="colorSurfaceVariant">#1C1B1F</item>
     </style>
 
     <!-- AlertDialog Theming -->
-    <style name="AppCompatDialogStyle.Light" parent="Theme.AppCompat.Light.Dialog.Alert">
+    <style name="AppCompatDialogStyle.Light" parent="Theme.Material3.Light.Dialog.Alert">
         <item name="colorAccent">@color/accent_color</item>
     </style>
 
-    <style name="AppCompatDialogStyle.Dark" parent="Theme.AppCompat.Dialog.Alert">
+    <style name="AppCompatDialogStyle.Dark" parent="Theme.Material3.Dark.Dialog.Alert">
         <item name="colorAccent">@color/accent_color</item>
     </style>
 
-    <style name="AppCompatDialogStyle.Black" parent="Theme.AppCompat.Dialog.Alert">
+    <style name="AppCompatDialogStyle.Black" parent="Theme.Material3.Dark.Dialog.Alert">
         <item name="colorAccent">@color/accent_color</item>
     </style>
 
     <!-- Overflow Menu Customization -->
-    <style name="overFlowButtonStyle" parent="@style/Widget.AppCompat.ActionButton.Overflow">
+    <style name="overFlowButtonStyle" parent="@style/Widget.Material3.ActionBar.Solid.OverflowButton">
         <item name="android:minWidth">48dp</item>
         <item name="android:padding">0dp</item>
     </style>

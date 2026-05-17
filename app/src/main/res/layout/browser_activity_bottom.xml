@@ -78,9 +78,9 @@
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_marginLeft="8dp"
-                                android:layout_marginTop="6dp"
-                                android:layout_marginRight="2dp"
-                                android:layout_marginBottom="6dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginRight="4dp"
+                                android:layout_marginBottom="8dp"
                                 android:layout_weight="1"
                                 android:background="?attr/searchBackground"
                                 android:clipChildren="false"
@@ -316,6 +316,8 @@
                 android:background="?attr/dividerColor"
                 android:baselineAligned="false"
                 android:orientation="horizontal"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
                 android:weightSum="4">
 
                 <ImageView
@@ -415,6 +417,8 @@
                 android:background="?attr/dividerColor"
                 android:baselineAligned="false"
                 android:orientation="horizontal"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
                 android:weightSum="2">
 
                 <ImageView

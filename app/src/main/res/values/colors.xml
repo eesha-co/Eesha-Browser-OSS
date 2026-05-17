@@ -7,20 +7,20 @@
     <color name="white">#ffffff</color>
     <color name="gray_list_bg">#0d000000</color>
 
-    <color name="primary_color">#E0E0E0</color>
+    <color name="primary_color">#F5F5F5</color>
     <color name="secondary_color">#66000000</color>
-    <color name="accent_color">#E94560</color>
+    <color name="accent_color">#FF6B6B</color>
 
     <color name="drawer_background">#ffffff</color>
-    <color name="drawer_background_dark">#16213E</color>
+    <color name="drawer_background_dark">#2B2930</color>
 
     <color name="secondary_color_settings">#9C9C9C</color>
-    <color name="secondary_color_settings_dark">#0F3460</color>
+    <color name="secondary_color_settings_dark">#332D41</color>
 
     <color name="hint_text_light_theme">#80000000</color>
     <color name="hint_text_dark_theme">#80ffffff</color>
 
-    <color name="primary_color_dark">#1A1A2E</color>
+    <color name="primary_color_dark">#1C1B1F</color>
 
     <color name="divider_dark">#1FFFFFFF</color>
     <color name="divider_light">#1F000000</color>
