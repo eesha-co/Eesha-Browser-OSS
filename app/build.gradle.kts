@@ -89,7 +89,7 @@ android {
     lint {
         abortOnError = true
     }
-    namespace = "org.eesha.browser"
+    namespace = "acr.browser.lightning"
 }
 
 dependencies {
