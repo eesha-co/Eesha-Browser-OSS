@@ -10,11 +10,20 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
+/**
+ * Migration cleanup for the homepage.
+ *
+ * v140: Complete architectural fix — removed SearXNG from the homepage entirely.
+ * - News data is now fetched in Kotlin (not JavaScript XHR)
+ * - No base URL is used (loadDataWithBaseURL with null base URL)
+ * - SearXNG has NOTHING to do with the homepage — only used for searching
+ * - Cleared all saved tab state to prevent stale SearXNG tabs from being restored
+ */
 class HomeCleanup @Inject constructor(
     private val application: Application,
     private val userPreferences: UserPreferences
 ) : Cleanup.Action {
-    override val versionCode: Int = 121
+    override val versionCode: Int = 140
 
     override suspend fun execute() {
         withContext(Dispatchers.IO) {
@@ -26,11 +35,19 @@ class HomeCleanup @Inject constructor(
                     ?.forEach(File::delete)
             }
 
-            // Delete saved tab state so stale SearXNG tabs don't get restored
-            // The browser will create fresh tabs with the proper homepage initializer
+            // Delete saved tab state so stale SearXNG tabs don't get restored.
+            // The browser will create fresh tabs with the proper homepage initializer.
+            // This is essential because old saved tabs may have URL_KEY set to
+            // https://eesha-search.onrender.com which would show SearXNG on restore.
             val savedTabs = File(application.filesDir, "SAVED_TABS.parcel")
             if (savedTabs.exists()) {
                 savedTabs.delete()
+            }
+
+            // Also check the internal files directory for the parcel file
+            val internalSavedTabs = File(application.filesDir, "../saved_tabs/SAVED_TABS.parcel")
+            if (internalSavedTabs.exists()) {
+                internalSavedTabs.delete()
             }
         }
 

@@ -11,6 +11,7 @@ import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.download.DownloadPageFactory
 import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
+import acr.browser.lightning.html.homepage.NewsBridge
 import acr.browser.lightning.preference.UserPreferences
 import android.app.Activity
 import android.os.Bundle
@@ -62,8 +63,9 @@ class HomePageInitializer @Inject constructor(
     override fun initialize(webView: WebView, headers: Map<String, String>) {
         val homepage = userPreferences.homepage
 
-        // If homepage is set to a search engine URL, redirect to the custom news page
-        // Search engines make bad homepages — the custom homepage has search + news
+        // If homepage is set to a search engine URL, redirect to the custom news page.
+        // Search engines make bad homepages — the custom homepage has search + news.
+        // SearXNG should ONLY be used for searching, NOT as the homepage.
         val effectiveHomepage = if (homepage.contains("eesha-search") ||
             homepage.contains("searx") ||
             homepage.contains("google.com/search") ||
@@ -87,7 +89,15 @@ class HomePageInitializer @Inject constructor(
 
 /**
  * An initializer that displays the start page.
- * Uses loadDataWithBaseURL for the homepage to allow XHR/fetch from the news hub.
+ *
+ * IMPORTANT: The homepage is COMPLETELY INDEPENDENT of any search engine.
+ * - NO base URL is used (null) — no SearXNG, no external domain
+ * - News data is pre-fetched in Kotlin and injected into the HTML
+ * - Category switching uses a JavaScript interface (NewsBridge) to fetch via Kotlin
+ * - The historyUrl is set to "eesha://homepage" so WebView.getUrl() returns
+ *   a recognizable identifier for tab state save/restore
+ *
+ * SearXNG is ONLY used when the user actually searches from the search bar.
  */
 @Reusable
 class StartPageInitializer @Inject constructor(
@@ -97,6 +107,11 @@ class StartPageInitializer @Inject constructor(
 ) : TabInitializer {
 
     override fun initialize(webView: WebView, headers: Map<String, String>) {
+        // Add the NewsBridge JavaScript interface BEFORE loading the page.
+        // This allows JavaScript to request news data from Kotlin without
+        // needing XHR/fetch (which would require a base URL for CORS).
+        webView.addJavascriptInterface(NewsBridge(webView), "EeshaNews")
+
         homePageFactory
             .buildPage()
             .subscribeOn(diskScheduler)
@@ -105,12 +120,17 @@ class StartPageInitializer @Inject constructor(
                 onSuccess = { url ->
                     if (url.startsWith(HomePageFactory.SCHEME_DATA)) {
                         val html = url.substring(HomePageFactory.SCHEME_DATA.length)
+                        // CRITICAL: Use null as baseUrl — no SearXNG, no external domain.
+                        // The historyUrl is set to "eesha://homepage" so that
+                        // WebView.getUrl() returns a recognizable identifier.
+                        // This ensures tab state restoration loads the homepage
+                        // instead of redirecting to a search engine.
                         webView.loadDataWithBaseURL(
-                            HomePageFactory.HOMEPAGE_BASE_URL,
+                            null,  // NO base URL — homepage is independent of any search engine
                             html,
                             "text/html",
                             "UTF-8",
-                            null
+                            HomePageFactory.HOMEPAGE_HISTORY_URL  // eesha://homepage
                         )
                     } else {
                         webView.loadUrl(url, headers)
@@ -128,11 +148,11 @@ class StartPageInitializer @Inject constructor(
                         </body></html>
                     """.trimIndent()
                     webView.loadDataWithBaseURL(
-                        HomePageFactory.HOMEPAGE_BASE_URL,
+                        null,  // NO base URL
                         fallbackHtml,
                         "text/html",
                         "UTF-8",
-                        null
+                        HomePageFactory.HOMEPAGE_HISTORY_URL  // eesha://homepage
                     )
                 }
             )

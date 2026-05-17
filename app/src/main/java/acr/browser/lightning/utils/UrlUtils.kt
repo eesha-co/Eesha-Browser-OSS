@@ -73,7 +73,8 @@ fun smartUrlFilter(url: String, canBeSearch: Boolean, searchUrl: String): String
 fun String?.isFileUrl(): Boolean = this != null && this.startsWith(FILE)
 
 /**
- * Returns whether the given url is the bookmarks/history page or a normal website
+ * Returns whether the given url is the bookmarks/history/homepage page or a normal website.
+ * Also recognizes the eesha://homepage custom scheme used by loadDataWithBaseURL.
  */
 fun String?.isSpecialUrl(): Boolean =
     this != null
@@ -82,7 +83,8 @@ fun String?.isSpecialUrl(): Boolean =
         || this.endsWith(DownloadPageFactory.FILENAME)
         || this.endsWith(HistoryPageFactory.FILENAME)
         || this.endsWith(HomePageFactory.FILENAME))
-        || this == HomePageFactory.HOMEPAGE_BASE_URL)
+        || this == HomePageFactory.HOMEPAGE_HISTORY_URL
+        || this == "eesha://home")  // Legacy base URL, still recognize it
 
 /**
  * Determines if the url is a url for the bookmark page.
@@ -93,9 +95,9 @@ fun String?.isBookmarkUrl(): Boolean =
     this != null && this.startsWith(FILE) && this.endsWith(BookmarkPageFactory.FILENAME)
 
 /**
- * Determines if the url is a url for the bookmark page.
+ * Determines if the url is a url for the downloads page.
  *
- * @return true if the url is a bookmark url, false otherwise.
+ * @return true if the url is a downloads url, false otherwise.
  */
 fun String?.isDownloadsUrl(): Boolean =
     this != null && this.startsWith(FILE) && this.endsWith(DownloadPageFactory.FILENAME)
@@ -109,25 +111,29 @@ fun String?.isHistoryUrl(): Boolean =
     this != null && this.startsWith(FILE) && this.endsWith(HistoryPageFactory.FILENAME)
 
 /**
- * Determines if the url is a url for the start page.
- *
- * @return true if the url is a start page url, false otherwise.
+ * Determines if the url is a url for the start page / homepage.
+ * Recognizes both the file:// based URL and the eesha:// custom schemes.
  */
 fun String?.isStartPageUrl(): Boolean =
     this != null && (this.startsWith(FILE) && this.endsWith(HomePageFactory.FILENAME)
-        || this == HomePageFactory.HOMEPAGE_BASE_URL)
+        || this == HomePageFactory.HOMEPAGE_HISTORY_URL
+        || this == "eesha://home")
 
 /**
  * Determines if the url is the Eesha custom homepage loaded via loadDataWithBaseURL.
- * This uses our custom eesha://home scheme, NOT SearXNG.
+ * This uses our custom eesha://homepage scheme — NOT SearXNG or any search engine.
  */
 fun String?.isHomePageUrl(): Boolean =
-    this != null && this == HomePageFactory.HOMEPAGE_BASE_URL
+    this != null && (this == HomePageFactory.HOMEPAGE_HISTORY_URL
+        || this == "eesha://home")
 
 /**
  * Determines if the url is a search engine URL that should not be used as a homepage.
  * Search engines like SearXNG, Google, DuckDuckGo etc. make poor homepages because
  * they lack the news/updates content the custom homepage provides.
+ *
+ * IMPORTANT: When a search engine URL is detected as a saved tab, the tab should
+ * be redirected to the homepage initializer instead of restored as-is.
  */
 fun String?.isSearchEngineUrl(): Boolean =
     this != null && (
@@ -136,6 +142,18 @@ fun String?.isSearchEngineUrl(): Boolean =
         this.contains("google.com/search") ||
         this.contains("bing.com/search") ||
         this.contains("duckduckgo.com")
+    )
+
+/**
+ * Determines if the url looks like it was loaded by loadDataWithBaseURL with a null
+ * base URL. Some WebView versions return "about:blank", "about:blank#block", or empty
+ * string when the page was loaded this way.
+ */
+fun String?.isLoadDataUrl(): Boolean =
+    this != null && (
+        this == "about:blank" ||
+        this.startsWith("about:blank") ||
+        this.isEmpty()
     )
 
 private val ACCEPTED_URI_SCHEMA =

@@ -427,11 +427,21 @@
 </div>
 
 <script type="text/javascript">
+    // Search engine URL for queries (set by Kotlin)
     var BASE_URL = "${BASE_URL}";
+
+    // Pre-fetched "For You" news data injected by Kotlin (no XHR needed!)
+    var INITIAL_NEWS = ${NEWS_DATA};
+
     var currentCategory = "top";
     var newsCache = {};
 
-    // Search function
+    // Cache the initial data
+    if (INITIAL_NEWS && INITIAL_NEWS.length > 0) {
+        newsCache["top"] = INITIAL_NEWS;
+    }
+
+    // Search function — this navigates to SearXNG for actual search queries only
     function search() {
         var q = document.getElementById("search_input").value.trim();
         if (q !== "") {
@@ -457,47 +467,6 @@
         document.getElementById("greetingSub").textContent = dateStr + " \u2014 Stay informed";
     }
 
-    // RSS Feed URLs by category
-    var feeds = {
-        top: [
-            "https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en",
-            "https://feeds.bbci.co.uk/news/rss.xml"
-        ],
-        politics: [
-            "https://news.google.com/rss/topics/CAAqIggKIhxDQkFTRHdvSkwyMHZNRGxqTVhZU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en",
-            "https://feeds.bbci.co.uk/news/politics/rss.xml"
-        ],
-        education: [
-            "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGRqTVhZU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en",
-            "https://feeds.bbci.co.uk/news/education/rss.xml"
-        ],
-        sports: [
-            "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRFp1ZEdvU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en",
-            "https://feeds.bbci.co.uk/sport/rss.xml"
-        ],
-        tech: [
-            "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGRqTVhZU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en",
-            "https://feeds.bbci.co.uk/news/technology/rss.xml",
-            "https://www.theverge.com/rss/index.xml"
-        ],
-        business: [
-            "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en",
-            "https://feeds.bbci.co.uk/news/business/rss.xml"
-        ],
-        entertainment: [
-            "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNREpxYW5RU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en",
-            "https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml"
-        ],
-        health: [
-            "https://news.google.com/rss/topics/CAAqIQgKIhtDQkFTRGdvSUwyMHZNR3QwTlRFU0FtVnVLQUFQAQ?hl=en-US&gl=US&ceid=US:en",
-            "https://feeds.bbci.co.uk/news/health/rss.xml"
-        ],
-        science: [
-            "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRFp0Y1RjU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en",
-            "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml"
-        ]
-    };
-
     // Time ago helper
     function timeAgo(dateStr) {
         try {
@@ -514,57 +483,6 @@
         }
     }
 
-    // Extract image from RSS item description
-    function extractImage(desc) {
-        if (!desc) return "";
-        var imgMatch = desc.match(/<img[^>]+src="([^"]+)"/);
-        if (imgMatch) return imgMatch[1];
-        var srcMatch = desc.match(/src="([^"]+\.(jpg|jpeg|png|gif|webp)[^"]*)"/i);
-        if (srcMatch) return srcMatch[1];
-        return "";
-    }
-
-    // Clean HTML from text
-    function cleanHtml(html) {
-        if (!html) return "";
-        return html.replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&")
-            .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').trim();
-    }
-
-    // Fetch and parse RSS feed via rss2json
-    function fetchFeed(url) {
-        return new Promise(function(resolve) {
-            var apiUrl = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(url) + "&count=15";
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", apiUrl, true);
-            xhr.timeout = 10000;
-            xhr.onload = function() {
-                try {
-                    var data = JSON.parse(xhr.responseText);
-                    if (data.status === "ok" && data.items && data.items.length > 0) {
-                        resolve(data.items.map(function(item) {
-                            return {
-                                title: cleanHtml(item.title),
-                                link: item.link || "",
-                                source: (data.feed && data.feed.title) ? data.feed.title : "News",
-                                date: item.pubDate || "",
-                                desc: cleanHtml(item.description || ""),
-                                image: item.thumbnail || (item.enclosure && item.enclosure.link) || extractImage(item.description || "")
-                            };
-                        }));
-                    } else {
-                        resolve([]);
-                    }
-                } catch(e) {
-                    resolve([]);
-                }
-            };
-            xhr.onerror = function() { resolve([]); };
-            xhr.ontimeout = function() { resolve([]); };
-            xhr.send();
-        });
-    }
-
     // Render news articles
     function renderNews(articles) {
         var container = document.getElementById("newsContainer");
@@ -577,17 +495,6 @@
                 '<button class="retry-btn" onclick="loadCategory(currentCategory)">Retry</button></div>';
             return;
         }
-
-        // Deduplicate by title
-        var seen = {};
-        var unique = [];
-        articles.forEach(function(a) {
-            if (!seen[a.title] && a.title.length > 10) {
-                seen[a.title] = true;
-                unique.push(a);
-            }
-        });
-        articles = unique.slice(0, 20);
 
         var html = "";
 
@@ -634,32 +541,31 @@
         var container = document.getElementById("newsContainer");
         container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Loading news...</div>';
 
-        var feedUrls = feeds[category] || feeds.top;
-        var allArticles = [];
-        var completed = 0;
-        var hasAnyData = false;
-
-        feedUrls.forEach(function(url) {
-            fetchFeed(url).then(function(items) {
-                if (items.length > 0) hasAnyData = true;
-                allArticles = allArticles.concat(items);
-                completed++;
-                if (completed === feedUrls.length) {
-                    if (allArticles.length === 0) {
-                        renderNews([]);
-                    } else {
-                        // Sort by date
-                        allArticles.sort(function(a, b) {
-                            return new Date(b.date) - new Date(a.date);
-                        });
-                        // Cache the result
-                        newsCache[category] = allArticles;
-                        renderNews(allArticles);
-                    }
-                }
-            });
-        });
+        // Use Kotlin NewsBridge for fetching (no XHR, no CORS issues!)
+        if (window.EeshaNews) {
+            window.EeshaNews.fetchCategory(category);
+        } else {
+            // Fallback: no bridge available
+            renderNews([]);
+        }
     }
+
+    // Callback from Kotlin NewsBridge — receives news data
+    window.__onNewsData = function(category, data) {
+        if (data && data.length > 0) {
+            newsCache[category] = data;
+        }
+        if (category === currentCategory) {
+            renderNews(data);
+        }
+    };
+
+    // Error callback from Kotlin NewsBridge
+    window.__onNewsError = function(category) {
+        if (category === currentCategory) {
+            renderNews([]);
+        }
+    };
 
     // Tab click handling
     document.getElementById("tabs").addEventListener("click", function(e) {
@@ -674,7 +580,14 @@
 
     // Initialize
     updateGreeting();
-    loadCategory("top");
+
+    // Render pre-loaded "For You" news immediately
+    if (INITIAL_NEWS && INITIAL_NEWS.length > 0) {
+        renderNews(INITIAL_NEWS);
+    } else {
+        // Try fetching via the bridge if no pre-loaded data
+        loadCategory("top");
+    }
 </script>
 </body>
 </html>

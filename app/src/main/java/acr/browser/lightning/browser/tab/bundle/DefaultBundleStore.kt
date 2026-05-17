@@ -14,6 +14,7 @@ import acr.browser.lightning.utils.isBookmarkUrl
 import acr.browser.lightning.utils.isDownloadsUrl
 import acr.browser.lightning.utils.isHomePageUrl
 import acr.browser.lightning.utils.isHistoryUrl
+import acr.browser.lightning.utils.isLoadDataUrl
 import acr.browser.lightning.utils.isSearchEngineUrl
 import acr.browser.lightning.utils.isSpecialUrl
 import acr.browser.lightning.utils.isStartPageUrl
@@ -24,6 +25,11 @@ import javax.inject.Inject
 
 /**
  * A bundle store that serializes each tab state to disk and supports its retrieval.
+ *
+ * IMPORTANT: When restoring tabs, any tab that was on the homepage, a search engine,
+ * or a blank page (from loadDataWithBaseURL with null base URL) is redirected to
+ * the homepage initializer. This ensures SearXNG or any other search engine is
+ * NEVER restored as the homepage — the custom news homepage is always loaded instead.
  */
 class DefaultBundleStore @Inject constructor(
     private val application: Application,
@@ -71,16 +77,23 @@ class DefaultBundleStore @Inject constructor(
                     }
                 }
         }?.map { (bundle, title, id) ->
-            // Check URL_KEY — it's now saved for ALL tabs, not just special ones
+            // Check URL_KEY — it's saved for ALL tabs
             val savedUrl = bundle.getString(URL_KEY)
             return@map savedUrl?.let { url ->
                 when {
-                    url.isHomePageUrl() -> homePageInitializer        // eesha://home
+                    // Homepage URLs — always load the custom news homepage
+                    url.isHomePageUrl() -> homePageInitializer
+                    url.isStartPageUrl() -> homePageInitializer
+                    // Other special pages
                     url.isBookmarkUrl() -> bookmarkPageInitializer
                     url.isDownloadsUrl() -> downloadPageInitializer
-                    url.isStartPageUrl() -> homePageInitializer
                     url.isHistoryUrl() -> historyPageInitializer
-                    url.isSearchEngineUrl() -> homePageInitializer   // Redirect search engine tabs to homepage
+                    // Search engine URLs — redirect to homepage, never restore SearXNG
+                    url.isSearchEngineUrl() -> homePageInitializer
+                    // Pages loaded with loadDataWithBaseURL(null, ...) return about:blank
+                    // These are homepage tabs — redirect to homepage
+                    url.isLoadDataUrl() -> homePageInitializer
+                    // Normal web pages — restore from frozen bundle
                     else -> FreezableBundleInitializer(bundle, title ?: application.getString(R.string.tab_frozen), id)
                 }
             } ?: FreezableBundleInitializer(
