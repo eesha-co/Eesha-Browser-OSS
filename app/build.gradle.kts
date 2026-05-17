@@ -19,6 +19,21 @@ android {
 
     val isCi = System.getenv("CI") == "true"
 
+    // Signing configuration
+    val keystoreFile = file("keystore/eesha-release.jks")
+    val hasKeystore = keystoreFile.exists() || isCi
+
+    signingConfigs {
+        if (hasKeystore) {
+            create("release") {
+                storeFile = if (isCi) file("keystore/eesha-release.jks") else keystoreFile
+                storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "eesha2026"
+                keyAlias = System.getenv("KEY_ALIAS") ?: "eesha"
+                keyPassword = System.getenv("KEY_PASSWORD") ?: "eesha2026"
+            }
+        }
+    }
+
     sourceSets {
         create("lightningPlus").apply {
             setRoot("src/LightningPlus")
@@ -52,6 +67,10 @@ android {
             setProguardFiles(listOf("proguard-project.txt"))
             enableUnitTestCoverage = false
             enableAndroidTestCoverage = false
+
+            if (hasKeystore) {
+                signingConfig = signingConfigs.getByName("release")
+            }
 
             ndk {
                 abiFilters.add("arm64-v8a")
