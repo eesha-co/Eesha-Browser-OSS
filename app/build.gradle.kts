@@ -88,7 +88,7 @@ android {
             dimension = "capabilities"
             buildConfigField("boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")")
             applicationId = "org.eesha.browser"
-            versionCode = 19
+            versionCode = 20
         }
 
         if (!isCi) {
