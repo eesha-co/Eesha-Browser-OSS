@@ -13,7 +13,7 @@ android {
     defaultConfig {
         minSdk = 26
         targetSdk = 36
-        versionName = "1.5.0"
+        versionName = "1.6.0"
         vectorDrawables.useSupportLibrary = true
     }
 
@@ -88,7 +88,7 @@ android {
             dimension = "capabilities"
             buildConfigField("boolean", "FULL_VERSION", "Boolean.parseBoolean(\"true\")")
             applicationId = "org.eesha.browser"
-            versionCode = 26
+            versionCode = 27
         }
 
         if (!isCi) {
@@ -152,7 +152,6 @@ dependencies {
     implementation("javax.inject:javax.inject:1")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlin")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
     implementation("org.jsoup:jsoup:1.22.2")
     implementation("org.jspecify:jspecify:1.0.0")
     implementation("org.reactivestreams:reactive-streams:1.0.4")

@@ -41,7 +41,7 @@
     .greeting {
         font-size: 22px;
         font-weight: 700;
-        margin-bottom: 4px;
+        margin-bottom: 12px;
         letter-spacing: -0.3px;
     }
 
@@ -49,7 +49,7 @@
         font-size: 13px;
         color: var(--text-secondary);
         font-weight: 400;
-        margin-bottom: 12px;
+        margin-top: 2px;
     }
 
     /* Search Bar */
@@ -135,71 +135,6 @@
     /* Content Area */
     .content {
         padding: 0 16px 100px;
-    }
-
-    /* Quick Links */
-    .quick-links {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-
-    .quick-link {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 6px;
-        padding: 12px 4px;
-        border-radius: 14px;
-        background: var(--card-bg);
-        cursor: pointer;
-        text-decoration: none;
-        color: inherit;
-        -webkit-user-select: none;
-        border: 1px solid var(--divider);
-        transition: transform 0.15s ease;
-    }
-
-    .quick-link:active {
-        transform: scale(0.95);
-    }
-
-    .quick-link-icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 18px;
-    }
-
-    .quick-link-label {
-        font-size: 11px;
-        font-weight: 500;
-        color: var(--text-secondary);
-        text-align: center;
-        line-height: 1.2;
-    }
-
-    /* News Section Header */
-    .section-header {
-        font-size: 16px;
-        font-weight: 700;
-        margin-bottom: 12px;
-        letter-spacing: -0.2px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-
-    .section-header .dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: var(--accent);
-        display: inline-block;
     }
 
     /* News Card */
@@ -335,7 +270,7 @@
         to { transform: rotate(360deg); }
     }
 
-    /* Error / Offline State */
+    /* Error State */
     .error-state {
         text-align: center;
         padding: 40px 20px;
@@ -349,21 +284,49 @@
         opacity: 0.4;
     }
 
-    .retry-btn {
-        display: inline-block;
-        margin-top: 12px;
-        padding: 8px 20px;
-        border-radius: 20px;
-        background: var(--accent);
-        color: white;
-        font-size: 13px;
-        font-weight: 600;
-        border: none;
-        cursor: pointer;
+    /* Quick Links */
+    .quick-links {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 20px;
     }
 
-    .retry-btn:active {
-        opacity: 0.8;
+    .quick-link {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding: 12px 4px;
+        border-radius: 14px;
+        background: var(--card-bg);
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+        -webkit-user-select: none;
+        border: 1px solid var(--divider);
+    }
+
+    .quick-link:active {
+        opacity: 0.7;
+    }
+
+    .quick-link-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+
+    .quick-link-label {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--text-secondary);
+        text-align: center;
+        line-height: 1.2;
     }
 </style>
 
@@ -397,51 +360,17 @@
 </div>
 
 <div class="content" id="content">
-    <!-- Quick Links always visible -->
-    <div class="quick-links" id="quickLinks">
-        <a class="quick-link" href="https://eesha-search.onrender.com">
-            <div class="quick-link-icon" style="background:rgba(255,107,107,0.12);color:#FF6B6B;">&#128269;</div>
-            <span class="quick-link-label">Eesha Search</span>
-        </a>
-        <a class="quick-link" href="https://en.wikipedia.org">
-            <div class="quick-link-icon" style="background:rgba(59,130,246,0.12);color:#3B82F6;">&#128218;</div>
-            <span class="quick-link-label">Wikipedia</span>
-        </a>
-        <a class="quick-link" href="https://www.bbc.com/news">
-            <div class="quick-link-icon" style="background:rgba(16,185,129,0.12);color:#10B981;">&#128240;</div>
-            <span class="quick-link-label">BBC News</span>
-        </a>
-        <a class="quick-link" href="https://www.youtube.com">
-            <div class="quick-link-icon" style="background:rgba(239,68,68,0.12);color:#EF4444;">&#9654;</div>
-            <span class="quick-link-label">YouTube</span>
-        </a>
-    </div>
-
-    <div class="section-header"><span class="dot"></span> Latest News</div>
-    <div id="newsContainer">
-        <div class="loading">
-            <div class="loading-spinner"></div>
-            Loading news...
-        </div>
+    <div class="loading">
+        <div class="loading-spinner"></div>
+        Loading news...
     </div>
 </div>
 
 <script type="text/javascript">
-    // Search engine URL for queries (set by Kotlin)
     var BASE_URL = "${BASE_URL}";
-
-    // Pre-fetched "For You" news data injected by Kotlin (no XHR needed!)
-    var INITIAL_NEWS = ${NEWS_DATA};
-
     var currentCategory = "top";
-    var newsCache = {};
 
-    // Cache the initial data
-    if (INITIAL_NEWS && INITIAL_NEWS.length > 0) {
-        newsCache["top"] = INITIAL_NEWS;
-    }
-
-    // Search function — this navigates to SearXNG for actual search queries only
+    // Search function
     function search() {
         var q = document.getElementById("search_input").value.trim();
         if (q !== "") {
@@ -464,8 +393,49 @@
         var dateStr = days[d.getDay()] + ", " + months[d.getMonth()] + " " + d.getDate();
 
         document.getElementById("greeting").textContent = greeting;
-        document.getElementById("greetingSub").textContent = dateStr + " \u2014 Stay informed";
+        document.getElementById("greetingSub").textContent = dateStr + " — Stay informed";
     }
+
+    // RSS Feed URLs by category
+    var feeds = {
+        top: [
+            "https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en",
+            "https://feeds.bbci.co.uk/news/rss.xml"
+        ],
+        politics: [
+            "https://news.google.com/rss/topics/CAAqIggKIhxDQkFTRHdvSkwyMHZNRGxqTVhZU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en",
+            "https://feeds.bbci.co.uk/news/politics/rss.xml"
+        ],
+        education: [
+            "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGRqTVhZU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en",
+            "https://feeds.bbci.co.uk/news/education/rss.xml"
+        ],
+        sports: [
+            "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRFp1ZEdvU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en",
+            "https://feeds.bbci.co.uk/sport/rss.xml"
+        ],
+        tech: [
+            "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGRqTVhZU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en",
+            "https://feeds.bbci.co.uk/news/technology/rss.xml",
+            "https://www.theverge.com/rss/index.xml"
+        ],
+        business: [
+            "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en",
+            "https://feeds.bbci.co.uk/news/business/rss.xml"
+        ],
+        entertainment: [
+            "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNREpxYW5RU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en",
+            "https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml"
+        ],
+        health: [
+            "https://news.google.com/rss/topics/CAAqIQgKIhtDQkFTRGdvSUwyMHZNR3QwTlRFU0FtVnVLQUFQAQ?hl=en-US&gl=US&ceid=US:en",
+            "https://feeds.bbci.co.uk/news/health/rss.xml"
+        ],
+        science: [
+            "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRFp0Y1RjU0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en",
+            "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml"
+        ]
+    };
 
     // Time ago helper
     function timeAgo(dateStr) {
@@ -483,18 +453,80 @@
         }
     }
 
+    // Extract image from RSS item description
+    function extractImage(desc) {
+        if (!desc) return "";
+        var imgMatch = desc.match(/<img[^>]+src="([^"]+)"/);
+        if (imgMatch) return imgMatch[1];
+        var srcMatch = desc.match(/src="([^"]+\.(jpg|jpeg|png|gif|webp)[^"]*)"/i);
+        if (srcMatch) return srcMatch[1];
+        return "";
+    }
+
+    // Clean HTML from text
+    function cleanHtml(html) {
+        if (!html) return "";
+        return html.replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&")
+            .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').trim();
+    }
+
+    // Fetch and parse RSS feed
+    function fetchFeed(url) {
+        return new Promise(function(resolve) {
+            var apiUrl = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(url) + "&count=15";
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", apiUrl, true);
+            xhr.timeout = 8000;
+            xhr.onload = function() {
+                try {
+                    var data = JSON.parse(xhr.responseText);
+                    if (data.status === "ok" && data.items) {
+                        resolve(data.items.map(function(item) {
+                            return {
+                                title: cleanHtml(item.title),
+                                link: item.link || "",
+                                source: (data.feed && data.feed.title) ? data.feed.title : "News",
+                                date: item.pubDate || "",
+                                desc: cleanHtml(item.description || ""),
+                                image: item.thumbnail || item.enclosure && item.enclosure.link || extractImage(item.description || ""),
+                                thumbnail: item.thumbnail || extractImage(item.description || "")
+                            };
+                        }));
+                    } else {
+                        resolve([]);
+                    }
+                } catch(e) {
+                    resolve([]);
+                }
+            };
+            xhr.onerror = function() { resolve([]); };
+            xhr.ontimeout = function() { resolve([]); };
+            xhr.send();
+        });
+    }
+
     // Render news articles
     function renderNews(articles) {
-        var container = document.getElementById("newsContainer");
+        var container = document.getElementById("content");
 
         if (!articles || articles.length === 0) {
             container.innerHTML = '<div class="error-state">' +
                 '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2"/></svg>' +
                 '<p>Unable to load news right now</p>' +
-                '<p style="font-size:12px;margin-top:4px">Check your internet connection</p>' +
-                '<button class="retry-btn" onclick="loadCategory(currentCategory)">Retry</button></div>';
+                '<p style="font-size:12px;margin-top:4px">Check your internet connection</p></div>';
             return;
         }
+
+        // Deduplicate by title
+        var seen = {};
+        var unique = [];
+        articles.forEach(function(a) {
+            if (!seen[a.title] && a.title.length > 10) {
+                seen[a.title] = true;
+                unique.push(a);
+            }
+        });
+        articles = unique.slice(0, 20);
 
         var html = "";
 
@@ -531,41 +563,27 @@
     // Load news for a category
     function loadCategory(category) {
         currentCategory = category;
-
-        // Return cached data if available
-        if (newsCache[category]) {
-            renderNews(newsCache[category]);
-            return;
-        }
-
-        var container = document.getElementById("newsContainer");
+        var container = document.getElementById("content");
         container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Loading news...</div>';
 
-        // Use Kotlin NewsBridge for fetching (no XHR, no CORS issues!)
-        if (window.EeshaNews) {
-            window.EeshaNews.fetchCategory(category);
-        } else {
-            // Fallback: no bridge available
-            renderNews([]);
-        }
+        var feedUrls = feeds[category] || feeds.top;
+        var allArticles = [];
+        var completed = 0;
+
+        feedUrls.forEach(function(url) {
+            fetchFeed(url).then(function(items) {
+                allArticles = allArticles.concat(items);
+                completed++;
+                if (completed === feedUrls.length) {
+                    // Sort by date
+                    allArticles.sort(function(a, b) {
+                        return new Date(b.date) - new Date(a.date);
+                    });
+                    renderNews(allArticles);
+                }
+            });
+        });
     }
-
-    // Callback from Kotlin NewsBridge — receives news data
-    window.__onNewsData = function(category, data) {
-        if (data && data.length > 0) {
-            newsCache[category] = data;
-        }
-        if (category === currentCategory) {
-            renderNews(data);
-        }
-    };
-
-    // Error callback from Kotlin NewsBridge
-    window.__onNewsError = function(category) {
-        if (category === currentCategory) {
-            renderNews([]);
-        }
-    };
 
     // Tab click handling
     document.getElementById("tabs").addEventListener("click", function(e) {
@@ -580,14 +598,7 @@
 
     // Initialize
     updateGreeting();
-
-    // Render pre-loaded "For You" news immediately
-    if (INITIAL_NEWS && INITIAL_NEWS.length > 0) {
-        renderNews(INITIAL_NEWS);
-    } else {
-        // Try fetching via the bridge if no pre-loaded data
-        loadCategory("top");
-    }
+    loadCategory("top");
 </script>
 </body>
 </html>
