@@ -4,6 +4,7 @@ import acr.browser.lightning.R
 import acr.browser.lightning.preference.UserPreferences
 import acr.browser.lightning.utils.Utils
 import acr.browser.lightning.utils.isSpecialUrl
+import acr.browser.lightning.utils.extractSearchQuery
 import android.app.Application
 import dagger.Reusable
 import javax.inject.Inject
@@ -25,6 +26,7 @@ class SearchBoxModel @Inject constructor(
      *  - The user's preference to show either the URL, domain, or page title
      *  - Whether or not the current page is loading
      *  - Whether or not the current page is a Lightning generated page.
+     *  - If the URL is a search results page, show just the search query
      *
      * This method uses the URL, title, and loading information to determine what
      * should be displayed by the search box.
@@ -39,13 +41,19 @@ class SearchBoxModel @Inject constructor(
             url.isSpecialUrl() -> ""
             isLoading -> url
             else -> when (userPreferences.urlBoxContentChoice) {
-                SearchBoxDisplayChoice.DOMAIN -> safeDomain(url)
-                SearchBoxDisplayChoice.URL -> url
+                // For search results pages, always show just the search query text
+                // instead of the full URL like "https://eesha-search.onrender.com/search?q=cats"
+                SearchBoxDisplayChoice.DOMAIN -> {
+                    url.extractSearchQuery() ?: safeDomain(url)
+                }
+                SearchBoxDisplayChoice.URL -> {
+                    url.extractSearchQuery() ?: url
+                }
                 SearchBoxDisplayChoice.TITLE ->
                     if (title?.isEmpty() == false) {
                         title
                     } else {
-                        untitledTitle
+                        url.extractSearchQuery() ?: untitledTitle
                     }
             }
         }

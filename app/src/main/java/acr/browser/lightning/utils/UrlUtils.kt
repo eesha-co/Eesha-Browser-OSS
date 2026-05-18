@@ -73,47 +73,71 @@ fun smartUrlFilter(url: String, canBeSearch: Boolean, searchUrl: String): String
 fun String?.isFileUrl(): Boolean = this != null && this.startsWith(FILE)
 
 /**
- * Returns whether the given url is the bookmarks/history page or a normal website
+ * Returns whether the given url is a special (internal) page or a normal website.
+ * Also recognizes the eesha://homepage custom scheme.
  */
 fun String?.isSpecialUrl(): Boolean =
     this != null
-        && this.startsWith(FILE)
+        && (this.startsWith(FILE)
         && (this.endsWith(BookmarkPageFactory.FILENAME)
         || this.endsWith(DownloadPageFactory.FILENAME)
         || this.endsWith(HistoryPageFactory.FILENAME)
         || this.endsWith(HomePageFactory.FILENAME))
+        || this == HomePageFactory.HOMEPAGE_URL)
 
 /**
  * Determines if the url is a url for the bookmark page.
- *
- * @return true if the url is a bookmark url, false otherwise.
  */
 fun String?.isBookmarkUrl(): Boolean =
     this != null && this.startsWith(FILE) && this.endsWith(BookmarkPageFactory.FILENAME)
 
 /**
- * Determines if the url is a url for the bookmark page.
- *
- * @return true if the url is a bookmark url, false otherwise.
+ * Determines if the url is a url for the downloads page.
  */
 fun String?.isDownloadsUrl(): Boolean =
     this != null && this.startsWith(FILE) && this.endsWith(DownloadPageFactory.FILENAME)
 
 /**
  * Determines if the url is a url for the history page.
- *
- * @return true if the url is a history url, false otherwise.
  */
 fun String?.isHistoryUrl(): Boolean =
     this != null && this.startsWith(FILE) && this.endsWith(HistoryPageFactory.FILENAME)
 
 /**
- * Determines if the url is a url for the start page.
- *
- * @return true if the url is a start page url, false otherwise.
+ * Determines if the url is a url for the start page / homepage.
+ * Recognizes both the file:// based URL and the eesha://homepage custom scheme.
  */
 fun String?.isStartPageUrl(): Boolean =
-    this != null && this.startsWith(FILE) && this.endsWith(HomePageFactory.FILENAME)
+    this != null && (this.startsWith(FILE) && this.endsWith(HomePageFactory.FILENAME)
+        || this == HomePageFactory.HOMEPAGE_URL)
+
+/**
+ * Extracts the search query from a search engine URL.
+ * For example: "https://eesha-search.onrender.com/search?q=cats" → "cats"
+ * Returns null if the URL is not a search engine URL or has no query.
+ */
+fun String?.extractSearchQuery(): String? {
+    if (this == null) return null
+    // Match common search URL patterns: ?q=, ?query=, ?s=, ?search=
+    val patterns = listOf(
+        Regex("""[?&]q=([^&]+)""", RegexOption.IGNORE_CASE),
+        Regex("""[?&]query=([^&]+)""", RegexOption.IGNORE_CASE),
+        Regex("""[?&]s=([^&]+)""", RegexOption.IGNORE_CASE),
+        Regex("""[?&]search=([^&]+)""", RegexOption.IGNORE_CASE)
+    )
+    for (pattern in patterns) {
+        pattern.find(this)?.groupValues?.get(1)?.let { encoded ->
+            return java.net.URLDecoder.decode(encoded, "UTF-8")
+        }
+    }
+    return null
+}
+
+/**
+ * Checks if a URL is a search engine results page.
+ */
+fun String?.isSearchResultsUrl(): Boolean =
+    this != null && extractSearchQuery() != null
 
 private val ACCEPTED_URI_SCHEMA =
     Pattern.compile("(?i)((?:http|https|file)://|(?:inline|data|about|javascript):|(?:.*:.*@))(.*)")

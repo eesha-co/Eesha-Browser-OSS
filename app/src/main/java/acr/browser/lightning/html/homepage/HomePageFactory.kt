@@ -14,13 +14,16 @@ import acr.browser.lightning.html.jsoup.tag
 import acr.browser.lightning.html.jsoup.title
 import acr.browser.lightning.search.SearchEngineProvider
 import android.app.Application
+import android.util.Log
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
 /**
  * A factory for the home page.
- * Returns HTML content with a special scheme prefix so the initializer
- * can use loadDataWithBaseURL for proper XHR/fetch support.
+ *
+ * News data is pre-fetched in Kotlin (not JavaScript XHR) to completely
+ * decouple the homepage from any search engine. SearXNG is ONLY used
+ * for actual search queries.
  */
 class HomePageFactory @Inject constructor(
     private val application: Application,
@@ -33,7 +36,6 @@ class HomePageFactory @Inject constructor(
 
     private fun Int.toColor(): String {
         val string = Integer.toHexString(this)
-
         return string.substring(2) + string.substring(0, 2)
     }
 
@@ -45,8 +47,19 @@ class HomePageFactory @Inject constructor(
         get() = themeProvider.color(R.attr.autoCompleteTitleColor).toColor()
 
     override fun buildPage(): Single<String> = Single
-        .just(searchEngineProvider.provideSearchEngine())
-        .map { (iconUrl, queryUrl, _) ->
+        .fromCallable {
+            // Fetch "For You" news synchronously on the disk scheduler thread.
+            // This avoids XHR/fetch in JavaScript which would need a base URL for CORS.
+            // No SearXNG involved at all — news data comes from rss2json.com API.
+            try {
+                NewsFetcher.fetchCategorySync("top")
+            } catch (e: Exception) {
+                Log.w("HomePageFactory", "Failed to pre-fetch news", e)
+                "[]"
+            }
+        }
+        .map { newsData ->
+            val (iconUrl, queryUrl, _) = searchEngineProvider.provideSearchEngine()
             parse(homePageReader.provideHtml()) andBuild {
                 title { title }
                 style { content ->
@@ -56,11 +69,17 @@ class HomePageFactory @Inject constructor(
                 }
                 charset { UTF8 }
                 body {
-                    id("image_url") { attr("src", iconUrl) }
+                    // Set search engine icon if the element exists
+                    try {
+                        id("image_url") { attr("src", iconUrl) }
+                    } catch (_: Exception) {
+                        // Element doesn't exist in this HTML template, skip
+                    }
                     tag("script") {
                         html(
                             html()
                                 .replace("\${BASE_URL}", queryUrl)
+                                .replace("\${NEWS_DATA}", newsData)
                                 .replace("&", "\\u0026")
                         )
                     }
@@ -73,6 +92,13 @@ class HomePageFactory @Inject constructor(
 
         const val FILENAME = "homepage.html"
         const val SCHEME_DATA = "data:eesha-homepage,"
+
+        /**
+         * The historyUrl used with loadDataWithBaseURL.
+         * This is what WebView.getUrl() returns.
+         * It identifies the page as the Eesha homepage — NOT any search engine.
+         */
+        const val HOMEPAGE_URL = "eesha://homepage"
 
     }
 

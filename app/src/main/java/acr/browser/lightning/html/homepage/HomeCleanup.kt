@@ -9,11 +9,20 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
+/**
+ * Migration cleanup for the homepage.
+ *
+ * v104: Homepage is now completely independent of SearXNG.
+ * - No SearXNG base URL used (null base URL)
+ * - News data fetched in Kotlin, not JavaScript XHR
+ * - historyUrl set to eesha://homepage (not SearXNG)
+ * - Cleared all saved tab state to prevent stale SearXNG tabs from being restored
+ */
 class HomeCleanup @Inject constructor(
     private val application: Application,
     private val userPreferences: UserPreferences
 ) : Cleanup.Action {
-    override val versionCode: Int = 103
+    override val versionCode: Int = 104
 
     override suspend fun execute() {
         withContext(Dispatchers.IO) {
@@ -25,8 +34,7 @@ class HomeCleanup @Inject constructor(
                     ?.forEach(File::delete)
             }
 
-            // Delete saved tab state so stale SearXNG tabs don't get restored.
-            // The browser will create fresh tabs with the proper homepage initializer.
+            // Delete saved tab state so stale SearXNG tabs don't get restored
             val savedTabs = File(application.filesDir, "SAVED_TABS.parcel")
             if (savedTabs.exists()) {
                 savedTabs.delete()

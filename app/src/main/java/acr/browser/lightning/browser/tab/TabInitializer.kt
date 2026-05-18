@@ -11,6 +11,7 @@ import acr.browser.lightning.html.bookmark.BookmarkPageFactory
 import acr.browser.lightning.html.download.DownloadPageFactory
 import acr.browser.lightning.html.history.HistoryPageFactory
 import acr.browser.lightning.html.homepage.HomePageFactory
+import acr.browser.lightning.html.homepage.NewsBridge
 import acr.browser.lightning.preference.UserPreferences
 import android.app.Activity
 import android.os.Bundle
@@ -82,7 +83,15 @@ class HomePageInitializer @Inject constructor(
 
 /**
  * An initializer that displays the start page.
- * Uses loadDataWithBaseURL for the homepage to allow XHR/fetch from the news hub.
+ *
+ * The homepage is COMPLETELY INDEPENDENT of any search engine.
+ * - NO SearXNG base URL is used
+ * - News data is pre-fetched in Kotlin and injected into the HTML
+ * - Category switching uses a JavaScript interface (NewsBridge)
+ * - The historyUrl is "eesha://homepage" so WebView.getUrl() returns
+ *   a recognizable identifier (NOT a search engine URL)
+ *
+ * SearXNG is ONLY used when the user actually searches from the search bar.
  */
 @Reusable
 class StartPageInitializer @Inject constructor(
@@ -92,6 +101,11 @@ class StartPageInitializer @Inject constructor(
 ) : TabInitializer {
 
     override fun initialize(webView: WebView, headers: Map<String, String>) {
+        // Add the NewsBridge JavaScript interface BEFORE loading the page.
+        // This allows JavaScript to request news data from Kotlin without
+        // needing XHR/fetch (which would require a search engine base URL).
+        webView.addJavascriptInterface(NewsBridge(webView, diskScheduler), "EeshaNews")
+
         homePageFactory
             .buildPage()
             .subscribeOn(diskScheduler)
@@ -100,11 +114,11 @@ class StartPageInitializer @Inject constructor(
                 if (url.startsWith(HomePageFactory.SCHEME_DATA)) {
                     val html = url.substring(HomePageFactory.SCHEME_DATA.length)
                     webView.loadDataWithBaseURL(
-                        "https://eesha-search.onrender.com",
+                        null,  // NO base URL — homepage is independent of any search engine
                         html,
                         "text/html",
                         "UTF-8",
-                        null
+                        HomePageFactory.HOMEPAGE_URL  // "eesha://homepage" — NOT SearXNG
                     )
                 } else {
                     webView.loadUrl(url, headers)

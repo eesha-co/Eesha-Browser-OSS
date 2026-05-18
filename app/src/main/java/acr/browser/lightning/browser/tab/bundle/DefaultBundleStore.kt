@@ -38,10 +38,7 @@ class DefaultBundleStore @Inject constructor(
         tabs.withIndex().forEach { (index, tab) ->
             if (!tab.url.isSpecialUrl()) {
                 val frozenBundle = tab.freeze()
-                // Always save the URL alongside the WebView state so we can check it on restore.
-                // This is critical because loadDataWithBaseURL makes WebView.getUrl() return
-                // the base URL (e.g. eesha-search.onrender.com), and we need to detect that
-                // on restore to redirect to the homepage initializer instead of loading SearXNG.
+                // Always save the URL alongside the WebView state so we can check it on restore
                 frozenBundle.putString(URL_KEY, tab.url)
                 outState.putBundle(BUNDLE_KEY + index, frozenBundle)
                 outState.putString(TAB_TITLE_KEY + index, tab.title)
@@ -72,18 +69,15 @@ class DefaultBundleStore @Inject constructor(
                     }
                 }
         }?.map { (bundle, title, id) ->
-            // Check URL_KEY — it's now saved for ALL tabs
             val savedUrl = bundle.getString(URL_KEY)
             return@map savedUrl?.let { url ->
                 when {
+                    url.isStartPageUrl() -> homePageInitializer
                     url.isBookmarkUrl() -> bookmarkPageInitializer
                     url.isDownloadsUrl() -> downloadPageInitializer
-                    url.isStartPageUrl() -> homePageInitializer
                     url.isHistoryUrl() -> historyPageInitializer
-                    // If the saved URL is the SearXNG base URL used by loadDataWithBaseURL,
-                    // redirect to the homepage initializer. This fixes the bug where the app
-                    // showed SearXNG instead of the custom news homepage on restart.
-                    url.isHomepageBaseUri() -> homePageInitializer
+                    // If the URL is the old SearXNG base URL, redirect to homepage
+                    url.isOldHomepageBaseUri() -> homePageInitializer
                     // Normal web pages — restore from frozen bundle
                     else -> FreezableBundleInitializer(
                         bundle = bundle,
@@ -121,11 +115,8 @@ class DefaultBundleStore @Inject constructor(
 }
 
 /**
- * Checks if the URL is the base URL used by loadDataWithBaseURL for the homepage.
- * When loadDataWithBaseURL("https://eesha-search.onrender.com", html, ...) is called,
- * WebView.getUrl() returns "https://eesha-search.onrender.com".
- * We need to detect this on tab restore and redirect to the homepage initializer
- * instead of loading SearXNG directly.
+ * Detects the old SearXNG base URL from previous versions.
+ * When loadDataWithBaseURL used SearXNG as base URL, WebView.getUrl() returned this.
  */
-private fun String.isHomepageBaseUri(): Boolean =
+private fun String.isOldHomepageBaseUri(): Boolean =
     this.contains("eesha-search.onrender.com") && !this.contains("/search?")
