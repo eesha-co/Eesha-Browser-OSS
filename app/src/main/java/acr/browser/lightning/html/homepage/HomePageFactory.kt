@@ -94,11 +94,25 @@ class HomePageFactory @Inject constructor(
         const val SCHEME_DATA = "data:eesha-homepage,"
 
         /**
-         * The historyUrl used with loadDataWithBaseURL.
-         * This is what WebView.getUrl() returns.
-         * It identifies the page as the Eesha homepage — NOT any search engine.
+         * The baseUrl used with loadDataWithBaseURL.
+         *
+         * "https://localhost" is the recommended base URL for local content that
+         * needs JavaScript interfaces. It provides:
+         * - Proper HTTPS origin for CORS and same-origin policy
+         * - JavaScript interfaces (@JavascriptInterface) work correctly
+         * - WebView.getUrl() returns this value (identifiable as homepage)
+         * - shouldOverrideUrlLoading properly intercepts navigation
+         * - External resources (fonts, images) with absolute URLs load correctly
+         *
+         * This completely decouples the homepage from any search engine.
          */
-        const val HOMEPAGE_URL = "eesha://homepage"
+        const val BASE_URL = "https://localhost"
+
+        /**
+         * The historyUrl used with loadDataWithBaseURL.
+         * Same as BASE_URL for consistency.
+         */
+        const val HOMEPAGE_URL = BASE_URL
 
     }
 

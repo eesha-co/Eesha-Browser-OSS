@@ -74,7 +74,9 @@ fun String?.isFileUrl(): Boolean = this != null && this.startsWith(FILE)
 
 /**
  * Returns whether the given url is a special (internal) page or a normal website.
- * Also recognizes the eesha://homepage custom scheme.
+ * Recognizes:
+ * - file:// URLs ending in bookmark/download/history/homepage HTML filenames
+ * - https://localhost (the homepage base URL used by loadDataWithBaseURL)
  */
 fun String?.isSpecialUrl(): Boolean =
     this != null
@@ -83,7 +85,8 @@ fun String?.isSpecialUrl(): Boolean =
         || this.endsWith(DownloadPageFactory.FILENAME)
         || this.endsWith(HistoryPageFactory.FILENAME)
         || this.endsWith(HomePageFactory.FILENAME))
-        || this == HomePageFactory.HOMEPAGE_URL)
+        || this == HomePageFactory.HOMEPAGE_URL
+        || this == HomePageFactory.BASE_URL)
 
 /**
  * Determines if the url is a url for the bookmark page.
@@ -105,11 +108,16 @@ fun String?.isHistoryUrl(): Boolean =
 
 /**
  * Determines if the url is a url for the start page / homepage.
- * Recognizes both the file:// based URL and the eesha://homepage custom scheme.
+ * Recognizes:
+ * - file:// URLs ending in homepage.html
+ * - https://localhost (the homepage base URL)
+ * - eesha://homepage (legacy, from older versions)
  */
 fun String?.isStartPageUrl(): Boolean =
     this != null && (this.startsWith(FILE) && this.endsWith(HomePageFactory.FILENAME)
-        || this == HomePageFactory.HOMEPAGE_URL)
+        || this == HomePageFactory.HOMEPAGE_URL
+        || this == HomePageFactory.BASE_URL
+        || this == "eesha://homepage")
 
 /**
  * Extracts the search query from a search engine URL.

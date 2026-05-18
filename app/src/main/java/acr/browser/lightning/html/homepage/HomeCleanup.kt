@@ -12,18 +12,18 @@ import javax.inject.Inject
 /**
  * Migration cleanup for the homepage.
  *
- * v105: Fixed homepage URL and UI overhaul.
- * - Base URL changed from null to "eesha://homepage" (fixes about:blank URL bar issue)
- * - Fixed CSS variable replacement (--card-bg, --text-primary instead of --box-bg, --box-txt)
- * - Complete UI/UX redesign for Chrome-level quality
- * - URL bar now shows search text instead of SearXNG URL
- * - Cleared all saved tab state to prevent stale tabs from being restored
+ * v106: Fixed critical bugs causing homepage to be completely static.
+ * - Changed base URL from "eesha://homepage" to "https://localhost" (recommended for JS interfaces)
+ * - Removed &count= parameter from rss2json.com API calls (caused HTTP 422 on free tier)
+ * - Fixed CSS variable replacement (--card-bg, --text-primary)
+ * - Removed broken quick action shortcuts (bookmarks/history/downloads use wrong paths)
+ * - Better RSS sources: BBC feeds first (provide thumbnails), Google News second
  */
 class HomeCleanup @Inject constructor(
     private val application: Application,
     private val userPreferences: UserPreferences
 ) : Cleanup.Action {
-    override val versionCode: Int = 105
+    override val versionCode: Int = 106
 
     override suspend fun execute() {
         withContext(Dispatchers.IO) {

@@ -7,10 +7,14 @@ import io.reactivex.rxjava3.kotlin.subscribeBy
 
 /**
  * JavaScript interface that allows the homepage HTML to fetch news data
- * from Kotlin (instead of using XHR/fetch which would need a base URL).
+ * from Kotlin (instead of using XHR/fetch which would need a base URL for CORS).
  *
  * This completely decouples the homepage from any search engine.
  * SearXNG is ONLY used for actual search queries.
+ *
+ * IMPORTANT: All @JavascriptInterface methods run on a background thread.
+ * UI operations (like evaluateJavascript) MUST be posted to the main thread
+ * via webView.post {}.
  */
 class NewsBridge(
     private val webView: WebView,
@@ -24,6 +28,7 @@ class NewsBridge(
     /**
      * Called from JavaScript to fetch news for a category.
      * Result delivered via callback: window.__onNewsData(category, jsonString)
+     * On error: window.__onNewsError(category)
      */
     @android.webkit.JavascriptInterface
     fun fetchCategory(category: String) {

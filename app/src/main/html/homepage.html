@@ -21,7 +21,6 @@
         --shadow-lg: 0 4px 16px rgba(0,0,0,0.08)
         --text-secondary: rgba(0,0,0,0.45)
         --text-tertiary: rgba(0,0,0,0.30)
-        --surface-elevated: rgba(255,255,255,0.85)
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -139,48 +138,6 @@
     .search-bar input::placeholder {
         color: var(--text-tertiary);
         font-weight: 400;
-    }
-
-    /* ── Quick Actions ── */
-    .quick-actions {
-        display: flex;
-        gap: 8px;
-        padding: 0 20px;
-        margin-bottom: 20px;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-    }
-
-    .quick-actions::-webkit-scrollbar { display: none; }
-
-    .quick-action {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 8px 14px;
-        border-radius: 20px;
-        background: var(--card-bg);
-        border: 1px solid var(--divider);
-        white-space: nowrap;
-        cursor: pointer;
-        text-decoration: none;
-        color: var(--text-primary);
-        font-size: 13px;
-        font-weight: 500;
-        transition: background 0.15s;
-        -webkit-user-select: none;
-        user-select: none;
-        flex-shrink: 0;
-    }
-
-    .quick-action:active {
-        background: var(--accent-soft);
-    }
-
-    .quick-action-icon {
-        font-size: 15px;
-        line-height: 1;
     }
 
     /* ── Category Tabs ── */
@@ -395,7 +352,7 @@
         display: block;
     }
 
-    /* ── Loading State (Skeleton) ── */
+    /* ── Loading State (Skeleton Shimmer) ── */
     .loading-state {
         padding: 8px 0;
     }
@@ -508,10 +465,6 @@
         from { opacity: 0; }
         to { opacity: 1; }
     }
-
-    .fade-in {
-        animation: fadeIn 0.3s ease-out;
-    }
 </style>
 
 <body>
@@ -552,18 +505,6 @@
             </ul>
         </div>
     </div>
-</div>
-
-<div class="quick-actions">
-    <a class="quick-action" onclick="goTo('bookmarks')">
-        <span class="quick-action-icon">&#9733;</span> Bookmarks
-    </a>
-    <a class="quick-action" onclick="goTo('history')">
-        <span class="quick-action-icon">&#9202;</span> History
-    </a>
-    <a class="quick-action" onclick="goTo('downloads')">
-        <span class="quick-action-icon">&#8681;</span> Downloads
-    </a>
 </div>
 
 <div class="content" id="content">
@@ -613,41 +554,33 @@
         newsCache["top"] = INITIAL_NEWS;
     }
 
-    // Search function — navigates to SearXNG for actual search queries only
+    // ── Search ──
     function search() {
         var q = document.getElementById("search_input").value.trim();
         if (q !== "") {
+            // Navigate to SearXNG for search — it's just a search engine backend
             window.location.href = BASE_URL + encodeURIComponent(q);
-            document.getElementById("search_input").value = "";
         }
         return false;
     }
 
-    // Navigate to internal pages
-    function goTo(page) {
-        if (page === "bookmarks") window.location.href = "file:///android_asset/bookmarks.html";
-        else if (page === "history") window.location.href = "file:///android_asset/history.html";
-        else if (page === "downloads") window.location.href = "file:///android_asset/downloads.html";
-    }
-
-    // Time-based greeting
+    // ── Greeting ──
     function updateGreeting() {
         var hour = new Date().getHours();
         var greeting = "Good evening";
-        var emoji = "&#127769;";
-        if (hour < 12) { greeting = "Good morning"; emoji = "&#9728;&#65039;"; }
-        else if (hour < 17) { greeting = "Good afternoon"; emoji = "&#9925;"; }
+        if (hour < 12) greeting = "Good morning";
+        else if (hour < 17) greeting = "Good afternoon";
 
         var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
         var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
         var d = new Date();
         var dateStr = days[d.getDay()] + ", " + months[d.getMonth()] + " " + d.getDate();
 
-        document.getElementById("greeting").innerHTML = greeting + " " + emoji;
+        document.getElementById("greeting").textContent = greeting;
         document.getElementById("greetingDate").textContent = dateStr;
     }
 
-    // Time ago helper
+    // ── Time ago ──
     function timeAgo(dateStr) {
         try {
             var d = new Date(dateStr);
@@ -663,24 +596,25 @@
         }
     }
 
-    // Escape HTML to prevent XSS
+    // ── Escape HTML ──
     function esc(str) {
         var d = document.createElement("div");
         d.textContent = str;
         return d.innerHTML;
     }
 
-    // Render news articles
+    // ── Render News ──
     function renderNews(articles) {
         var container = document.getElementById("content");
 
         if (!articles || articles.length === 0) {
-            container.innerHTML = '<div class="error-state">' +
+            container.innerHTML =
+                '<div class="error-state">' +
                 '<div class="error-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">' +
                 '<path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>' +
                 '<div class="error-title">No stories right now</div>' +
                 '<div class="error-subtitle">Check your connection and try again</div>' +
-                '<button class="retry-btn" onclick="loadCategory(currentCategory)">&#8635; Retry</button>' +
+                '<button class="retry-btn" onclick="retryCategory()">&#8635; Retry</button>' +
                 '</div>';
             return;
         }
@@ -699,7 +633,7 @@
         var html = "";
 
         // Featured card (first article with image)
-        var featured = articles.find(function(a) { return a.image; });
+        var featured = articles.find(function(a) { return a.image && a.image.length > 0; });
         if (featured) {
             html += '<a class="featured-card" href="' + esc(featured.link) + '">' +
                 '<div class="featured-image-wrap">' +
@@ -717,7 +651,7 @@
         // Remaining articles
         articles.forEach(function(a) {
             var imgHtml = "";
-            if (a.image) {
+            if (a.image && a.image.length > 0) {
                 imgHtml = '<div class="news-thumb-wrap">' +
                     '<img class="news-thumb" src="' + esc(a.image) + '" onerror="this.parentElement.style.display=\'none\'" alt=""/>' +
                     '</div>';
@@ -733,10 +667,10 @@
         container.innerHTML = html;
     }
 
-    // Show skeleton loading
+    // ── Skeleton Loading ──
     function showLoading() {
-        var container = document.getElementById("content");
-        container.innerHTML = '<div class="loading-state" id="loadingState">' +
+        document.getElementById("content").innerHTML =
+            '<div class="loading-state">' +
             '<div class="skeleton skeleton-featured"></div>' +
             '<div class="skeleton-card"><div class="skeleton-text">' +
             '<div class="skeleton skeleton-line short"></div>' +
@@ -751,12 +685,12 @@
             '</div>';
     }
 
-    // Load news for a category
+    // ── Load Category ──
     function loadCategory(category) {
         currentCategory = category;
 
         // Clear any pending timeout
-        if (bridgeTimeout) clearTimeout(bridgeTimeout);
+        if (bridgeTimeout) { clearTimeout(bridgeTimeout); bridgeTimeout = null; }
 
         // Return cached data if available
         if (newsCache[category]) {
@@ -766,24 +700,34 @@
 
         showLoading();
 
-        // Use Kotlin NewsBridge for fetching (no XHR, no CORS issues!)
-        if (window.EeshaNews) {
+        // Use Kotlin NewsBridge for fetching — no XHR, no CORS issues!
+        if (window.EeshaNews && typeof window.EeshaNews.fetchCategory === "function") {
             window.EeshaNews.fetchCategory(category);
 
-            // Timeout fallback: if NewsBridge doesn't respond in 12s, show error
+            // Timeout fallback: if NewsBridge doesn't respond in 15s, show error
             bridgeTimeout = setTimeout(function() {
+                bridgeTimeout = null;
                 if (newsCache[category]) return; // already loaded
+                console.log("Eesha: NewsBridge timeout for category: " + category);
                 renderNews([]);
-            }, 12000);
+            }, 15000);
         } else {
-            // No bridge available, try direct fetch as last resort
+            // No bridge available — show error immediately
+            console.log("Eesha: NewsBridge not available");
             renderNews([]);
         }
     }
 
-    // Callback from Kotlin NewsBridge
+    // ── Retry current category ──
+    function retryCategory() {
+        // Clear cache for this category so it fetches fresh
+        delete newsCache[currentCategory];
+        loadCategory(currentCategory);
+    }
+
+    // ── Callback from Kotlin NewsBridge (success) ──
     window.__onNewsData = function(category, data) {
-        if (bridgeTimeout) clearTimeout(bridgeTimeout);
+        if (bridgeTimeout) { clearTimeout(bridgeTimeout); bridgeTimeout = null; }
         if (data && data.length > 0) {
             newsCache[category] = data;
         }
@@ -792,15 +736,15 @@
         }
     };
 
-    // Error callback from Kotlin NewsBridge
+    // ── Callback from Kotlin NewsBridge (error) ──
     window.__onNewsError = function(category) {
-        if (bridgeTimeout) clearTimeout(bridgeTimeout);
+        if (bridgeTimeout) { clearTimeout(bridgeTimeout); bridgeTimeout = null; }
         if (category === currentCategory) {
             renderNews([]);
         }
     };
 
-    // Tab click handling
+    // ── Tab click handling ──
     document.getElementById("tabs").addEventListener("click", function(e) {
         if (e.target && e.target.classList.contains("tab")) {
             document.querySelectorAll(".tab").forEach(function(t) {
@@ -811,7 +755,7 @@
         }
     });
 
-    // Initialize
+    // ── Initialize ──
     updateGreeting();
 
     // Render pre-loaded "For You" news immediately
