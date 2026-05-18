@@ -87,8 +87,8 @@ class HomePageInitializer @Inject constructor(
 @Reusable
 class StartPageInitializer @Inject constructor(
     private val homePageFactory: HomePageFactory,
-    @DiskScheduler diskScheduler: Scheduler,
-    @MainScheduler foregroundScheduler: Scheduler
+    @DiskScheduler private val diskScheduler: Scheduler,
+    @MainScheduler private val foregroundScheduler: Scheduler
 ) : TabInitializer {
 
     override fun initialize(webView: WebView, headers: Map<String, String>) {
