@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>${TITLE}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <style>
     :root {
@@ -13,67 +13,115 @@
         --card-bg: {COLOR}
         --text-primary: {COLOR}
         --accent: #FF6B6B
-        --accent-light: rgba(255,107,107,0.12)
-        --divider: rgba(128,128,128,0.12)
-        --shadow: rgba(0,0,0,0.06)
-        --text-secondary: rgba(0,0,0,0.5)
+        --accent-soft: rgba(255,107,107,0.10)
+        --accent-medium: rgba(255,107,107,0.18)
+        --divider: rgba(128,128,128,0.08)
+        --shadow-sm: 0 1px 2px rgba(0,0,0,0.04)
+        --shadow-md: 0 2px 8px rgba(0,0,0,0.06)
+        --shadow-lg: 0 4px 16px rgba(0,0,0,0.08)
+        --text-secondary: rgba(0,0,0,0.45)
+        --text-tertiary: rgba(0,0,0,0.30)
+        --surface-elevated: rgba(255,255,255,0.85)
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
     body {
         background: var(--body-bg);
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         color: var(--text-primary);
-        -webkit-tap-highlight-color: transparent;
         overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
     }
 
-    /* Header */
+    /* ── Header ── */
     .header {
-        padding: 16px 16px 0;
+        padding: 20px 20px 0;
         position: sticky;
         top: 0;
         background: var(--body-bg);
         z-index: 100;
     }
 
-    .greeting {
-        font-size: 22px;
-        font-weight: 700;
-        margin-bottom: 12px;
-        letter-spacing: -0.3px;
+    .header-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
     }
 
-    .greeting-sub {
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .brand-logo {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 50%, #FFB4B4 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 800;
+        color: white;
+        letter-spacing: -0.5px;
+    }
+
+    .brand-name {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    .greeting-section {
+        margin-bottom: 16px;
+    }
+
+    .greeting {
+        font-size: 26px;
+        font-weight: 800;
+        letter-spacing: -0.8px;
+        line-height: 1.15;
+    }
+
+    .greeting-date {
         font-size: 13px;
         color: var(--text-secondary);
-        font-weight: 400;
-        margin-top: 2px;
+        font-weight: 500;
+        margin-top: 4px;
     }
 
-    /* Search Bar */
+    /* ── Search Bar ── */
     .search-container {
         position: relative;
-        margin-bottom: 12px;
+        margin-bottom: 16px;
     }
 
     .search-bar {
         display: flex;
         align-items: center;
         background: var(--card-bg);
-        border-radius: 28px;
+        border-radius: 16px;
         padding: 0 16px;
-        height: 48px;
-        box-shadow: 0 1px 3px var(--shadow);
-        border: 1px solid var(--divider);
+        height: 52px;
+        box-shadow: var(--shadow-md);
+        border: 1.5px solid var(--divider);
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .search-bar:focus-within {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-soft), var(--shadow-md);
     }
 
     .search-icon {
         width: 20px;
         height: 20px;
-        margin-right: 10px;
-        opacity: 0.4;
+        margin-right: 12px;
+        opacity: 0.35;
         flex-shrink: 0;
     }
 
@@ -84,141 +132,151 @@
         font-size: 15px;
         background: transparent;
         color: var(--text-primary);
-        font-family: 'Inter', sans-serif;
+        font-family: inherit;
+        font-weight: 500;
     }
 
     .search-bar input::placeholder {
-        color: var(--text-secondary);
+        color: var(--text-tertiary);
+        font-weight: 400;
     }
 
-    /* Category Tabs */
+    /* ── Quick Actions ── */
+    .quick-actions {
+        display: flex;
+        gap: 8px;
+        padding: 0 20px;
+        margin-bottom: 20px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .quick-actions::-webkit-scrollbar { display: none; }
+
+    .quick-action {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 14px;
+        border-radius: 20px;
+        background: var(--card-bg);
+        border: 1px solid var(--divider);
+        white-space: nowrap;
+        cursor: pointer;
+        text-decoration: none;
+        color: var(--text-primary);
+        font-size: 13px;
+        font-weight: 500;
+        transition: background 0.15s;
+        -webkit-user-select: none;
+        user-select: none;
+        flex-shrink: 0;
+    }
+
+    .quick-action:active {
+        background: var(--accent-soft);
+    }
+
+    .quick-action-icon {
+        font-size: 15px;
+        line-height: 1;
+    }
+
+    /* ── Category Tabs ── */
+    .tabs-container {
+        padding: 0 20px;
+        margin-bottom: 4px;
+    }
+
     .tabs-scroll {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
-        padding-bottom: 12px;
     }
 
     .tabs-scroll::-webkit-scrollbar { display: none; }
 
     .tabs {
         display: flex;
-        gap: 8px;
-        padding: 0 16px;
+        gap: 6px;
         list-style: none;
+        padding-bottom: 12px;
     }
 
     .tab {
-        padding: 8px 18px;
-        border-radius: 20px;
+        padding: 7px 16px;
+        border-radius: 10px;
         font-size: 13px;
         font-weight: 600;
         white-space: nowrap;
         cursor: pointer;
-        transition: all 0.2s ease;
-        border: none;
-        background: var(--card-bg);
+        transition: all 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+        border: 1.5px solid transparent;
+        background: transparent;
         color: var(--text-secondary);
         -webkit-user-select: none;
         user-select: none;
+        letter-spacing: -0.1px;
     }
 
     .tab.active {
-        background: var(--accent);
-        color: white;
+        background: var(--text-primary);
+        color: var(--body-bg);
+        border-color: var(--text-primary);
     }
 
     .tab:not(.active):active {
-        opacity: 0.7;
-    }
-
-    /* Content Area */
-    .content {
-        padding: 0 16px 100px;
-    }
-
-    /* News Card */
-    .news-card {
-        display: flex;
-        gap: 12px;
-        padding: 14px 0;
-        border-bottom: 1px solid var(--divider);
-        cursor: pointer;
-        text-decoration: none;
-        color: inherit;
-        -webkit-user-select: none;
-    }
-
-    .news-card:active {
-        opacity: 0.7;
-    }
-
-    .news-card-text {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .news-source {
-        font-size: 11px;
-        font-weight: 600;
+        background: var(--accent-soft);
         color: var(--accent);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 4px;
     }
 
-    .news-title {
-        font-size: 15px;
-        font-weight: 600;
-        line-height: 1.35;
-        letter-spacing: -0.2px;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        margin-bottom: 6px;
+    /* ── Content ── */
+    .content {
+        padding: 4px 20px 100px;
     }
 
-    .news-meta {
-        font-size: 12px;
-        color: var(--text-secondary);
-        display: flex;
-        gap: 8px;
-        align-items: center;
-    }
-
-    .news-thumb {
-        width: 96px;
-        height: 72px;
-        border-radius: 12px;
-        object-fit: cover;
-        background: var(--card-bg);
-        flex-shrink: 0;
-    }
-
-    /* Featured Card */
+    /* ── Featured Card ── */
     .featured-card {
-        border-radius: 16px;
+        display: block;
+        border-radius: 18px;
         overflow: hidden;
-        margin-bottom: 16px;
+        margin-bottom: 14px;
         cursor: pointer;
         text-decoration: none;
         color: inherit;
-        display: block;
-        box-shadow: 0 2px 8px var(--shadow);
+        box-shadow: var(--shadow-md);
         -webkit-user-select: none;
+        transition: transform 0.15s;
+        animation: fadeSlideUp 0.35s ease-out;
     }
 
     .featured-card:active {
-        opacity: 0.9;
+        transform: scale(0.98);
+    }
+
+    .featured-image-wrap {
+        position: relative;
+        width: 100%;
+        height: 200px;
+        overflow: hidden;
+        background: linear-gradient(135deg, var(--accent-soft), var(--card-bg));
     }
 
     .featured-image {
         width: 100%;
-        height: 180px;
+        height: 100%;
         object-fit: cover;
         display: block;
-        background: var(--card-bg);
+    }
+
+    .featured-gradient {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 80px;
+        background: linear-gradient(transparent, rgba(0,0,0,0.55));
     }
 
     .featured-content {
@@ -227,12 +285,23 @@
     }
 
     .featured-source {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
         font-size: 11px;
-        font-weight: 600;
+        font-weight: 700;
         color: var(--accent);
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.6px;
         margin-bottom: 6px;
+    }
+
+    .featured-source::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
     }
 
     .featured-title {
@@ -241,128 +310,289 @@
         line-height: 1.3;
         letter-spacing: -0.3px;
         margin-bottom: 8px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
     .featured-meta {
         font-size: 12px;
         color: var(--text-secondary);
+        font-weight: 500;
     }
 
-    /* Loading State */
-    .loading {
-        text-align: center;
-        padding: 40px 0;
-        color: var(--text-secondary);
-        font-size: 14px;
-    }
-
-    .loading-spinner {
-        width: 28px;
-        height: 28px;
-        border: 3px solid var(--divider);
-        border-top-color: var(--accent);
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-        margin: 0 auto 12px;
-    }
-
-    @keyframes spin {
-        to { transform: rotate(360deg); }
-    }
-
-    /* Error State */
-    .error-state {
-        text-align: center;
-        padding: 40px 20px;
-        color: var(--text-secondary);
-    }
-
-    .error-state svg {
-        width: 40px;
-        height: 40px;
-        margin-bottom: 12px;
-        opacity: 0.4;
-    }
-
-    /* Quick Links */
-    .quick-links {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 10px;
-        margin-bottom: 20px;
-    }
-
-    .quick-link {
+    /* ── News Card ── */
+    .news-card {
         display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 6px;
-        padding: 12px 4px;
-        border-radius: 14px;
-        background: var(--card-bg);
+        gap: 14px;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--divider);
         cursor: pointer;
         text-decoration: none;
         color: inherit;
         -webkit-user-select: none;
-        border: 1px solid var(--divider);
+        transition: background 0.12s;
+        animation: fadeSlideUp 0.35s ease-out;
     }
 
-    .quick-link:active {
-        opacity: 0.7;
+    .news-card:active {
+        background: var(--accent-soft);
+        margin: 0 -12px;
+        padding-left: 12px;
+        padding-right: 12px;
+        border-radius: 12px;
     }
 
-    .quick-link-icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
+    .news-card-text {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .news-source {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+    }
+
+    .news-title {
+        font-size: 14.5px;
+        font-weight: 600;
+        line-height: 1.35;
+        letter-spacing: -0.15px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin-bottom: 6px;
+    }
+
+    .news-meta {
+        font-size: 11.5px;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .news-thumb-wrap {
+        width: 100px;
+        height: 76px;
+        border-radius: 12px;
+        overflow: hidden;
+        flex-shrink: 0;
+        background: linear-gradient(135deg, var(--accent-soft), var(--card-bg));
+    }
+
+    .news-thumb {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    /* ── Loading State (Skeleton) ── */
+    .loading-state {
+        padding: 8px 0;
+    }
+
+    .skeleton {
+        border-radius: 8px;
+        background: linear-gradient(90deg, var(--divider) 25%, var(--card-bg) 50%, var(--divider) 75%);
+        background-size: 200% 100%;
+        animation: shimmer 1.5s ease-in-out infinite;
+    }
+
+    .skeleton-featured {
+        height: 220px;
+        border-radius: 18px;
+        margin-bottom: 14px;
+    }
+
+    .skeleton-card {
+        display: flex;
+        gap: 14px;
+        padding: 14px 0;
+    }
+
+    .skeleton-text {
+        flex: 1;
+    }
+
+    .skeleton-line {
+        height: 12px;
+        margin-bottom: 8px;
+        border-radius: 6px;
+    }
+
+    .skeleton-line.short { width: 40%; }
+    .skeleton-line.medium { width: 70%; }
+    .skeleton-line.long { width: 95%; }
+
+    .skeleton-thumb {
+        width: 100px;
+        height: 76px;
+        border-radius: 12px;
+        flex-shrink: 0;
+    }
+
+    @keyframes shimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+
+    /* ── Error State ── */
+    .error-state {
+        text-align: center;
+        padding: 48px 20px;
+    }
+
+    .error-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        background: var(--accent-soft);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 18px;
+        margin: 0 auto 16px;
     }
 
-    .quick-link-label {
-        font-size: 11px;
-        font-weight: 500;
+    .error-icon svg {
+        width: 24px;
+        height: 24px;
+        opacity: 0.6;
+    }
+
+    .error-title {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+
+    .error-subtitle {
+        font-size: 13px;
         color: var(--text-secondary);
-        text-align: center;
-        line-height: 1.2;
+        margin-bottom: 20px;
+    }
+
+    .retry-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 24px;
+        border-radius: 12px;
+        background: var(--accent);
+        color: white;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        -webkit-user-select: none;
+        transition: opacity 0.15s;
+    }
+
+    .retry-btn:active { opacity: 0.8; }
+
+    /* ── Animations ── */
+    @keyframes fadeSlideUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .fade-in {
+        animation: fadeIn 0.3s ease-out;
     }
 </style>
 
 <body>
 <div class="header">
-    <div class="greeting" id="greeting">Good morning</div>
-    <div class="greeting-sub" id="greetingSub">Stay informed with the latest updates</div>
+    <div class="header-top">
+        <div class="brand">
+            <div class="brand-logo">e</div>
+            <span class="brand-name">Eesha</span>
+        </div>
+    </div>
+
+    <div class="greeting-section">
+        <div class="greeting" id="greeting">Good morning</div>
+        <div class="greeting-date" id="greetingDate">Monday, January 1</div>
+    </div>
 
     <form onsubmit="return search()" class="search-container" autocomplete="off">
         <div class="search-bar">
-            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
                 <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
             </svg>
             <input type="text" id="search_input" placeholder="Search the web..."/>
         </div>
     </form>
 
-    <div class="tabs-scroll">
-        <ul class="tabs" id="tabs">
-            <li class="tab active" data-category="top">For You</li>
-            <li class="tab" data-category="politics">Politics</li>
-            <li class="tab" data-category="education">Education</li>
-            <li class="tab" data-category="sports">Sports</li>
-            <li class="tab" data-category="tech">Technology</li>
-            <li class="tab" data-category="business">Business</li>
-            <li class="tab" data-category="entertainment">Entertainment</li>
-            <li class="tab" data-category="health">Health</li>
-            <li class="tab" data-category="science">Science</li>
-        </ul>
+    <div class="tabs-container">
+        <div class="tabs-scroll">
+            <ul class="tabs" id="tabs">
+                <li class="tab active" data-category="top">For You</li>
+                <li class="tab" data-category="politics">Politics</li>
+                <li class="tab" data-category="education">Education</li>
+                <li class="tab" data-category="sports">Sports</li>
+                <li class="tab" data-category="tech">Technology</li>
+                <li class="tab" data-category="business">Business</li>
+                <li class="tab" data-category="entertainment">Entertainment</li>
+                <li class="tab" data-category="health">Health</li>
+                <li class="tab" data-category="science">Science</li>
+            </ul>
+        </div>
     </div>
 </div>
 
+<div class="quick-actions">
+    <a class="quick-action" onclick="goTo('bookmarks')">
+        <span class="quick-action-icon">&#9733;</span> Bookmarks
+    </a>
+    <a class="quick-action" onclick="goTo('history')">
+        <span class="quick-action-icon">&#9202;</span> History
+    </a>
+    <a class="quick-action" onclick="goTo('downloads')">
+        <span class="quick-action-icon">&#8681;</span> Downloads
+    </a>
+</div>
+
 <div class="content" id="content">
-    <div class="loading">
-        <div class="loading-spinner"></div>
-        Loading news...
+    <div class="loading-state" id="loadingState">
+        <div class="skeleton skeleton-featured"></div>
+        <div class="skeleton-card">
+            <div class="skeleton-text">
+                <div class="skeleton skeleton-line short"></div>
+                <div class="skeleton skeleton-line long"></div>
+                <div class="skeleton skeleton-line medium"></div>
+            </div>
+            <div class="skeleton skeleton-thumb"></div>
+        </div>
+        <div class="skeleton-card">
+            <div class="skeleton-text">
+                <div class="skeleton skeleton-line short"></div>
+                <div class="skeleton skeleton-line long"></div>
+                <div class="skeleton skeleton-line medium"></div>
+            </div>
+            <div class="skeleton skeleton-thumb"></div>
+        </div>
+        <div class="skeleton-card">
+            <div class="skeleton-text">
+                <div class="skeleton skeleton-line short"></div>
+                <div class="skeleton skeleton-line long"></div>
+                <div class="skeleton skeleton-line medium"></div>
+            </div>
+            <div class="skeleton skeleton-thumb"></div>
+        </div>
     </div>
 </div>
 
@@ -376,6 +606,7 @@
 
     var currentCategory = "top";
     var newsCache = {};
+    var bridgeTimeout = null;
 
     // Cache the initial data
     if (INITIAL_NEWS && INITIAL_NEWS.length > 0) {
@@ -392,20 +623,28 @@
         return false;
     }
 
+    // Navigate to internal pages
+    function goTo(page) {
+        if (page === "bookmarks") window.location.href = "file:///android_asset/bookmarks.html";
+        else if (page === "history") window.location.href = "file:///android_asset/history.html";
+        else if (page === "downloads") window.location.href = "file:///android_asset/downloads.html";
+    }
+
     // Time-based greeting
     function updateGreeting() {
         var hour = new Date().getHours();
         var greeting = "Good evening";
-        if (hour < 12) greeting = "Good morning";
-        else if (hour < 17) greeting = "Good afternoon";
+        var emoji = "&#127769;";
+        if (hour < 12) { greeting = "Good morning"; emoji = "&#9728;&#65039;"; }
+        else if (hour < 17) { greeting = "Good afternoon"; emoji = "&#9925;"; }
 
         var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
         var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
         var d = new Date();
         var dateStr = days[d.getDay()] + ", " + months[d.getMonth()] + " " + d.getDate();
 
-        document.getElementById("greeting").textContent = greeting;
-        document.getElementById("greetingSub").textContent = dateStr + " \u2014 Stay informed";
+        document.getElementById("greeting").innerHTML = greeting + " " + emoji;
+        document.getElementById("greetingDate").textContent = dateStr;
     }
 
     // Time ago helper
@@ -424,15 +663,25 @@
         }
     }
 
+    // Escape HTML to prevent XSS
+    function esc(str) {
+        var d = document.createElement("div");
+        d.textContent = str;
+        return d.innerHTML;
+    }
+
     // Render news articles
     function renderNews(articles) {
         var container = document.getElementById("content");
 
         if (!articles || articles.length === 0) {
             container.innerHTML = '<div class="error-state">' +
-                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2"/></svg>' +
-                '<p>Unable to load news right now</p>' +
-                '<p style="font-size:12px;margin-top:4px">Check your internet connection</p></div>';
+                '<div class="error-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">' +
+                '<path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>' +
+                '<div class="error-title">No stories right now</div>' +
+                '<div class="error-subtitle">Check your connection and try again</div>' +
+                '<button class="retry-btn" onclick="loadCategory(currentCategory)">&#8635; Retry</button>' +
+                '</div>';
             return;
         }
 
@@ -452,11 +701,14 @@
         // Featured card (first article with image)
         var featured = articles.find(function(a) { return a.image; });
         if (featured) {
-            html += '<a class="featured-card" href="' + featured.link + '">' +
-                '<img class="featured-image" src="' + featured.image + '" onerror="this.style.display=\'none\'" alt=""/>' +
+            html += '<a class="featured-card" href="' + esc(featured.link) + '">' +
+                '<div class="featured-image-wrap">' +
+                '<img class="featured-image" src="' + esc(featured.image) + '" onerror="this.parentElement.style.display=\'none\'" alt=""/>' +
+                '<div class="featured-gradient"></div>' +
+                '</div>' +
                 '<div class="featured-content">' +
-                '<div class="featured-source">' + featured.source + '</div>' +
-                '<div class="featured-title">' + featured.title + '</div>' +
+                '<div class="featured-source">' + esc(featured.source) + '</div>' +
+                '<div class="featured-title">' + esc(featured.title) + '</div>' +
                 '<div class="featured-meta">' + timeAgo(featured.date) + '</div>' +
                 '</div></a>';
             articles = articles.filter(function(a) { return a.title !== featured.title; });
@@ -466,22 +718,45 @@
         articles.forEach(function(a) {
             var imgHtml = "";
             if (a.image) {
-                imgHtml = '<img class="news-thumb" src="' + a.image + '" onerror="this.style.display=\'none\'" alt=""/>';
+                imgHtml = '<div class="news-thumb-wrap">' +
+                    '<img class="news-thumb" src="' + esc(a.image) + '" onerror="this.parentElement.style.display=\'none\'" alt=""/>' +
+                    '</div>';
             }
-            html += '<a class="news-card" href="' + a.link + '">' +
+            html += '<a class="news-card" href="' + esc(a.link) + '">' +
                 '<div class="news-card-text">' +
-                '<div class="news-source">' + a.source + '</div>' +
-                '<div class="news-title">' + a.title + '</div>' +
-                '<div class="news-meta"><span>' + timeAgo(a.date) + '</span></div>' +
+                '<div class="news-source">' + esc(a.source) + '</div>' +
+                '<div class="news-title">' + esc(a.title) + '</div>' +
+                '<div class="news-meta">' + timeAgo(a.date) + '</div>' +
                 '</div>' + imgHtml + '</a>';
         });
 
         container.innerHTML = html;
     }
 
+    // Show skeleton loading
+    function showLoading() {
+        var container = document.getElementById("content");
+        container.innerHTML = '<div class="loading-state" id="loadingState">' +
+            '<div class="skeleton skeleton-featured"></div>' +
+            '<div class="skeleton-card"><div class="skeleton-text">' +
+            '<div class="skeleton skeleton-line short"></div>' +
+            '<div class="skeleton skeleton-line long"></div>' +
+            '<div class="skeleton skeleton-line medium"></div>' +
+            '</div><div class="skeleton skeleton-thumb"></div></div>' +
+            '<div class="skeleton-card"><div class="skeleton-text">' +
+            '<div class="skeleton skeleton-line short"></div>' +
+            '<div class="skeleton skeleton-line long"></div>' +
+            '<div class="skeleton skeleton-line medium"></div>' +
+            '</div><div class="skeleton skeleton-thumb"></div></div>' +
+            '</div>';
+    }
+
     // Load news for a category
     function loadCategory(category) {
         currentCategory = category;
+
+        // Clear any pending timeout
+        if (bridgeTimeout) clearTimeout(bridgeTimeout);
 
         // Return cached data if available
         if (newsCache[category]) {
@@ -489,19 +764,26 @@
             return;
         }
 
-        var container = document.getElementById("content");
-        container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Loading news...</div>';
+        showLoading();
 
         // Use Kotlin NewsBridge for fetching (no XHR, no CORS issues!)
         if (window.EeshaNews) {
             window.EeshaNews.fetchCategory(category);
+
+            // Timeout fallback: if NewsBridge doesn't respond in 12s, show error
+            bridgeTimeout = setTimeout(function() {
+                if (newsCache[category]) return; // already loaded
+                renderNews([]);
+            }, 12000);
         } else {
+            // No bridge available, try direct fetch as last resort
             renderNews([]);
         }
     }
 
     // Callback from Kotlin NewsBridge
     window.__onNewsData = function(category, data) {
+        if (bridgeTimeout) clearTimeout(bridgeTimeout);
         if (data && data.length > 0) {
             newsCache[category] = data;
         }
@@ -512,6 +794,7 @@
 
     // Error callback from Kotlin NewsBridge
     window.__onNewsError = function(category) {
+        if (bridgeTimeout) clearTimeout(bridgeTimeout);
         if (category === currentCategory) {
             renderNews([]);
         }

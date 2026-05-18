@@ -42,6 +42,7 @@ import acr.browser.lightning.utils.QUERY_PLACE_HOLDER
 import acr.browser.lightning.utils.isBookmarkUrl
 import acr.browser.lightning.utils.isDownloadsUrl
 import acr.browser.lightning.utils.isHistoryUrl
+import acr.browser.lightning.utils.extractSearchQuery
 import acr.browser.lightning.utils.isSpecialUrl
 import acr.browser.lightning.utils.smartUrlFilter
 import acr.browser.lightning.utils.value
@@ -684,11 +685,19 @@ class BrowserPresenter @Inject constructor(
     fun onSearchFocusChanged(isFocused: Boolean) {
         isSearchViewFocused = isFocused
         if (isFocused) {
+            // When focused, show search query text for search results pages,
+            // or the raw URL for other pages. Special pages show empty.
+            val rawUrl = currentTab?.url.orEmpty()
+            val displayText = when {
+                rawUrl.isSpecialUrl() -> ""
+                rawUrl.extractSearchQuery() != null -> rawUrl.extractSearchQuery()!!
+                else -> rawUrl
+            }
             view?.updateState(
                 viewState.copy(
                     sslState = SslState.None,
                     isRefresh = false,
-                    displayUrl = currentTab?.url?.takeIf { !it.isSpecialUrl() }.orEmpty()
+                    displayUrl = displayText
                 )
             )
         } else {

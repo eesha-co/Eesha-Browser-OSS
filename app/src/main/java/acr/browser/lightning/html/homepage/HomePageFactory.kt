@@ -64,8 +64,8 @@ class HomePageFactory @Inject constructor(
                 title { title }
                 style { content ->
                     content.replace("--body-bg: {COLOR}", "--body-bg: #$backgroundColor;")
-                        .replace("--box-bg: {COLOR}", "--box-bg: #$cardColor;")
-                        .replace("--box-txt: {COLOR}", "--box-txt: #$textColor;")
+                        .replace("--card-bg: {COLOR}", "--card-bg: #$cardColor;")
+                        .replace("--text-primary: {COLOR}", "--text-primary: #$textColor;")
                 }
                 charset { UTF8 }
                 body {

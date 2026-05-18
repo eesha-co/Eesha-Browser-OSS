@@ -113,12 +113,19 @@ class StartPageInitializer @Inject constructor(
             .subscribeBy(onSuccess = { url ->
                 if (url.startsWith(HomePageFactory.SCHEME_DATA)) {
                     val html = url.substring(HomePageFactory.SCHEME_DATA.length)
+                    // Use "eesha://homepage" as both baseUrl and historyUrl.
+                    // - baseUrl: ensures WebView.getUrl() returns this (not "about:blank")
+                    //           and JavaScript interfaces work properly.
+                    //           No SearXNG involved — homepage is fully independent.
+                    // - historyUrl: same value for consistency.
+                    // All resources in the HTML use absolute URLs, so the base URL
+                    // is only used for identification, not for resolving relative paths.
                     webView.loadDataWithBaseURL(
-                        null,  // NO base URL — homepage is independent of any search engine
+                        HomePageFactory.HOMEPAGE_URL,
                         html,
                         "text/html",
                         "UTF-8",
-                        HomePageFactory.HOMEPAGE_URL  // "eesha://homepage" — NOT SearXNG
+                        HomePageFactory.HOMEPAGE_URL
                     )
                 } else {
                     webView.loadUrl(url, headers)

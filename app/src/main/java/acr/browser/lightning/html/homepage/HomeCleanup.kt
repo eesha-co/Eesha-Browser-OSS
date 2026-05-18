@@ -12,17 +12,18 @@ import javax.inject.Inject
 /**
  * Migration cleanup for the homepage.
  *
- * v104: Homepage is now completely independent of SearXNG.
- * - No SearXNG base URL used (null base URL)
- * - News data fetched in Kotlin, not JavaScript XHR
- * - historyUrl set to eesha://homepage (not SearXNG)
- * - Cleared all saved tab state to prevent stale SearXNG tabs from being restored
+ * v105: Fixed homepage URL and UI overhaul.
+ * - Base URL changed from null to "eesha://homepage" (fixes about:blank URL bar issue)
+ * - Fixed CSS variable replacement (--card-bg, --text-primary instead of --box-bg, --box-txt)
+ * - Complete UI/UX redesign for Chrome-level quality
+ * - URL bar now shows search text instead of SearXNG URL
+ * - Cleared all saved tab state to prevent stale tabs from being restored
  */
 class HomeCleanup @Inject constructor(
     private val application: Application,
     private val userPreferences: UserPreferences
 ) : Cleanup.Action {
-    override val versionCode: Int = 104
+    override val versionCode: Int = 105
 
     override suspend fun execute() {
         withContext(Dispatchers.IO) {
@@ -34,7 +35,7 @@ class HomeCleanup @Inject constructor(
                     ?.forEach(File::delete)
             }
 
-            // Delete saved tab state so stale SearXNG tabs don't get restored
+            // Delete saved tab state so stale tabs don't get restored
             val savedTabs = File(application.filesDir, "SAVED_TABS.parcel")
             if (savedTabs.exists()) {
                 savedTabs.delete()

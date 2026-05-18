@@ -115,8 +115,11 @@ class DefaultBundleStore @Inject constructor(
 }
 
 /**
- * Detects the old SearXNG base URL from previous versions.
- * When loadDataWithBaseURL used SearXNG as base URL, WebView.getUrl() returned this.
+ * Detects URLs from previous versions that should be redirected to the homepage.
+ * - Old SearXNG base URL (v1.6.0 and earlier): loadDataWithBaseURL used SearXNG as base URL
+ * - "about:blank" (v1.7.0): loadDataWithBaseURL used null as base URL
+ * Both should be treated as the homepage on restore.
  */
 private fun String.isOldHomepageBaseUri(): Boolean =
-    this.contains("eesha-search.onrender.com") && !this.contains("/search?")
+    (this.contains("eesha-search.onrender.com") && !this.contains("/search?"))
+        || this == "about:blank"
