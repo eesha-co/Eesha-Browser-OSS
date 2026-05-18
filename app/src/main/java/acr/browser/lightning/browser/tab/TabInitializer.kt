@@ -84,12 +84,11 @@ class HomePageInitializer @Inject constructor(
 /**
  * An initializer that displays the start page.
  *
- * The homepage is COMPLETELY INDEPENDENT of any search engine.
- * - NO SearXNG base URL is used
- * - News data is pre-fetched in Kotlin and injected into the HTML
- * - Category switching uses a JavaScript interface (NewsBridge)
- * - The historyUrl is "eesha://homepage" so WebView.getUrl() returns
- *   a recognizable identifier (NOT a search engine URL)
+ * Uses the original Lightning Browser file-based approach:
+ * - HTML is built by HomePageFactory and written to a file
+ * - Loaded via file:// URL (production-ready, no weird base URLs)
+ * - NewsBridge JavaScript interface is added for category switching
+ * - "For You" news data is pre-fetched and embedded in the HTML
  *
  * SearXNG is ONLY used when the user actually searches from the search bar.
  */
@@ -103,32 +102,19 @@ class StartPageInitializer @Inject constructor(
     override fun initialize(webView: WebView, headers: Map<String, String>) {
         // Add the NewsBridge JavaScript interface BEFORE loading the page.
         // This allows JavaScript to request news data from Kotlin without
-        // needing XHR/fetch (which would require a search engine base URL).
+        // needing XHR/fetch (which would require CORS-compatible base URL).
         webView.addJavascriptInterface(NewsBridge(webView, diskScheduler), "EeshaNews")
 
+        // Build the page (writes HTML to file, returns file:// URL)
         homePageFactory
             .buildPage()
             .subscribeOn(diskScheduler)
             .observeOn(foregroundScheduler)
             .subscribeBy(onSuccess = { url ->
-                if (url.startsWith(HomePageFactory.SCHEME_DATA)) {
-                    val html = url.substring(HomePageFactory.SCHEME_DATA.length)
-                    // Use "https://localhost" as base URL — the recommended practice
-                    // for local content that needs JavaScript interfaces.
-                    // - Provides proper HTTPS origin (JS interfaces, CORS work correctly)
-                    // - WebView.getUrl() returns this (identifiable as homepage, not SearXNG)
-                    // - shouldOverrideUrlLoading properly intercepts navigation
-                    // - All resources use absolute URLs so base URL is for origin only
-                    webView.loadDataWithBaseURL(
-                        HomePageFactory.BASE_URL,
-                        html,
-                        "text/html",
-                        "UTF-8",
-                        HomePageFactory.HOMEPAGE_URL
-                    )
-                } else {
-                    webView.loadUrl(url, headers)
-                }
+                // Load the file:// URL directly — same as original Lightning Browser.
+                // isSpecialUrl() and isStartPageUrl() already recognize file:// URLs
+                // ending in homepage.html, so the URL bar displays correctly.
+                webView.loadUrl(url, headers)
             })
     }
 

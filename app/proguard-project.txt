@@ -67,3 +67,8 @@
 
 -dontwarn androidx.window.extensions.**
 -dontwarn androidx.window.sidecar.**
+
+# Keep @JavascriptInterface methods for WebView JS bridge (e.g. NewsBridge)
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}

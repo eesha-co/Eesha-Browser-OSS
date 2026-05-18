@@ -2,6 +2,7 @@ package acr.browser.lightning.html.homepage
 
 import acr.browser.lightning.R
 import acr.browser.lightning.browser.theme.ThemeProvider
+import acr.browser.lightning.constant.FILE
 import acr.browser.lightning.constant.UTF8
 import acr.browser.lightning.html.HtmlPageFactory
 import acr.browser.lightning.html.jsoup.andBuild
@@ -16,14 +17,20 @@ import acr.browser.lightning.search.SearchEngineProvider
 import android.app.Application
 import android.util.Log
 import io.reactivex.rxjava3.core.Single
+import java.io.File
+import java.io.FileWriter
 import javax.inject.Inject
 
 /**
  * A factory for the home page.
  *
- * News data is pre-fetched in Kotlin (not JavaScript XHR) to completely
- * decouple the homepage from any search engine. SearXNG is ONLY used
- * for actual search queries.
+ * Uses the original Lightning Browser approach: build HTML, write to file on disk,
+ * load via file:// URL. This is production-ready and works with WebView's URL
+ * handling, JavaScript interfaces, and the browser's URL bar display logic.
+ *
+ * News data for "For You" is pre-fetched in Kotlin and injected into the HTML,
+ * so the initial category always has content. Other categories use the
+ * NewsBridge JavaScript interface.
  */
 class HomePageFactory @Inject constructor(
     private val application: Application,
@@ -49,8 +56,6 @@ class HomePageFactory @Inject constructor(
     override fun buildPage(): Single<String> = Single
         .fromCallable {
             // Fetch "For You" news synchronously on the disk scheduler thread.
-            // This avoids XHR/fetch in JavaScript which would need a base URL for CORS.
-            // No SearXNG involved at all — news data comes from rss2json.com API.
             try {
                 NewsFetcher.fetchCategorySync("top")
             } catch (e: Exception) {
@@ -60,7 +65,7 @@ class HomePageFactory @Inject constructor(
         }
         .map { newsData ->
             val (iconUrl, queryUrl, _) = searchEngineProvider.provideSearchEngine()
-            parse(homePageReader.provideHtml()) andBuild {
+            val content = parse(homePageReader.provideHtml()) andBuild {
                 title { title }
                 style { content ->
                     content.replace("--body-bg: {COLOR}", "--body-bg: #$backgroundColor;")
@@ -85,35 +90,22 @@ class HomePageFactory @Inject constructor(
                     }
                 }
             }
+            // Write HTML to file (like original Lightning Browser)
+            val page = createHomePage()
+            FileWriter(page, false).use { it.write(content) }
+            "$FILE$page"
         }
-        .map { content -> SCHEME_DATA + content }
 
-    companion object {
-
-        const val FILENAME = "homepage.html"
-        const val SCHEME_DATA = "data:eesha-homepage,"
-
-        /**
-         * The baseUrl used with loadDataWithBaseURL.
-         *
-         * "https://localhost" is the recommended base URL for local content that
-         * needs JavaScript interfaces. It provides:
-         * - Proper HTTPS origin for CORS and same-origin policy
-         * - JavaScript interfaces (@JavascriptInterface) work correctly
-         * - WebView.getUrl() returns this value (identifiable as homepage)
-         * - shouldOverrideUrlLoading properly intercepts navigation
-         * - External resources (fonts, images) with absolute URLs load correctly
-         *
-         * This completely decouples the homepage from any search engine.
-         */
-        const val BASE_URL = "https://localhost"
-
-        /**
-         * The historyUrl used with loadDataWithBaseURL.
-         * Same as BASE_URL for consistency.
-         */
-        const val HOMEPAGE_URL = BASE_URL
-
+    /**
+     * Create the home page file.
+     */
+    fun createHomePage(): File {
+        val generatedHtml = File(application.filesDir, "generated-html")
+        generatedHtml.mkdirs()
+        return File(generatedHtml, FILENAME)
     }
 
+    companion object {
+        const val FILENAME = "homepage.html"
+    }
 }
