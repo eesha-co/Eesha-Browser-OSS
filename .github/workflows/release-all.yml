@@ -28,17 +28,38 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > Eesha/android/eesha-release.jks
+
       - name: Build Release APK
         working-directory: Eesha/android
         run: |
           chmod +x gradlew
           ./gradlew assembleRelease
 
+      - name: Sign Release APK
+        working-directory: Eesha/android
+        run: |
+          cd app/build/outputs/apk/release/
+          ls -la *.apk
+          BUILD_TOOLS=$(ls $ANDROID_HOME/build-tools/ | sort -V | tail -1)
+          ${ANDROID_HOME}/build-tools/${BUILD_TOOLS}/zipalign -v -p 4 app-release-unsigned.apk app-release-aligned.apk
+          ${ANDROID_HOME}/build-tools/${BUILD_TOOLS}/apksigner sign \
+            --ks ../../../eesha-release.jks \
+            --ks-key-alias ${{ secrets.KEY_ALIAS }} \
+            --ks-pass pass:${{ secrets.KEYSTORE_PASSWORD }} \
+            --key-pass pass:${{ secrets.KEY_PASSWORD }} \
+            --out eesha-browser.apk \
+            app-release-aligned.apk
+          ${ANDROID_HOME}/build-tools/${BUILD_TOOLS}/apksigner verify eesha-browser.apk
+          echo "APK signed successfully!"
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: eesha-android-apk
-          path: Eesha/android/app/build/outputs/apk/release/*.apk
+          path: Eesha/android/app/build/outputs/apk/release/eesha-browser.apk
 
   build-desktop-linux:
     name: Desktop (Linux)
@@ -180,7 +201,7 @@ jobs:
             ## Eesha Browser v${{ inputs.version }}
 
             ### Downloads
-            - **Android**: APK → Install on Android device
+            - **Android**: `eesha-browser.apk` → Install on Android device
             - **Linux**: AppImage → `chmod +x && ./Eesha-*.AppImage`
             - **Windows**: Portable `.exe` → Run directly
             - **macOS**: `.dmg` → Open and drag to Applications

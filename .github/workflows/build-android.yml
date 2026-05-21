@@ -28,6 +28,10 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > Eesha/android/eesha-release.jks
+
       - name: Build Debug APK
         working-directory: Eesha/android
         run: |
@@ -36,7 +40,31 @@ jobs:
 
       - name: Build Release APK
         working-directory: Eesha/android
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew assembleRelease
+
+      - name: Sign Release APK
+        working-directory: Eesha/android
+        run: |
+          cd app/build/outputs/apk/release/
+          # Verify the unsigned APK exists
+          ls -la *.apk
+          # Sign with apksigner (from Android SDK)
+          BUILD_TOOLS=$(ls $ANDROID_HOME/build-tools/ | sort -V | tail -1)
+          ${ANDROID_HOME}/build-tools/${BUILD_TOOLS}/zipalign -v -p 4 app-release-unsigned.apk app-release-aligned.apk
+          ${ANDROID_HOME}/build-tools/${BUILD_TOOLS}/apksigner sign \
+            --ks ../../../eesha-release.jks \
+            --ks-key-alias ${{ secrets.KEY_ALIAS }} \
+            --ks-pass pass:${{ secrets.KEYSTORE_PASSWORD }} \
+            --key-pass pass:${{ secrets.KEY_PASSWORD }} \
+            --out eesha-browser.apk \
+            app-release-aligned.apk
+          # Verify signing
+          ${ANDROID_HOME}/build-tools/${BUILD_TOOLS}/apksigner verify eesha-browser.apk
+          echo "APK signed successfully!"
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
@@ -48,13 +76,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: eesha-release-apk
-          path: Eesha/android/app/build/outputs/apk/release/*.apk
+          path: Eesha/android/app/build/outputs/apk/release/eesha-browser.apk
 
       - name: Create Release
-        if: github.event_name == 'workflow_dispatch'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v0.9.9-android-${{ github.run_number }}
           files: |
-            Eesha/android/app/build/outputs/apk/release/*.apk
+            Eesha/android/app/build/outputs/apk/release/eesha-browser.apk
             Eesha/android/app/build/outputs/apk/debug/*.apk
