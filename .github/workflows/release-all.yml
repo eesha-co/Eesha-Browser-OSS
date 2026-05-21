@@ -31,6 +31,7 @@ jobs:
       - name: Decode Keystore
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > Eesha/android/eesha-release.jks
+          echo "KEYSTORE_PATH=$(pwd)/Eesha/android/eesha-release.jks" >> $GITHUB_ENV
 
       - name: Build Release APK
         working-directory: Eesha/android
@@ -46,7 +47,7 @@ jobs:
           BUILD_TOOLS=$(ls $ANDROID_HOME/build-tools/ | sort -V | tail -1)
           ${ANDROID_HOME}/build-tools/${BUILD_TOOLS}/zipalign -v -p 4 app-release-unsigned.apk app-release-aligned.apk
           ${ANDROID_HOME}/build-tools/${BUILD_TOOLS}/apksigner sign \
-            --ks ../../../eesha-release.jks \
+            --ks ${{ env.KEYSTORE_PATH }} \
             --ks-key-alias ${{ secrets.KEY_ALIAS }} \
             --ks-pass pass:${{ secrets.KEYSTORE_PASSWORD }} \
             --key-pass pass:${{ secrets.KEY_PASSWORD }} \
