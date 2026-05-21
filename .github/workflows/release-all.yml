@@ -58,7 +58,7 @@ jobs:
 
       - name: Build Linux
         working-directory: Eesha/desktop
-        run: npm run build:linux
+        run: npx electron-builder --linux --publish never
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -86,7 +86,7 @@ jobs:
 
       - name: Build Windows
         working-directory: Eesha/desktop
-        run: npm run build:win
+        run: npx electron-builder --win --publish never
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -114,7 +114,7 @@ jobs:
 
       - name: Build macOS
         working-directory: Eesha/desktop
-        run: npm run build:mac
+        run: npx electron-builder --mac --publish never
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

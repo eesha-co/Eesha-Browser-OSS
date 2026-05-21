@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/eesha-co/Eesha.git"
+    "url": "https://github.com/eesha-co/Eesha-Browser-OSS.git"
   },
   "scripts": {
     "start": "electron .",
