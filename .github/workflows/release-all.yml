@@ -1,0 +1,188 @@
+name: Release Eesha (All Platforms)
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (e.g. 0.9.9)'
+        required: true
+        default: '0.9.9'
+
+permissions:
+  contents: write
+
+jobs:
+  build-android:
+    name: Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build Release APK
+        working-directory: Eesha/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: eesha-android-apk
+          path: Eesha/android/app/build/outputs/apk/release/*.apk
+
+  build-desktop-linux:
+    name: Desktop (Linux)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: Eesha/desktop
+        run: npm install
+
+      - name: Build Linux
+        working-directory: Eesha/desktop
+        run: npm run build:linux
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Linux build
+        uses: actions/upload-artifact@v4
+        with:
+          name: eesha-desktop-linux
+          path: Eesha/desktop/dist/**/*
+
+  build-desktop-win:
+    name: Desktop (Windows)
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: Eesha/desktop
+        run: npm install
+
+      - name: Build Windows
+        working-directory: Eesha/desktop
+        run: npm run build:win
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Windows build
+        uses: actions/upload-artifact@v4
+        with:
+          name: eesha-desktop-win
+          path: Eesha/desktop/dist/**/*
+
+  build-desktop-mac:
+    name: Desktop (macOS)
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: Eesha/desktop
+        run: npm install
+
+      - name: Build macOS
+        working-directory: Eesha/desktop
+        run: npm run build:mac
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload macOS build
+        uses: actions/upload-artifact@v4
+        with:
+          name: eesha-desktop-mac
+          path: Eesha/desktop/dist/**/*
+
+  build-ios:
+    name: iOS
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode Project
+        working-directory: Eesha/ios
+        run: xcodegen generate
+
+      - name: Build iOS (no signing)
+        working-directory: Eesha/ios
+        run: |
+          xcodebuild build \
+            -project Eesha.xcodeproj \
+            -scheme Eesha \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO \
+            | xcpretty
+
+      - name: Upload iOS build
+        uses: actions/upload-artifact@v4
+        with:
+          name: eesha-ios-build
+          path: Eesha/ios/build/**/*
+
+  release:
+    name: Create GitHub Release
+    needs: [build-android, build-desktop-linux, build-desktop-win, build-desktop-mac, build-ios]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: List artifacts
+        run: find artifacts -type f | head -50
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ inputs.version }}
+          name: Eesha v${{ inputs.version }}
+          body: |
+            ## Eesha Browser v${{ inputs.version }}
+
+            ### Downloads
+            - **Android**: APK → Install on Android device
+            - **Linux**: AppImage → `chmod +x && ./Eesha-*.AppImage`
+            - **Windows**: Portable `.exe` → Run directly
+            - **macOS**: `.dmg` → Open and drag to Applications
+            - **iOS**: Xcode build artifact (requires signing for device install)
+          files: artifacts/**/*

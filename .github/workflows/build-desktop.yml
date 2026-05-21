@@ -1,0 +1,52 @@
+name: Build Desktop (Electron)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Eesha/desktop/**'
+      - 'Eesha/shared/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux
+          - os: windows-latest
+            platform: win
+          - os: macos-latest
+            platform: mac
+
+    name: Desktop ${{ matrix.platform }}
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: Eesha/desktop
+        run: npm install
+
+      - name: Build Electron app
+        working-directory: Eesha/desktop
+        run: npm run build:${{ matrix.platform }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: eesha-desktop-${{ matrix.platform }}
+          path: Eesha/desktop/dist/**/*

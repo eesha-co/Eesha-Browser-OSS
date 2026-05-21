@@ -1,0 +1,44 @@
+name: Build iOS
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Eesha/ios/**'
+      - 'Eesha/shared/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: iOS Build
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode Project
+        working-directory: Eesha/ios
+        run: xcodegen generate
+
+      - name: Build iOS (no signing)
+        working-directory: Eesha/ios
+        run: |
+          xcodebuild build \
+            -project Eesha.xcodeproj \
+            -scheme Eesha \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO \
+            | xcpretty
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: eesha-ios-build
+          path: Eesha/ios/build/**/*
