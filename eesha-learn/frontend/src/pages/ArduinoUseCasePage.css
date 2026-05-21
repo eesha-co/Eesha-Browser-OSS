@@ -1,0 +1,675 @@
+/* ── ArduinoUseCasePage.css — Arduino use-case landing page ── */
+
+.usecase-page {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ── Breadcrumbs ───────────────────────────────────────── */
+.uc-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+
+.uc-breadcrumbs a {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.uc-breadcrumbs a:hover {
+  color: var(--text);
+}
+
+.uc-breadcrumbs span {
+  color: var(--text-dim);
+}
+
+/* ── Hero ──────────────────────────────────────────────── */
+.uc-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 48px;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 80px 80px 64px;
+  min-height: calc(100vh - 52px);
+}
+
+.uc-hero-copy {
+  display: flex;
+  flex-direction: column;
+}
+
+.uc-eyebrow {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.uc-hero h1 {
+  font-size: clamp(36px, 4.5vw, 60px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -2px;
+  color: var(--text);
+  margin: 0 0 20px;
+}
+
+.uc-hero h1 .uc-accent {
+  background: linear-gradient(135deg, #0071e3 0%, #30aaff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.uc-hero-lede {
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  max-width: 480px;
+  margin: 0 0 32px;
+}
+
+.uc-hero-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.uc-hero-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0a1a2e 0%, #1a0a2e 50%, #0a2e1a 100%);
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--border);
+  min-height: 380px;
+  position: relative;
+  overflow: hidden;
+}
+
+.uc-hero-visual-icon {
+  color: rgba(255, 255, 255, 0.08);
+}
+
+.uc-hero-visual-icon svg {
+  width: 120px;
+  height: 120px;
+}
+
+/* ── Section common ────────────────────────────────────── */
+.uc-section {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 80px 80px;
+}
+
+.uc-section-alt {
+  background: var(--bg-alt, #1d1d1f);
+  padding: 80px 0;
+}
+
+.uc-section-alt > .uc-section-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 80px;
+}
+
+.uc-section-header {
+  margin-bottom: 48px;
+}
+
+.uc-section-header .uc-eyebrow {
+  margin-bottom: 12px;
+}
+
+.uc-section-header h2 {
+  font-size: clamp(28px, 3.5vw, 44px);
+  font-weight: 700;
+  letter-spacing: -1.5px;
+  color: var(--text);
+  line-height: 1.1;
+  margin: 0 0 14px;
+}
+
+.uc-section-header p {
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  max-width: 560px;
+  margin: 0;
+}
+
+/* ── Starter cards (board picker) ──────────────────────── */
+.uc-starter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.uc-starter-card {
+  background: var(--color-bg-surface-1, #141416);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-decoration: none;
+  transition:
+    border-color 0.25s,
+    transform 0.28s,
+    box-shadow 0.28s;
+  position: relative;
+}
+
+.uc-starter-card:hover {
+  border-color: var(--border-hi);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+}
+
+.uc-starter-featured {
+  border-color: rgba(0, 113, 227, 0.25);
+  background: rgba(0, 113, 227, 0.04);
+}
+
+.uc-starter-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  background: var(--accent);
+  color: #fff;
+}
+
+.uc-starter-badge-secondary {
+  background: var(--color-bg-surface-3, #2c2c2e);
+  color: var(--text-muted);
+}
+
+.uc-starter-board-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 113, 227, 0.12);
+  border-radius: 12px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.uc-starter-board-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.uc-starter-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.3px;
+  margin: 0;
+}
+
+.uc-starter-card p {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.uc-starter-cta {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.uc-starter-cta svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ── Project gallery ───────────────────────────────────── */
+.uc-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.uc-gallery-card {
+  background: var(--color-bg-surface-1, #141416);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  transition:
+    border-color 0.25s,
+    transform 0.28s,
+    box-shadow 0.28s;
+}
+
+.uc-gallery-card:hover {
+  border-color: rgba(255, 255, 255, 0.13);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+}
+
+.uc-gallery-thumb {
+  width: 100%;
+  height: 180px;
+  background: linear-gradient(135deg, #0a1a2e 0%, #1a0a2e 50%, #0a2e1a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
+}
+
+.uc-gallery-thumb svg {
+  width: 40px;
+  height: 40px;
+}
+
+.uc-gallery-body {
+  padding: 20px 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.uc-gallery-card h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.3px;
+  margin: 0;
+}
+
+.uc-gallery-card p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0;
+  flex: 1;
+}
+
+.uc-gallery-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.uc-gallery-link svg {
+  width: 13px;
+  height: 13px;
+}
+
+.uc-gallery-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+/* ── Why Eesha Learn (comparison) ──────────────────────── */
+.uc-compare-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.uc-compare-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: var(--radius-xl);
+  padding: 36px 30px 32px;
+  display: flex;
+  flex-direction: column;
+  transition:
+    border-color 0.25s,
+    transform 0.28s,
+    box-shadow 0.28s;
+}
+
+.uc-compare-card:hover {
+  border-color: rgba(255, 255, 255, 0.13);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+}
+
+.uc-compare-featured {
+  border-color: rgba(0, 113, 227, 0.2);
+  background: rgba(0, 113, 227, 0.06);
+}
+
+.uc-compare-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 113, 227, 0.12);
+  border-radius: 12px;
+  margin-bottom: 22px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.uc-compare-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.uc-compare-card h3 {
+  margin: 0 0 10px;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.4px;
+}
+
+.uc-compare-card p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text-muted);
+}
+
+/* ── Under the Hood (ESP32 Rust+WASM section) ─────────── */
+.uc-proof-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.uc-proof-copy h2 {
+  font-size: clamp(24px, 2.8vw, 38px);
+  font-weight: 700;
+  letter-spacing: -1px;
+  color: var(--text);
+  margin: 0 0 16px;
+}
+
+.uc-proof-copy p {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--text-muted);
+  margin: 0 0 16px;
+}
+
+.uc-proof-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.uc-proof-link:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+.uc-proof-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.uc-proof-item {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+
+.uc-proof-item span {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.uc-proof-item p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* ── Wi-Fi/IoT Workflows ───────────────────────────────── */
+.uc-wifi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.uc-wifi-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: var(--radius-xl);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  transition:
+    border-color 0.25s,
+    transform 0.28s;
+}
+
+.uc-wifi-card:hover {
+  border-color: rgba(0, 113, 227, 0.2);
+  transform: translateY(-2px);
+}
+
+.uc-wifi-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 113, 227, 0.12);
+  border-radius: 10px;
+  color: var(--accent);
+}
+
+.uc-wifi-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.uc-wifi-card h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.2px;
+}
+
+.uc-wifi-card p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+/* ── FAQ ───────────────────────────────────────────────── */
+.uc-faq-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.uc-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.uc-faq-item {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.uc-faq-item:first-child {
+  padding-top: 0;
+}
+
+.uc-faq-item h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 8px;
+  letter-spacing: -0.2px;
+}
+
+.uc-faq-item p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--text-muted);
+}
+
+/* ── CTA ───────────────────────────────────────────────── */
+.uc-cta {
+  text-align: center;
+  padding: 80px 80px;
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.uc-cta-proof {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-dim);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  margin: 0 0 16px;
+}
+
+.uc-cta h2 {
+  font-size: clamp(28px, 3.5vw, 44px);
+  font-weight: 700;
+  letter-spacing: -1.5px;
+  color: var(--text);
+  margin: 0 0 14px;
+  line-height: 1.1;
+}
+
+.uc-cta p {
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  max-width: 520px;
+  margin: 0 auto 32px;
+}
+
+.uc-cta-actions {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ── Responsive ────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .uc-hero {
+    grid-template-columns: 1fr;
+    padding: 64px 48px;
+    min-height: auto;
+  }
+
+  .uc-hero-visual {
+    min-height: 260px;
+  }
+
+  .uc-section,
+  .uc-cta {
+    padding: 64px 48px;
+  }
+
+  .uc-section-alt > .uc-section-inner {
+    padding: 0 48px;
+  }
+
+  .uc-gallery-grid,
+  .uc-compare-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .uc-proof-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .uc-wifi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .uc-hero {
+    padding: 48px 24px;
+  }
+
+  .uc-section,
+  .uc-cta {
+    padding: 48px 24px;
+  }
+
+  .uc-section-alt > .uc-section-inner {
+    padding: 0 24px;
+  }
+
+  .uc-gallery-grid,
+  .uc-compare-grid,
+  .uc-wifi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .uc-faq-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .uc-starter-grid {
+    grid-template-columns: 1fr;
+  }
+}

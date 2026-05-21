@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Modern Floating Menu Popup - Bottom Sheet Style with Icon Grid -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/floatingMenuPopup"
+    android:layout_width="280dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/menu_bottom_sheet_bg"
+    android:visibility="gone"
+    android:elevation="12dp"
+    android:padding="12dp">
+
+    <!-- Navigation Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="4dp"
+        android:background="@drawable/tab_card_bg"
+        android:layout_marginBottom="8dp">
+
+        <ImageButton
+            android:id="@+id/popupNavBack"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_back"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Go back"
+            app:tint="@color/eesha_text_primary"
+            android:padding="10dp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="24dp"
+            android:background="@color/eesha_divider" />
+
+        <ImageButton
+            android:id="@+id/popupNavForward"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_forward"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Go forward"
+            app:tint="@color/eesha_text_primary"
+            android:padding="10dp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="24dp"
+            android:background="@color/eesha_divider" />
+
+        <ImageButton
+            android:id="@+id/popupNavRefresh"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_refresh"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Refresh"
+            app:tint="@color/eesha_text_primary"
+            android:padding="10dp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="24dp"
+            android:background="@color/eesha_divider" />
+
+        <ImageButton
+            android:id="@+id/popupNavHome"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_home"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Home"
+            app:tint="@color/eesha_primary"
+            android:padding="10dp" />
+    </LinearLayout>
+
+    <!-- Menu Grid -->
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="3"
+        android:rowCount="3"
+        android:alignmentMode="alignMargins"
+        android:columnOrderPreserved="false"
+        android:useDefaultMargins="true">
+
+        <!-- New Tab -->
+        <LinearLayout
+            android:id="@+id/popupNewTab"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="10dp"
+            android:background="@drawable/menu_grid_item_bg"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_add"
+                app:tint="@color/eesha_primary"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="New Tab"
+                android:textSize="11sp"
+                android:textColor="@color/eesha_text_secondary"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- Private Tab -->
+        <LinearLayout
+            android:id="@+id/popupNewPrivateTab"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="10dp"
+            android:background="@drawable/menu_grid_item_bg"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_private"
+                app:tint="#CE93D8"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Private"
+                android:textSize="11sp"
+                android:textColor="@color/eesha_text_secondary"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- Bookmark -->
+        <LinearLayout
+            android:id="@+id/popupBookmark"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="10dp"
+            android:background="@drawable/menu_grid_item_bg"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:id="@+id/popupBookmarkIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_bookmark_outline"
+                app:tint="#FBBF24"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:id="@+id/popupBookmarkLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bookmark"
+                android:textSize="11sp"
+                android:textColor="@color/eesha_text_secondary"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- Bookmarks List -->
+        <LinearLayout
+            android:id="@+id/popupBookmarks"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="10dp"
+            android:background="@drawable/menu_grid_item_bg"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_bookmark_filled"
+                app:tint="#FBBF24"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bookmarks"
+                android:textSize="11sp"
+                android:textColor="@color/eesha_text_secondary"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- History -->
+        <LinearLayout
+            android:id="@+id/popupHistory"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="10dp"
+            android:background="@drawable/menu_grid_item_bg"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_history"
+                app:tint="@color/eesha_secondary"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="History"
+                android:textSize="11sp"
+                android:textColor="@color/eesha_text_secondary"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- Downloads -->
+        <LinearLayout
+            android:id="@+id/popupDownloads"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="10dp"
+            android:background="@drawable/menu_grid_item_bg"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_download"
+                app:tint="@color/eesha_info"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Downloads"
+                android:textSize="11sp"
+                android:textColor="@color/eesha_text_secondary"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- Find in Page -->
+        <LinearLayout
+            android:id="@+id/popupFindInPage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="10dp"
+            android:background="@drawable/menu_grid_item_bg"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_find"
+                app:tint="@color/eesha_text_primary"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Find"
+                android:textSize="11sp"
+                android:textColor="@color/eesha_text_secondary"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- Desktop Site -->
+        <LinearLayout
+            android:id="@+id/popupDesktopSite"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="10dp"
+            android:background="@drawable/menu_grid_item_bg"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_desktop"
+                app:tint="@color/eesha_text_primary"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:id="@+id/popupDesktopLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Desktop"
+                android:textSize="11sp"
+                android:textColor="@color/eesha_text_secondary"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- Share -->
+        <LinearLayout
+            android:id="@+id/popupShare"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="10dp"
+            android:background="@drawable/menu_grid_item_bg"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_share"
+                app:tint="#4ADE80"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Share"
+                android:textSize="11sp"
+                android:textColor="@color/eesha_text_secondary"
+                android:gravity="center" />
+        </LinearLayout>
+
+    </GridLayout>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/eesha_divider" />
+
+    <!-- Settings Button -->
+    <LinearLayout
+        android:id="@+id/popupSettings"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:background="@drawable/menu_item_bg"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_settings"
+            app:tint="@color/eesha_text_secondary"
+            android:layout_marginEnd="12dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Settings"
+            android:textColor="@color/eesha_text_primary"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:src="@drawable/ic_chevron_right"
+            app:tint="@color/eesha_text_disabled" />
+    </LinearLayout>
+
+</LinearLayout>

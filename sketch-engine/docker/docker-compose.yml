@@ -1,0 +1,134 @@
+# Sketch Engine - Eesha Browser's Own Search Engine
+# Self-hosted, privacy-first, $0 cost search stack
+# Components: Apache Nutch (Crawler) + OpenSearch (Index) + SearXNG (UI)
+#
+# Usage:
+#   docker compose up -d          # Start all services
+#   docker compose logs -f        # View logs
+#   docker compose down           # Stop all services
+#
+# After starting:
+#   - SearXNG UI:        http://localhost:8888
+#   - OpenSearch Dash:   http://localhost:5601
+#   - OpenSearch API:    https://localhost:9200
+#   - Nutch (crawl):     docker compose run nutch crawl
+
+version: '3.8'
+
+services:
+  # ─── OpenSearch: Storage & Speed ─────────────────────────────────────────
+  # The open-source search engine that stores your index.
+  # Drop-in replacement for Elasticsearch, fully open source.
+  opensearch:
+    image: opensearchproject/opensearch:2.12.0
+    container_name: sketch-opensearch
+    environment:
+      - discovery.type=single-node
+      - OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g
+      - DISABLE_SECURITY_PLUGIN=true  # For local dev; enable for production
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_INITIAL_ADMIN_PASSWORD=SketchEngine2024!"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    networks:
+      - sketch-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+
+  # ─── OpenSearch Dashboards: Index Management ────────────────────────────
+  # Visual dashboard to monitor and manage your search index.
+  opensearch-dash:
+    image: opensearchproject/opensearch-dashboards:2.12.0
+    container_name: sketch-dashboards
+    environment:
+      - OPENSEARCH_HOSTS=http://opensearch:9200
+      - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true
+    ports:
+      - "5601:5601"
+    networks:
+      - sketch-net
+    depends_on:
+      opensearch:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ─── Apache Nutch: Crawl & Discovery ────────────────────────────────────
+  # Web crawler that discovers, fetches, and indexes pages.
+  # Configured to push indexed data to OpenSearch automatically.
+  nutch:
+    image: apache/nutch:1.20
+    container_name: sketch-nutch
+    volumes:
+      - ./nutch-conf:/root/nutch/conf:ro
+      - nutch-data:/root/nutch
+      - ../scripts:/root/scripts:ro
+    networks:
+      - sketch-net
+    depends_on:
+      opensearch:
+        condition: service_healthy
+    environment:
+      - JAVA_HEAP_XMX=1g
+    restart: "no"  # Runs on-demand via cron, not continuously
+
+  # ─── SearXNG: The Face (UI) ────────────────────────────────────────────
+  # Meta-search engine configured to use our local OpenSearch
+  # as primary engine, combined with other global sources.
+  searxng:
+    image: searxng/searxng:latest
+    container_name: sketch-searxng
+    volumes:
+      - ../searxng:/etc/searxng:rw
+    ports:
+      - "8888:8080"
+    networks:
+      - sketch-net
+    environment:
+      - SEARXNG_BASE_URL=http://localhost:8888/
+      - SEARXNG_SECRET=$(openssl rand -hex 32)
+    depends_on:
+      opensearch:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ─── Seed Generator: Automatic URL Discovery ────────────────────────────
+  # Python script that pulls trending URLs from RSS feeds
+  # every hour and appends them to Nutch's seed file.
+  seed-generator:
+    build:
+      context: ../scripts
+      dockerfile: Dockerfile.seed
+    container_name: sketch-seed-gen
+    volumes:
+      - nutch-data:/root/nutch
+    networks:
+      - sketch-net
+    environment:
+      - SEED_OUTPUT=/root/nutch/urls/seed.txt
+      - RSS_FEEDS=https://hnrss.org/frontpage,https://www.reddit.com/r/all/.rss,https://feeds.bbci.co.uk/news/world/rss.xml,https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml
+      - SCAN_INTERVAL=3600  # Every 1 hour
+    restart: unless-stopped
+
+volumes:
+  opensearch-data:
+    driver: local
+  nutch-data:
+    driver: local
+
+networks:
+  sketch-net:
+    driver: bridge

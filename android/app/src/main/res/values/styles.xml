@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Eesha Browser - Modern Material 3 Theme -->
+
+    <style name="Theme.Eesha" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- Primary brand color -->
+        <item name="colorPrimary">@color/eesha_primary</item>
+        <item name="colorPrimaryVariant">@color/eesha_primary_dark</item>
+        <item name="colorOnPrimary">@color/eesha_text_on_primary</item>
+
+        <!-- Secondary brand color -->
+        <item name="colorSecondary">@color/eesha_secondary</item>
+        <item name="colorSecondaryVariant">@color/eesha_secondary_dark</item>
+        <item name="colorOnSecondary">@color/eesha_text_on_primary</item>
+
+        <!-- Surface colors -->
+        <item name="android:colorBackground">@color/eesha_background</item>
+        <item name="colorSurface">@color/eesha_surface</item>
+        <item name="colorSurfaceVariant">@color/eesha_surface_variant</item>
+        <item name="colorOnSurface">@color/eesha_text_primary</item>
+        <item name="colorOnSurfaceVariant">@color/eesha_text_secondary</item>
+
+        <!-- Status bar - transparent for immersive mode -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/eesha_nav_bar</item>
+        <item name="android:windowBackground">@drawable/splash_screen</item>
+
+        <!-- Remove action bar -->
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+
+        <!-- Edge to edge display -->
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+
+        <!-- Ripple color -->
+        <item name="colorControlHighlight">@color/eesha_ripple</item>
+
+        <!-- Switch style -->
+        <item name="switchStyle">@style/EeshaSwitch</item>
+    </style>
+
+    <style name="Theme.Eesha.Splash" parent="Theme.Eesha">
+        <item name="android:windowBackground">@drawable/splash_screen</item>
+    </style>
+
+    <style name="Theme.Eesha.Settings" parent="Theme.Eesha">
+        <item name="android:colorBackground">@color/eesha_background</item>
+        <item name="colorSurface">@color/eesha_surface_elevated</item>
+    </style>
+
+    <style name="EeshaSwitch" parent="Widget.Material3.CompoundButton.MaterialSwitch">
+        <item name="thumbTint">@color/eesha_primary</item>
+        <item name="trackTint">@color/eesha_surface_variant</item>
+    </style>
+
+    <!-- Bottom Navigation Bar Style -->
+    <style name="EeshaBottomNav" parent="Widget.Material3.BottomAppBar">
+        <item name="android:background">@drawable/bottom_bar_bg</item>
+        <item name="elevation">8dp</item>
+    </style>
+
+    <!-- URL Bar Style -->
+    <style name="EeshaUrlBar" parent="Widget.Material3.TextInputLayout.FilledBox">
+        <item name="boxBackgroundColor">@color/eesha_url_bar_bg</item>
+        <item name="boxCornerRadiusTopStart">24dp</item>
+        <item name="boxCornerRadiusTopEnd">24dp</item>
+        <item name="boxCornerRadiusBottomStart">24dp</item>
+        <item name="boxCornerRadiusBottomEnd">24dp</item>
+        <item name="hintTextColor">@color/eesha_text_secondary</item>
+    </style>
+
+    <!-- Nav Icon Button Style -->
+    <style name="EeshaNavIcon" parent="Widget.Material3.Button.IconButton">
+        <item name="iconTint">@color/eesha_text_primary</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+    </style>
+
+    <!-- Tab Count Badge Style -->
+    <style name="EeshaTabBadge">
+        <item name="android:textColor">@color/eesha_text_primary</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <!-- Card Style -->
+    <style name="EeshaCard" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardBackgroundColor">@color/eesha_surface_elevated</item>
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">4dp</item>
+    </style>
+
+    <!-- Menu Item Style -->
+    <style name="EeshaMenuItem" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">@color/eesha_text_primary</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">center_vertical|start</item>
+        <item name="iconTint">@color/eesha_text_secondary</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+
+    <!-- Progress Bar Style -->
+    <style name="EeshaProgress" parent="Widget.Material3.LinearProgressIndicator">
+        <item name="indicatorColor">@color/eesha_primary</item>
+        <item name="trackColor">@android:color/transparent</item>
+        <item name="indicatorSize">3dp</item>
+    </style>
+</resources>

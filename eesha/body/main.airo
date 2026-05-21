@@ -1,0 +1,27 @@
+#this script calls all other files#
+call body/actuation/upper-right-hands.airo.
+call body/actuation/lower-right-hands.airo.
+call body/actuation/upper-left-hands.airo.
+call body/actuation/lower-left-hands.airo.
+call body/actuation/upper-right-legs.airo.
+call body/actuation/lower-right-legs.airo.
+call body/actuation/upper-left-legs.airo.
+call body/actuation/lower-left-legs.airo.
+call body/hearing/ears.airo.
+call body/sight/eyes.airo.
+call body/speech/mouth.airo.
+call body/other_sensors/temperature.airo.
+
+#this set of codes are for setting variables#
+body/other_sensors/temperature.airo = temperature.
+body/speech/mic.airo = mouth.
+body/sight/ultrasonic-sensor.airo = eyes.
+body/hearing/ears.airo = ears.
+body/actuation/lower-left-legs.airo = llleg.
+body/actuation/upper-left-legs.airo = ulleg.
+body/actuation/lower-right-legs.airo = lrlegs
+body/actuation/upper-right-legs.airo = urlegs
+body/actuation/lower-left-hands.airo = llhands
+body/actuation/lower-right-hands.airo = lrhadns
+body/actuation/upper-right-hands.airo = urhands
+body/actuation/upper-left-hands.airo = ulhads

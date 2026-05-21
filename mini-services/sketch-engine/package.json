@@ -1,0 +1,9 @@
+{
+  "name": "sketch-engine",
+  "version": "0.9.2",
+  "description": "Sketch Engine - Eesha Browser's own search engine service",
+  "scripts": {
+    "dev": "bun --hot index.ts"
+  },
+  "dependencies": {}
+}

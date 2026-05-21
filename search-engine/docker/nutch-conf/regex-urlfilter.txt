@@ -1,0 +1,56 @@
+# Eesha Search - Regex URL Filter
+# ============================================================
+# Rules are evaluated top-to-bottom; first match wins.
+# Lines starting with '#' are comments.
+# '+' means ACCEPT, '-' means REJECT.
+# ============================================================
+
+# ─── Skip URLs with problematic query parameters ─────────────
+-[\?&](reply|replyto|comment|comments|respond|login|signin|signup|register|logout|signout|auth|session|jsessionid|phpsessid|aspnet_sessionid)=
+
+# ─── Skip common non-indexable file extensions ───────────────
+-\.(pdf|doc|docx|xls|xlsx|ppt|pptx|odt|ods|odp|rtf|wps)$
+-\.(zip|gz|tar|rar|7z|bz2|tgz|z|arj|cab|iso|dmg)$
+-\.(exe|msi|bin|sh|bat|cmd|dll|so|deb|rpm)$
+-\.(apk|ipa|app|pkg|war|jar|ear)$
+
+# ─── Skip image file extensions ──────────────────────────────
+-\.(jpg|jpeg|png|gif|bmp|tiff|tif|ico|svg|webp|raw|cr2|nef|psd|ai)$
+
+# ─── Skip video / audio file extensions ──────────────────────
+-\.(mp4|avi|mov|wmv|flv|mkv|webm|m4v|3gp|ogv)$
+-\.(mp3|wav|ogg|flac|aac|wma|m4a|opus|mid|midi)$
+
+# ─── Skip font and other binary file types ───────────────────
+-\.(woff|woff2|ttf|otf|eot|css|js|json|xml|rss|atom)$
+-\.(swf|class|jar|war)$
+
+# ─── Skip social media domains not useful for search ─────────
++^https?://([a-z0-9-]+\.)?twitter\.com/
++^https?://([a-z0-9-]+\.)?x\.com/
+-^https?://([a-z0-9-]+\.)?(facebook|fb|instagram|tiktok|snapchat|pinterest|linkedin)\.com/
+-^https?://([a-z0-9-]+\.)?reddit\.com/(r|u|user)/[^/]+/comments/
+-^https?://([a-z0-9-]+\.)?(youtube|youtu)\.com/(watch\?|embed/|shorts/)
+
+# ─── Skip URLs with session / tracking cruft ─────────────────
+-[\?&](utm_source|utm_medium|utm_campaign|utm_term|utm_content|fbclid|gclid|msclkid|mc_eid|ref)=
+-[\?&](source|ref|ref_src)=
+
+# ─── Skip paginated / endless-scroll URLs ────────────────────
+-[\?&](page|p|pg|offset|start|from|begin|show|count|limit|per_page|pagesize|size)=\d+
+
+# ─── Skip admin / login / account paths ──────────────────────
+-/(login|signin|signup|register|logout|signout|auth|account|admin|dashboard|portal|myaccount|profile|settings|preferences)
+
+# ─── Skip print / mobile / AMP variants ──────────────────────
+-/(print|mobile|amp)/
+-[\?&](print|mobile|amp|output)=(1|true|yes)
+
+# ─── Skip common API / feed endpoints ────────────────────────
+-/(api|graphql|rest|oauth|token|feed|rss|atom)(/|$)
+
+# ─── Skip deeply nested URLs (likely junk) ───────────────────
+-^https?://[^/]+(/[^/]+){6,}
+
+# ─── Accept all remaining HTTP/HTTPS URLs ────────────────────
++^https?://

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Eesha Browser - Modern Dark Theme Color System -->
+
+    <!-- Core Surface Colors (Material 3 inspired) -->
+    <color name="eesha_background">#0A1219</color>
+    <color name="eesha_surface">#0D1B2A</color>
+    <color name="eesha_surface_elevated">#162636</color>
+    <color name="eesha_surface_variant">#1E3345</color>
+
+    <!-- Primary & Accent Colors -->
+    <color name="eesha_primary">#E84560</color>
+    <color name="eesha_primary_dark">#C73A52</color>
+    <color name="eesha_primary_light">#FF6B7A</color>
+    <color name="eesha_secondary">#3A86FF</color>
+    <color name="eesha_secondary_dark">#2A6FDB</color>
+
+    <!-- Content Colors -->
+    <color name="eesha_text_primary">#E8ECF1</color>
+    <color name="eesha_text_secondary">#8B95A5</color>
+    <color name="eesha_text_disabled">#4A5568</color>
+    <color name="eesha_text_on_primary">#FFFFFF</color>
+
+    <!-- Semantic Colors -->
+    <color name="eesha_success">#4ADE80</color>
+    <color name="eesha_warning">#FBBF24</color>
+    <color name="eesha_error">#F87171</color>
+    <color name="eesha_info">#60A5FA</color>
+
+    <!-- Navigation & Toolbar -->
+    <color name="eesha_nav_bar">#0F1923</color>
+    <color name="eesha_nav_bar_elevated">#16202D</color>
+    <color name="eesha_url_bar_bg">#1A2C3D</color>
+    <color name="eesha_url_bar_focused">#243B52</color>
+
+    <!-- Divider & Border -->
+    <color name="eesha_divider">#1E3345</color>
+    <color name="eesha_border">#2A3F54</color>
+    <color name="eesha_ripple">#33FFFFFF</color>
+
+    <!-- Private Mode -->
+    <color name="eesha_private_bg">#1A0A2E</color>
+    <color name="eesha_private_surface">#2A1A4E</color>
+    <color name="eesha_private_accent">#9C27B0</color>
+
+    <!-- Progress Bar -->
+    <color name="eesha_progress_start">#E84560</color>
+    <color name="eesha_progress_end">#FF8A9B</color>
+
+    <!-- Legacy compatibility -->
+    <color name="splash_background">#0A1219</color>
+    <color name="ic_launcher_background">#E84560</color>
+</resources>

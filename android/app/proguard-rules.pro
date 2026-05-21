@@ -1,0 +1,1 @@
+# Eesha Browser ProGuard Rules

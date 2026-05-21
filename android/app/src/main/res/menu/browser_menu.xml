@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_refresh"
+        android:title="Refresh" />
+    <item
+        android:id="@+id/menu_toggle_bookmark"
+        android:title="Bookmark this page" />
+    <item
+        android:id="@+id/menu_new_tab"
+        android:title="New Tab" />
+    <item
+        android:id="@+id/menu_bookmarks"
+        android:title="Bookmarks" />
+    <item
+        android:id="@+id/menu_history"
+        android:title="History" />
+    <item
+        android:id="@+id/menu_downloads"
+        android:title="Downloads" />
+    <item
+        android:id="@+id/menu_find"
+        android:title="Find in Page" />
+    <item
+        android:id="@+id/menu_share"
+        android:title="Share" />
+    <item
+        android:id="@+id/menu_new_private_tab"
+        android:title="New Private Tab" />
+    <item
+        android:id="@+id/menu_desktop_site"
+        android:title="Desktop Site"
+        android:checkable="true" />
+    <item
+        android:id="@+id/menu_settings"
+        android:title="Settings" />
+</menu>

@@ -1,0 +1,18 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Eesha Search - Crontab Configuration
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Install: crontab /path/to/search-engine/scripts/crontab
+# Verify:  crontab -l
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# ─── Seed Generator: Pull trending URLs from RSS every 1 hour ──────────
+0 * * * * cd /root/scripts && python3 seed_generator.py --once >> /var/log/eesha-seed.log 2>&1
+
+# ─── Crawl Loop: Full Nutch crawl cycle every 6 hours ─────────────────
+0 */6 * * * cd /root/scripts && bash crawl_loop.sh >> /var/log/eesha-crawl.log 2>&1
+
+# ─── Index Optimization: Merge segments daily at 3 AM ─────────────────
+0 3 * * * curl -sf -X POST "http://localhost:9200/nutch/_forcemerge?max_num_segments=1" >> /var/log/eesha-maintenance.log 2>&1
+
+# ─── Cleanup: Remove old archived seeds weekly on Sunday at 4 AM ──────
+0 4 * * 0 find /root/nutch/urls/ -name "archive.txt" -mtime +30 -delete >> /var/log/eesha-maintenance.log 2>&1

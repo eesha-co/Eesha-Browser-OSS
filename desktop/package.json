@@ -1,0 +1,66 @@
+{
+  "name": "eesha-browser",
+  "version": "0.9.9",
+  "description": "Eesha - A privacy-first browser powered by Chromium",
+  "main": "main.js",
+  "author": {
+    "name": "Eesha",
+    "email": "hello@eesha.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eesha-co/Eesha.git"
+  },
+  "scripts": {
+    "start": "electron .",
+    "build:linux": "electron-builder --linux",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:all": "electron-builder --linux --win --mac"
+  },
+  "build": {
+    "appId": "org.eesha.browser",
+    "productName": "Eesha",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "../shared",
+        "to": "shared",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "icon": "../shared/icons/icon512x512.png",
+      "category": "Network"
+    },
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "icon": "../shared/icons/icon.ico"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "icon": "../shared/icons/icon512x512.png",
+      "category": "public.app-category.productivity"
+    }
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  }
+}

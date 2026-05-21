@@ -1,0 +1,827 @@
+/* styles.css - Eesha Browser Chrome Styles */
+/* Dark theme with #1a1a2e background, #e94560 accent */
+
+/* ─── Reset & Base ───────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #16213e;
+  --bg-tertiary: #0f3460;
+  --bg-hover: #1e2a4a;
+  --bg-active: #253356;
+  --accent: #e94560;
+  --accent-hover: #d63a53;
+  --accent-light: rgba(233, 69, 96, 0.15);
+  --text-primary: #e0e0e0;
+  --text-secondary: #8888aa;
+  --text-muted: #5a5a7a;
+  --border: #2a2a4a;
+  --border-light: #3a3a5a;
+  --success: #4caf50;
+  --warning: #ff9800;
+  --private-purple: #7c3aed;
+  --private-bg: #1a0a2e;
+  --tab-height: 36px;
+  --url-bar-height: 40px;
+  --chrome-height: calc(var(--tab-height) + var(--url-bar-height) + 6px);
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  user-select: none;
+  -webkit-user-select: none;
+  font-size: 13px;
+}
+
+/* ─── Browser Chrome Container ───────────────────────────────────────────── */
+.browser-chrome {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-primary);
+  /* Allow dragging the window from empty areas of the chrome */
+  -webkit-app-region: drag;
+}
+
+/* ─── Tab Bar ────────────────────────────────────────────────────────────── */
+.tab-bar {
+  display: flex;
+  align-items: center;
+  height: var(--tab-height);
+  background: var(--bg-primary);
+  padding: 2px 4px 0 4px;
+  gap: 1px;
+  -webkit-app-region: drag;
+}
+
+.tabs-container {
+  display: flex;
+  align-items: flex-end;
+  flex: 1;
+  height: 100%;
+  gap: 1px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  /* Hide scrollbar */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.tabs-container::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  height: 30px;
+  min-width: 100px;
+  max-width: 220px;
+  padding: 0 8px 0 12px;
+  background: var(--bg-secondary);
+  border-radius: 8px 8px 0 0;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  -webkit-app-region: no-drag;
+  position: relative;
+  flex-shrink: 0;
+  gap: 6px;
+}
+
+.tab:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.tab.active {
+  background: var(--bg-tertiary);
+  color: #ffffff;
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px 2px 0 0;
+}
+
+/* Private tab styling */
+.tab.private-tab {
+  background: rgba(124, 58, 237, 0.15);
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  border-bottom: none;
+}
+
+.tab.private-tab:hover {
+  background: rgba(124, 58, 237, 0.25);
+}
+
+.tab.private-tab.active {
+  background: rgba(124, 58, 237, 0.35);
+  color: #d4b5ff;
+}
+
+.tab.private-tab.active::after {
+  background: var(--private-purple);
+}
+
+.tab.private-tab .tab-favicon {
+  color: #d4b5ff !important;
+}
+
+.tab-title {
+  flex: 1;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1;
+}
+
+.tab-favicon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+
+.tab-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+  padding: 0;
+}
+
+.tab-close:hover {
+  background: rgba(233, 69, 96, 0.2);
+  color: var(--accent);
+}
+
+.tab-close svg {
+  width: 10px;
+  height: 10px;
+}
+
+.tab.loading .tab-title {
+  color: var(--text-muted);
+}
+
+/* Loading spinner for tab */
+.tab.loading .tab-favicon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* New Tab Button */
+.new-tab-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+  -webkit-app-region: no-drag;
+  margin: 0 2px;
+}
+
+.new-tab-btn:hover {
+  background: var(--bg-hover);
+  color: var(--accent);
+}
+
+/* Private tab button */
+.private-tab-btn:hover {
+  color: var(--private-purple);
+}
+
+/* Window Controls (Windows/Linux) */
+.window-controls {
+  display: none; /* Hidden by default; shown on Windows/Linux */
+  align-items: center;
+  gap: 0;
+  margin-left: auto;
+  -webkit-app-region: no-drag;
+}
+
+/* Show window controls on non-macOS platforms */
+body.platform-win .window-controls,
+body.platform-linux .window-controls {
+  display: flex;
+}
+
+.window-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: var(--tab-height);
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.window-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.window-btn.close-btn:hover {
+  background: #e81123;
+  color: #ffffff;
+}
+
+/* ─── URL Bar ────────────────────────────────────────────────────────────── */
+.url-bar-container {
+  display: flex;
+  align-items: center;
+  height: var(--url-bar-height);
+  padding: 0 8px;
+  gap: 4px;
+  background: var(--bg-primary);
+  -webkit-app-region: drag;
+  position: relative;
+}
+
+.nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  -webkit-app-region: no-drag;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.nav-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.nav-btn:active {
+  background: var(--bg-active);
+}
+
+.nav-btn.disabled {
+  color: var(--text-muted);
+  cursor: default;
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+/* URL Input Wrapper */
+.url-input-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  height: 32px;
+  background: var(--bg-secondary);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 0 12px;
+  gap: 6px;
+  transition: all 0.2s ease;
+  -webkit-app-region: no-drag;
+  position: relative;
+}
+
+.url-input-wrapper:focus-within {
+  border-color: var(--accent);
+  background: rgba(22, 33, 62, 0.95);
+  box-shadow: 0 0 0 2px var(--accent-light);
+}
+
+/* ─── Shield Icon ────────────────────────────────────────────────────────── */
+.shield-icon {
+  display: flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  flex-shrink: 0;
+  color: var(--success);
+  transition: color 0.15s ease;
+}
+
+.shield-icon:hover {
+  color: #66bb6a;
+}
+
+.shield-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 8px;
+  font-weight: 700;
+  min-width: 12px;
+  height: 12px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.shield-badge.empty {
+  display: none;
+}
+
+/* ─── Shield Popup ────────────────────────────────────────────────────────── */
+.shield-popup {
+  position: fixed;
+  top: var(--chrome-height);
+  right: 8px;
+  width: 280px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: none;
+  overflow: hidden;
+}
+
+.shield-popup.visible {
+  display: block;
+  animation: fadeIn 0.15s ease;
+}
+
+.shield-popup-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.shield-popup-content {
+  padding: 8px 0;
+}
+
+.shield-popup-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+}
+
+.shield-popup-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.shield-popup-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--success);
+}
+
+.shield-popup-value.off {
+  color: var(--text-muted);
+}
+
+.shield-popup-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.shield-popup-btn {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.shield-popup-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ─── Security Indicator ────────────────────────────────────────────────── */
+.security-indicator {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.security-indicator .icon-lock {
+  color: var(--success);
+}
+
+.security-indicator .icon-info {
+  color: var(--text-muted);
+}
+
+.security-indicator.insecure .icon-lock {
+  display: none;
+}
+
+.security-indicator.insecure .icon-info {
+  display: block !important;
+  color: var(--accent);
+}
+
+.security-indicator.secure .icon-lock {
+  color: var(--success);
+}
+
+.security-indicator.internal .icon-lock {
+  display: none;
+}
+
+.security-indicator.internal .icon-info {
+  display: block !important;
+  color: var(--accent);
+}
+
+.url-input {
+  flex: 1;
+  height: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.url-input::placeholder {
+  color: var(--text-muted);
+}
+
+.url-input:focus::placeholder {
+  color: transparent;
+}
+
+/* ─── Autocomplete Dropdown ──────────────────────────────────────────────── */
+.autocomplete-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: none;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.autocomplete-dropdown.visible {
+  display: block;
+  animation: fadeIn 0.12s ease;
+}
+
+.autocomplete-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.selected {
+  background: var(--bg-hover);
+}
+
+.autocomplete-item-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.autocomplete-item-icon.bookmark-icon {
+  color: var(--accent);
+}
+
+.autocomplete-item-icon.history-icon {
+  color: var(--text-secondary);
+}
+
+.autocomplete-item-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.autocomplete-item-title {
+  font-size: 12px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.autocomplete-item-url {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 1px;
+}
+
+.autocomplete-category {
+  padding: 8px 12px 4px;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+/* ─── Action Buttons ────────────────────────────────────────────────────── */
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  -webkit-app-region: no-drag;
+}
+
+/* Bookmark button states */
+#bookmarkBtn .icon-bookmark-filled {
+  display: none;
+}
+
+#bookmarkBtn.bookmarked .icon-bookmark {
+  display: none;
+}
+
+#bookmarkBtn.bookmarked .icon-bookmark-filled {
+  display: block;
+}
+
+/* ─── Loading Progress Bar ───────────────────────────────────────────────── */
+.progress-bar-container {
+  height: 2px;
+  background: transparent;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  transition: width 0.3s ease;
+  border-radius: 0 1px 1px 0;
+  box-shadow: 0 0 8px rgba(233, 69, 96, 0.4);
+}
+
+.progress-bar.loading {
+  animation: progress-loading 2s ease-in-out forwards;
+}
+
+@keyframes progress-loading {
+  0% { width: 0; }
+  20% { width: 30%; }
+  50% { width: 60%; }
+  80% { width: 85%; }
+  100% { width: 95%; }
+}
+
+.progress-bar.complete {
+  width: 100%;
+  transition: width 0.2s ease;
+}
+
+.progress-bar.hidden {
+  width: 0;
+  transition: width 0.3s ease 0.3s;
+}
+
+/* ─── Scrollbar Custom Styling ───────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-light);
+}
+
+/* ─── Context Menu (right-click) ─────────────────────────────────────────── */
+.context-menu {
+  position: fixed;
+  z-index: 9999;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px;
+  min-width: 180px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  display: none;
+}
+
+.context-menu.visible {
+  display: block;
+}
+
+.context-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-primary);
+  font-size: 13px;
+  transition: background 0.1s ease;
+}
+
+.context-menu-item:hover {
+  background: var(--bg-hover);
+}
+
+.context-menu-item svg {
+  width: 14px;
+  height: 14px;
+  color: var(--text-secondary);
+}
+
+.context-menu-separator {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 8px;
+}
+
+/* ─── Animations ─────────────────────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.tab {
+  animation: fadeIn 0.15s ease;
+}
+
+/* ─── Find Bar ─────────────────────────────────────────────────────────── */
+.find-bar {
+  display: flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 12px;
+  gap: 8px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  -webkit-app-region: no-drag;
+}
+
+.find-input {
+  flex: 1;
+  max-width: 240px;
+  height: 28px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0 8px;
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+}
+
+.find-input:focus {
+  border-color: var(--accent);
+}
+
+.find-count {
+  font-size: 12px;
+  color: var(--text-secondary);
+  min-width: 40px;
+}
+
+.find-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.15s ease;
+}
+
+.find-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.find-close-btn:hover {
+  background: rgba(233, 69, 96, 0.2);
+  color: var(--accent);
+}
+
+/* ─── Download Badge ─────────────────────────────────────────────────────── */
+.download-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 8px;
+  font-weight: 700;
+  min-width: 12px;
+  height: 12px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  line-height: 1;
+  pointer-events: none;
+}
+
+#downloadsBtn {
+  position: relative;
+}
+
+/* ─── Tooltip ────────────────────────────────────────────────────────────── */
+[title] {
+  position: relative;
+}
+
+/* ─── Platform-specific adjustments ──────────────────────────────────────── */
+body.platform-mac .tab-bar {
+  padding-left: 78px; /* Space for traffic lights */
+}
+
+body.platform-mac .window-controls {
+  display: none !important;
+}

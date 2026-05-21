@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Floating draggable 3-dot menu button (Mobile Only) -->
+<!-- The popup panel is added dynamically to the webViewContainer at runtime -->
+<ImageButton xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/floatingMenuBtn"
+    android:layout_width="52dp"
+    android:layout_height="52dp"
+    android:src="@drawable/ic_overflow"
+    android:background="@drawable/floating_menu_bg"
+    android:contentDescription="Menu"
+    android:tint="#ffffff"
+    android:scaleType="centerInside"
+    android:padding="12dp"
+    android:elevation="8dp" />

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eesha Search — 100% Independent</title>
+    <link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="Eesha Search">
+    <style>
+        :root {
+            --green: #16a34a;
+            --green-dark: #15803d;
+            --green-light: #22c55e;
+            --green-bg: #f0fdf4;
+            --green-border: rgba(22,163,74,0.15);
+            --g50: #f9fafb; --g100: #f3f4f6; --g200: #e5e7eb; --g300: #d1d5db;
+            --g400: #9ca3af; --g500: #6b7280; --g600: #4b5563; --g700: #374151;
+            --g800: #1f2937; --g900: #111827;
+            --radius: 28px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 12px 32px rgba(0,0,0,0.1);
+            --shadow-focus: 0 0 0 4px rgba(22,163,74,0.12);
+        }
+
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #fff;
+            color: var(--g800);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ─── Home Container ─── */
+        .home {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 20px 40px;
+        }
+
+        /* ─── Logo ─── */
+        .logo { text-align: center; margin-bottom: 40px; }
+
+        .logo-icon {
+            width: 88px; height: 88px;
+            margin: 0 auto 18px;
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-light) 100%);
+            border-radius: 24px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 24px rgba(22,163,74,0.25), 0 2px 8px rgba(22,163,74,0.15);
+            position: relative;
+        }
+        .logo-icon::after {
+            content: '';
+            position: absolute; inset: -2px;
+            border-radius: 26px;
+            background: linear-gradient(135deg, rgba(22,163,74,0.3), rgba(34,197,94,0.1));
+            z-index: -1;
+            filter: blur(8px);
+        }
+        .logo-icon svg { width: 48px; height: 48px; fill: #fff; }
+
+        .logo-text {
+            font-size: 48px; font-weight: 800;
+            color: var(--g900); letter-spacing: -1.5px;
+            line-height: 1.1;
+        }
+        .logo-text span { color: var(--green); }
+
+        .logo-tagline {
+            font-size: 13px; color: var(--g500);
+            margin-top: 6px; letter-spacing: 3px;
+            text-transform: uppercase; font-weight: 500;
+        }
+
+        /* ─── Search ─── */
+        .search-wrapper {
+            width: 100%; max-width: 640px;
+            position: relative;
+        }
+
+        .search-box {
+            width: 100%;
+            display: flex; align-items: center;
+            border: 2px solid var(--g200);
+            border-radius: var(--radius);
+            padding: 4px 6px 4px 4px;
+            background: #fff;
+            transition: border-color .2s, box-shadow .2s;
+            box-shadow: var(--shadow-sm);
+        }
+        .search-box:hover { border-color: var(--g300); box-shadow: var(--shadow-md); }
+        .search-box:focus-within {
+            border-color: var(--green);
+            box-shadow: var(--shadow-focus);
+        }
+
+        .search-icon {
+            padding: 10px 12px; color: var(--g400);
+            flex-shrink: 0; display: flex; align-items: center;
+        }
+
+        .search-input {
+            flex: 1; border: none; outline: none;
+            font-size: 16px; padding: 12px 4px;
+            background: transparent; color: var(--g900);
+            font-family: inherit;
+        }
+        .search-input::placeholder { color: var(--g400); }
+
+        .search-btn {
+            background: var(--green); color: #fff;
+            border: none; border-radius: 22px;
+            padding: 11px 28px; font-size: 15px;
+            font-weight: 600; cursor: pointer;
+            transition: background .15s, transform .1s;
+            white-space: nowrap; font-family: inherit;
+        }
+        .search-btn:hover { background: var(--green-dark); }
+        .search-btn:active { transform: scale(.97); }
+
+        /* ─── Autocomplete ─── */
+        .ac-dropdown {
+            position: absolute; top: calc(100% + 6px);
+            left: 0; right: 0;
+            background: #fff; border-radius: 18px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--g200);
+            overflow: hidden; z-index: 100;
+            display: none;
+        }
+        .ac-dropdown.active { display: block; }
+
+        .ac-item {
+            padding: 11px 20px; cursor: pointer;
+            display: flex; align-items: center; gap: 14px;
+            font-size: 14px; color: var(--g700);
+            transition: background .08s;
+        }
+        .ac-item:hover, .ac-item.selected { background: var(--green-bg); }
+        .ac-item + .ac-item { border-top: 1px solid var(--g100); }
+        .ac-item svg { width: 16px; height: 16px; fill: var(--g400); flex-shrink: 0; }
+
+        /* ─── Category Pills ─── */
+        .cats {
+            display: flex; gap: 10px;
+            margin-top: 24px; justify-content: center;
+        }
+        .cat-pill {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 9px 20px; border-radius: 22px;
+            border: 1.5px solid var(--g200);
+            background: #fff; color: var(--g600);
+            font-size: 14px; font-weight: 500;
+            cursor: pointer; text-decoration: none;
+            transition: all .15s;
+            font-family: inherit;
+        }
+        .cat-pill:hover { border-color: var(--green); color: var(--green); }
+        .cat-pill.active {
+            background: var(--green); color: #fff;
+            border-color: var(--green);
+            box-shadow: 0 2px 8px rgba(22,163,74,0.25);
+        }
+        .cat-pill svg { width: 16px; height: 16px; fill: currentColor; }
+
+        /* ─── Badge ─── */
+        .badge-area { margin-top: 36px; text-align: center; }
+
+        .indie-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--green-bg);
+            border: 1px solid var(--green-border);
+            border-radius: 22px; padding: 9px 20px;
+            font-size: 13px; font-weight: 600;
+            color: var(--green-dark);
+        }
+        .indie-badge svg { width: 16px; height: 16px; fill: var(--green); }
+
+        .stats {
+            margin-top: 12px; font-size: 12px;
+            color: var(--g400); letter-spacing: 0.3px;
+        }
+
+        /* ─── Error ─── */
+        .error-msg {
+            background: #fef2f2; border: 1px solid #fecaca;
+            border-radius: 14px; padding: 14px 20px;
+            color: #991b1b; font-size: 14px;
+            margin-bottom: 24px; max-width: 640px;
+            width: 100%; text-align: center;
+        }
+
+        /* ─── Footer ─── */
+        .footer {
+            text-align: center; padding: 20px;
+            font-size: 12px; color: var(--g400);
+            border-top: 1px solid var(--g100);
+        }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 640px) {
+            .logo-text { font-size: 36px; }
+            .logo-icon { width: 72px; height: 72px; border-radius: 20px; }
+            .logo-icon svg { width: 40px; height: 40px; }
+            .search-btn { padding: 11px 20px; font-size: 14px; }
+            .cats { gap: 6px; }
+            .cat-pill { padding: 8px 16px; font-size: 13px; }
+            .logo-tagline { font-size: 11px; letter-spacing: 2px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="home">
+        {% if error %}
+        <div class="error-msg">{{ error }}</div>
+        {% endif %}
+
+        <!-- Logo -->
+        <div class="logo">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+            </div>
+            <div class="logo-text">Eesha <span>Search</span></div>
+            <div class="logo-tagline">100% Independent Search Engine</div>
+        </div>
+
+        <!-- Search -->
+        <form class="search-wrapper" action="/search" method="get" autocomplete="off">
+            <div class="search-box">
+                <div class="search-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                    </svg>
+                </div>
+                <input class="search-input" type="text" name="q" id="search-input"
+                       placeholder="Search the web independently..."
+                       autofocus aria-label="Search"
+                       value="{{ query|default('', true) }}">
+                <input type="hidden" name="category" id="category-input" value="general">
+                <button class="search-btn" type="submit">Search</button>
+            </div>
+            <div class="ac-dropdown" id="autocomplete"></div>
+        </form>
+
+        <!-- Category Pills -->
+        <div class="cats">
+            <a class="cat-pill active" href="#" data-category="general">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                All
+            </a>
+            <a class="cat-pill" href="#" data-category="images">
+                <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                Images
+            </a>
+            <a class="cat-pill" href="#" data-category="videos">
+                <svg viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+                Videos
+            </a>
+        </div>
+
+        <!-- Badge + Stats -->
+        <div class="badge-area">
+            <div class="indie-badge">
+                <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+                100% Independent — No External Engines
+            </div>
+            {% if index_counts and (index_counts.pages > 0 or index_counts.media > 0) %}
+            <div class="stats">
+                {{ "{:,}".format(index_counts.pages) }} pages indexed
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <footer class="footer">Eesha Search — Results from our own index</footer>
+
+    <script>
+        // Category tab selection
+        document.querySelectorAll('.cat-pill').forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.cat-pill').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('category-input').value = this.dataset.category;
+                document.getElementById('search-input').focus();
+            });
+        });
+
+        // Autocomplete
+        const searchInput = document.getElementById('search-input');
+        const ac = document.getElementById('autocomplete');
+        let debounce, selIdx = -1;
+
+        searchInput.addEventListener('input', function() {
+            clearTimeout(debounce);
+            const q = this.value.trim();
+            if (q.length < 2) { ac.classList.remove('active'); return; }
+            debounce = setTimeout(() => {
+                fetch(`/suggest?q=${encodeURIComponent(q)}`)
+                    .then(r => r.json())
+                    .then(suggestions => {
+                        if (!suggestions.length) { ac.classList.remove('active'); return; }
+                        ac.innerHTML = suggestions.map(s => `
+                            <div class="ac-item" onclick="pick('${s.replace(/'/g,"\\'")}')">
+                                <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                                ${esc(s)}
+                            </div>`).join('');
+                        selIdx = -1;
+                        ac.classList.add('active');
+                    })
+                    .catch(() => ac.classList.remove('active'));
+            }, 300);
+        });
+
+        function pick(text) {
+            searchInput.value = text;
+            ac.classList.remove('active');
+            searchInput.closest('form').submit();
+        }
+
+        function esc(t) {
+            const d = document.createElement('div');
+            d.textContent = t;
+            return d.innerHTML;
+        }
+
+        document.addEventListener('click', e => {
+            if (!e.target.closest('.search-wrapper')) ac.classList.remove('active');
+        });
+
+        searchInput.addEventListener('keydown', function(e) {
+            const items = ac.querySelectorAll('.ac-item');
+            if (!items.length || !ac.classList.contains('active')) return;
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                selIdx = Math.min(selIdx + 1, items.length - 1);
+                updateSel(items);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                selIdx = Math.max(selIdx - 1, 0);
+                updateSel(items);
+            } else if (e.key === 'Enter' && selIdx >= 0) {
+                e.preventDefault();
+                items[selIdx].click();
+            }
+        });
+
+        function updateSel(items) {
+            items.forEach((it, i) => it.classList.toggle('selected', i === selIdx));
+        }
+    </script>
+</body>
+</html>

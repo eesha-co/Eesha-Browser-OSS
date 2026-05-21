@@ -1,0 +1,72 @@
+# Eesha Search — 100% Independent Configuration
+# NO external search engines. Only our own Nutch-crawled OpenSearch index.
+# This configuration defines ALL engines from scratch — no defaults are loaded.
+
+use_default_settings: false
+
+general:
+  instance_name: "Eesha Search"
+  debug: false
+
+search:
+  safe_search: 0
+  autocomplete: ""
+  default_lang: "auto"
+  formats:
+    - html
+    - json
+    - csv
+    - rss
+
+server:
+  # IMPORTANT: Change this secret_key before deploying to production!
+  secret_key: "eesha-search-searxng-change-me-in-production"
+  bind_address: "0.0.0.0"
+  port: 8080
+  limiter: false
+  image_proxy: true
+  method: "POST"
+
+ui:
+  static_use_hash: true
+  default_locale: ""
+  query_in_title: false
+  infinite_scroll: false
+  center_alignment: true
+  default_theme: "simple"
+  theme_args:
+    simple_style: "auto"
+
+enabled_plugins:
+  - 'Hash plugin'
+  - 'Self Information'
+  - 'Tracker URL remover'
+  - 'Ahmia blacklist'
+
+# ─── Engine Configuration ────────────────────────────────────────────────
+# 100% INDEPENDENT — Only our own Nutch-crawled, OpenSearch-indexed results.
+# NO DuckDuckGo, NO Brave, NO Google, NO Bing, NO external engines of any kind.
+
+engines:
+  # ─── Our Local OpenSearch — Web Search ────────────────────────────────
+  - name: eesha index
+    engine: elasticsearch
+    base_url: http://opensearch:9200
+    index: nutch
+    shortcut: es
+    categories: [general]
+    timeout: 5.0
+    enable_http: true
+
+  # ─── Our Local OpenSearch — Image Search ──────────────────────────────
+  - name: eesha images
+    engine: elasticsearch
+    base_url: http://opensearch:9200
+    index: eesha-media
+    shortcut: eim
+    categories: [images]
+    timeout: 5.0
+    enable_http: true
+    query_field:
+      - source_title
+      - media_url

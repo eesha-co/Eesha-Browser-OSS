@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/eesha_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- Private Mode Banner -->
+        <LinearLayout
+            android:id="@+id/privateBanner"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="#2A1A4E"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_private"
+                android:tint="#CE93D8"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Private Browsing"
+                android:textSize="12sp"
+                android:textColor="#CE93D8"
+                android:fontFamily="sans-serif-medium" />
+
+        </LinearLayout>
+
+        <!-- Modern Progress Bar -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:max="100"
+            android:progressDrawable="@drawable/progress_bar"
+            android:visibility="gone" />
+
+        <!-- Blocked Count Indicator -->
+        <TextView
+            android:id="@+id/blockedCountText"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:background="#0D2818"
+            android:gravity="center"
+            android:textColor="#4ADE80"
+            android:textSize="11sp"
+            android:fontFamily="sans-serif-medium"
+            android:visibility="gone" />
+
+        <!-- Find in Page Bar -->
+        <LinearLayout
+            android:id="@+id/findBar"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="12dp"
+            android:paddingEnd="8dp"
+            android:background="@color/eesha_surface_elevated"
+            android:visibility="gone"
+            android:elevation="4dp">
+
+            <EditText
+                android:id="@+id/findInput"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:background="@drawable/url_bar_bg"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:singleLine="true"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:textColor="@color/eesha_text_primary"
+                android:textSize="14sp"
+                android:hint="Find in page..."
+                android:textColorHint="@color/eesha_text_secondary" />
+
+            <TextView
+                android:id="@+id/findCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0/0"
+                android:textSize="13sp"
+                android:textColor="@color/eesha_text_secondary"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="4dp"
+                android:minWidth="40dp"
+                android:gravity="center"
+                android:fontFamily="sans-serif-medium" />
+
+            <ImageButton
+                android:id="@+id/btnFindPrev"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_back"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Previous match"
+                app:tint="@color/eesha_text_primary" />
+
+            <ImageButton
+                android:id="@+id/btnFindNext"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_forward"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Next match"
+                app:tint="@color/eesha_text_primary" />
+
+            <ImageButton
+                android:id="@+id/btnFindClose"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_close"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Close find"
+                app:tint="@color/eesha_error" />
+        </LinearLayout>
+
+        <!-- WebView Container -->
+        <FrameLayout
+            android:id="@+id/webViewContainer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefresh"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <WebView
+                    android:id="@+id/webView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+            <!-- Autocomplete dropdown overlay -->
+            <ListView
+                android:id="@+id/autocompleteList"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:layout_gravity="top"
+                android:background="@color/eesha_surface_elevated"
+                android:elevation="8dp"
+                android:visibility="gone"
+                android:divider="@color/eesha_divider"
+                android:dividerHeight="1dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp" />
+
+            <!-- Floating menu button (FAB) -->
+            <include
+                layout="@layout/floating_menu"
+                android:id="@+id/floatingMenuBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="88dp" />
+
+            <!-- Floating menu popup panel -->
+            <include
+                layout="@layout/floating_menu_popup"
+                android:id="@+id/floatingMenuPopup"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:visibility="gone" />
+
+        </FrameLayout>
+
+        <!-- Modern Bottom Navigation Bar -->
+        <LinearLayout
+            android:id="@+id/navigationBar"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
+            android:background="@drawable/bottom_bar_bg"
+            android:elevation="12dp">
+
+            <!-- Back Button -->
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:src="@drawable/ic_back"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Go back"
+                app:tint="@color/eesha_text_primary"
+                android:padding="9dp"
+                android:scaleType="fitCenter" />
+
+            <!-- Forward Button -->
+            <ImageButton
+                android:id="@+id/btnForward"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:src="@drawable/ic_forward"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Go forward"
+                app:tint="@color/eesha_text_primary"
+                android:padding="9dp"
+                android:scaleType="fitCenter" />
+
+            <!-- Refresh Button -->
+            <ImageButton
+                android:id="@+id/btnRefresh"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:src="@drawable/ic_refresh"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Refresh page"
+                app:tint="@color/eesha_text_primary"
+                android:padding="9dp"
+                android:scaleType="fitCenter" />
+
+            <!-- URL Bar (center, takes remaining space) -->
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_weight="1"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp">
+
+                <EditText
+                    android:id="@+id/urlBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp"
+                    android:background="@drawable/url_bar_bg"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="36dp"
+                    android:singleLine="true"
+                    android:imeOptions="actionGo"
+                    android:inputType="textUri"
+                    android:textColorHint="@color/eesha_text_secondary"
+                    android:textColor="@color/eesha_text_primary"
+                    android:textSize="13sp"
+                    android:hint="Search or enter URL"
+                    android:completionThreshold="2"
+                    android:dropDownAnchor="@+id/urlBar"
+                    android:gravity="center_vertical"
+                    android:ellipsize="end" />
+
+                <!-- Security icon inside URL bar -->
+                <ImageView
+                    android:id="@+id/urlSecurityIcon"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_gravity="center_vertical|start"
+                    android:layout_marginStart="14dp"
+                    android:src="@drawable/ic_https"
+                    android:visibility="gone" />
+
+                <!-- Clear button inside URL bar -->
+                <ImageButton
+                    android:id="@+id/btnClearUrl"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center_vertical|end"
+                    android:layout_marginEnd="4dp"
+                    android:src="@drawable/ic_close"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Clear URL"
+                    app:tint="@color/eesha_text_secondary"
+                    android:padding="6dp"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone" />
+
+            </FrameLayout>
+
+            <!-- Home Button -->
+            <ImageButton
+                android:id="@+id/btnHome"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:src="@drawable/ic_home"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Home"
+                app:tint="@color/eesha_primary"
+                android:padding="9dp"
+                android:scaleType="fitCenter" />
+
+            <!-- Tab Count Button -->
+            <FrameLayout
+                android:layout_width="44dp"
+                android:layout_height="44dp">
+
+                <TextView
+                    android:id="@+id/tabCount"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/tab_count_bg"
+                    android:gravity="center"
+                    android:text="1"
+                    android:textColor="@color/eesha_text_primary"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackgroundBorderless" />
+            </FrameLayout>
+
+            <!-- Menu Button -->
+            <ImageButton
+                android:id="@+id/btnMenu"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:src="@drawable/ic_menu"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Menu"
+                app:tint="@color/eesha_text_primary"
+                android:padding="9dp"
+                android:scaleType="fitCenter" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

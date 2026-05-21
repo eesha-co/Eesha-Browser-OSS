@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ query }} — Eesha Search</title>
+    <link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="Eesha Search">
+    <style>
+        :root {
+            --green: #16a34a;
+            --green-dark: #15803d;
+            --green-light: #22c55e;
+            --green-bg: #f0fdf4;
+            --green-border: rgba(22,163,74,0.15);
+            --g50: #f9fafb; --g100: #f3f4f6; --g200: #e5e7eb; --g300: #d1d5db;
+            --g400: #9ca3af; --g500: #6b7280; --g600: #4b5563; --g700: #374151;
+            --g800: #1f2937; --g900: #111827;
+            --link: #1a0dab;
+            --link-visited: #6a1b9a;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 12px 32px rgba(0,0,0,0.1);
+        }
+
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #fff; color: var(--g800);
+            min-height: 100vh; display: flex; flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ═══ TOP BAR ═══ */
+        .topbar {
+            background: #fff;
+            border-bottom: 1px solid var(--g200);
+            position: sticky; top: 0; z-index: 50;
+        }
+        .topbar-inner {
+            max-width: 1240px; margin: 0 auto;
+            padding: 10px 20px;
+            display: flex; align-items: center; gap: 18px;
+        }
+
+        .logo-link {
+            display: flex; align-items: center; gap: 8px;
+            text-decoration: none; flex-shrink: 0;
+        }
+        .logo-icon-sm {
+            width: 34px; height: 34px;
+            background: linear-gradient(135deg, var(--green), var(--green-light));
+            border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .logo-icon-sm svg { width: 18px; height: 18px; fill: #fff; }
+        .logo-name { font-size: 18px; font-weight: 800; color: var(--g900); letter-spacing: -0.5px; }
+        .logo-name span { color: var(--green); }
+
+        /* ─── Search Bar ─── */
+        .search-bar { flex: 1; max-width: 620px; position: relative; }
+        .search-box {
+            width: 100%; display: flex; align-items: center;
+            border: 2px solid var(--g200); border-radius: 24px;
+            padding: 2px 6px 2px 2px; background: #fff;
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .search-box:focus-within {
+            border-color: var(--green);
+            box-shadow: 0 0 0 4px rgba(22,163,74,0.1);
+        }
+        .s-icon { padding: 6px 8px; color: var(--g400); flex-shrink:0; display:flex; align-items:center; }
+        .s-input {
+            flex: 1; border: none; outline: none;
+            font-size: 15px; padding: 8px 4px;
+            background: transparent; color: var(--g900); font-family: inherit;
+        }
+        .s-btn {
+            background: var(--green); color: #fff;
+            border: none; border-radius: 18px;
+            padding: 8px 18px; font-size: 14px;
+            font-weight: 600; cursor: pointer;
+            transition: background .15s; font-family: inherit;
+        }
+        .s-btn:hover { background: var(--green-dark); }
+
+        /* ─── Category Tabs ┐ */
+        .catbar {
+            background: #fff; border-bottom: 1px solid var(--g100);
+            padding: 0 20px;
+        }
+        .catbar-inner {
+            max-width: 1240px; margin: 0 auto;
+            display: flex; gap: 2px;
+        }
+        .ctab {
+            display: flex; align-items: center; gap: 6px;
+            padding: 10px 18px; font-size: 13px;
+            font-weight: 500; color: var(--g500);
+            text-decoration: none;
+            border-bottom: 3px solid transparent;
+            transition: color .12s;
+        }
+        .ctab:hover { color: var(--green); }
+        .ctab.active { color: var(--green); border-bottom-color: var(--green); font-weight: 600; }
+        .ctab svg { width: 15px; height: 15px; fill: currentColor; }
+
+        /* ═══ RESULTS LAYOUT ═══ */
+        .layout {
+            flex: 1; max-width: 1240px; margin: 0 auto;
+            padding: 20px; width: 100%;
+            display: flex; gap: 28px;
+        }
+        .main-col { flex: 1; min-width: 0; }
+        .side-col { width: 360px; flex-shrink: 0; }
+
+        /* ═══ SPELL CORRECTION ═══ */
+        .spell {
+            background: var(--green-bg); border: 1px solid var(--green-border);
+            border-radius: 12px; padding: 12px 16px;
+            margin-bottom: 18px; display: flex;
+            align-items: center; gap: 8px; font-size: 14px;
+        }
+        .spell svg { width: 18px; height: 18px; fill: var(--green); flex-shrink:0; }
+        .spell-label { color: var(--g600); }
+        .spell a {
+            color: var(--green-dark); font-weight: 600;
+            text-decoration: none;
+        }
+        .spell a:hover { text-decoration: underline; }
+
+        /* ═══ RESULTS HEADER ═══ */
+        .res-header {
+            font-size: 13px; color: var(--g500);
+            margin-bottom: 22px;
+        }
+        .res-header strong { color: var(--g700); }
+
+        /* ═══ WEB RESULTS ═══ */
+        .web-result {
+            margin-bottom: 28px;
+            display: flex; gap: 16px;
+        }
+        .web-result-body { flex: 1; min-width: 0; }
+        .web-result-thumb {
+            flex-shrink: 0; width: 120px; height: 80px;
+            border-radius: 10px; overflow: hidden;
+            background: var(--g100);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .web-result-thumb img {
+            width: 100%; height: 100%; object-fit: cover;
+            display: block;
+        }
+        .web-result-thumb svg {
+            width: 32px; height: 32px; fill: var(--g300);
+        }
+
+        .res-url {
+            font-size: 12px; color: var(--g500);
+            margin-bottom: 3px;
+            display: flex; align-items: center; gap: 6px;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .favicon {
+            width: 18px; height: 18px; border-radius: 50%;
+            background: var(--green-bg); border: 1px solid var(--green-border);
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 9px; font-weight: 700; color: var(--green);
+            flex-shrink: 0;
+        }
+        .res-title {
+            font-size: 18px; line-height: 1.35;
+            margin-bottom: 4px;
+        }
+        .res-title a {
+            color: var(--link); text-decoration: none;
+            display: -webkit-box; -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical; overflow: hidden;
+        }
+        .res-title a:hover { text-decoration: underline; }
+        .res-title a:visited { color: var(--link-visited); }
+
+        .res-snippet {
+            font-size: 14px; line-height: 1.55;
+            color: var(--g600);
+            display: -webkit-box; -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical; overflow: hidden;
+        }
+        .res-snippet em {
+            font-style: normal; font-weight: 700;
+            color: var(--g800);
+        }
+        .res-date {
+            font-size: 11px; color: var(--g400);
+            margin-top: 3px;
+        }
+
+        /* ═══ IMAGE GRID ═══ */
+        .img-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+        }
+        .img-card {
+            border-radius: 12px; overflow: hidden;
+            background: var(--g100); cursor: pointer;
+            transition: transform .2s, box-shadow .2s;
+            aspect-ratio: 4/3; position: relative;
+            text-decoration: none; display: block;
+        }
+        .img-card:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: var(--shadow-lg);
+        }
+        .img-card img {
+            width: 100%; height: 100%; object-fit: cover; display: block;
+        }
+        .img-card .img-ov {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.75));
+            padding: 28px 10px 8px; color: #fff;
+            font-size: 12px; line-height: 1.3;
+        }
+        .img-card .img-ov span {
+            display: -webkit-box; -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical; overflow: hidden;
+        }
+        .img-card .img-ov .img-src {
+            font-size: 10px; color: rgba(255,255,255,0.65);
+            margin-top: 2px;
+        }
+
+        /* ═══ VIDEO GRID ═══ */
+        .vid-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .vid-card {
+            border-radius: 12px; overflow: hidden;
+            background: var(--g100); cursor: pointer;
+            transition: transform .2s, box-shadow .2s;
+            text-decoration: none; display: block;
+        }
+        .vid-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+        .vid-thumb {
+            aspect-ratio: 16/9; background: var(--g200);
+            display: flex; align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+        }
+        .vid-thumb img {
+            width: 100%; height: 100%; object-fit: cover; display: block;
+        }
+        .vid-thumb .play-btn {
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.15);
+            transition: background .2s;
+        }
+        .vid-card:hover .play-btn { background: rgba(0,0,0,0.25); }
+        .play-btn svg {
+            width: 52px; height: 52px; fill: rgba(255,255,255,0.92);
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
+        }
+        .vid-info { padding: 10px 14px; background: #fff; }
+        .vid-title {
+            font-size: 14px; font-weight: 500; color: var(--g800);
+            display: -webkit-box; -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical; overflow: hidden;
+            line-height: 1.4;
+        }
+        .vid-src {
+            font-size: 12px; color: var(--g400); margin-top: 4px;
+        }
+
+        /* ═══ KNOWLEDGE BOX ═══ */
+        .kb {
+            background: #fff; border: 1px solid var(--g200);
+            border-radius: 14px; overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        .kb-head {
+            background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+            padding: 18px 20px; border-bottom: 1px solid var(--g200);
+        }
+        .kb-title { font-size: 19px; font-weight: 700; color: var(--g900); line-height: 1.3; }
+        .kb-source {
+            font-size: 11px; color: var(--g400); margin-top: 5px;
+            display: flex; align-items: center; gap: 4px;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .kb-source svg { width: 12px; height: 12px; fill: var(--g400); }
+        .kb-body { padding: 18px 20px; }
+        .kb-desc { font-size: 13px; line-height: 1.65; color: var(--g600); }
+        .kb-desc em { font-style: normal; font-weight: 700; color: var(--g800); }
+        .kb-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            margin-top: 14px; font-size: 13px;
+            color: var(--green); text-decoration: none; font-weight: 500;
+        }
+        .kb-link:hover { text-decoration: underline; }
+        .kb-link svg { width: 14px; height: 14px; fill: currentColor; }
+
+        /* ═══ EMPTY STATE ═══ */
+        .empty { text-align: center; padding: 72px 20px; }
+        .empty-icon {
+            width: 88px; height: 88px; margin: 0 auto 24px;
+            background: var(--green-bg); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .empty-icon svg { width: 44px; height: 44px; fill: var(--green); }
+        .empty h3 { font-size: 22px; color: var(--g700); margin-bottom: 10px; font-weight: 600; }
+        .empty p {
+            font-size: 14px; color: var(--g500);
+            max-width: 420px; margin: 0 auto; line-height: 1.65;
+        }
+
+        /* ═══ PAGINATION ═══ */
+        .pager {
+            display: flex; justify-content: center;
+            align-items: center; gap: 6px;
+            padding: 36px 0 12px; margin-top: 16px;
+        }
+        .pg-link {
+            display: flex; align-items: center; justify-content: center;
+            min-width: 38px; height: 38px; padding: 0 12px;
+            border-radius: 10px; border: 1px solid var(--g200);
+            background: #fff; color: var(--g600);
+            font-size: 14px; text-decoration: none;
+            transition: all .12s; font-family: inherit;
+        }
+        .pg-link:hover { border-color: var(--green); color: var(--green); }
+        .pg-link.active {
+            background: var(--green); color: #fff;
+            border-color: var(--green); font-weight: 600;
+        }
+        .pg-link.disabled { opacity: 0.35; pointer-events: none; }
+
+        /* ═══ FOOTER ═══ */
+        .footer {
+            text-align: center; padding: 20px;
+            font-size: 12px; color: var(--g400);
+            border-top: 1px solid var(--g100);
+            margin-top: auto;
+        }
+
+        /* ═══ RESPONSIVE ═══ */
+        @media (max-width: 960px) {
+            .layout { flex-direction: column; }
+            .side-col { width: 100%; order: -1; }
+            .kb { margin-bottom: 16px; }
+        }
+
+        @media (max-width: 640px) {
+            .topbar-inner { flex-wrap: wrap; gap: 8px; padding: 8px 12px; }
+            .logo-name { font-size: 16px; }
+            .search-bar { order: 3; max-width: 100%; flex-basis: 100%; }
+            .catbar-inner { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .ctab { padding: 8px 14px; font-size: 12px; white-space: nowrap; }
+            .layout { padding: 16px 12px; }
+            .web-result { flex-direction: column; gap: 10px; }
+            .web-result-thumb { width: 100%; height: 140px; order: -1; }
+            .img-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+            .vid-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ═══ TOP BAR ═══ -->
+    <header class="topbar">
+        <div class="topbar-inner">
+            <a class="logo-link" href="/">
+                <div class="logo-icon-sm">
+                    <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                </div>
+                <div class="logo-name">Eesha <span>Search</span></div>
+            </a>
+            <form class="search-bar" action="/search" method="get" autocomplete="off">
+                <div class="search-box">
+                    <div class="s-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                        </svg>
+                    </div>
+                    <input class="s-input" type="text" name="q" value="{{ query }}" aria-label="Search">
+                    <input type="hidden" name="category" id="category-input" value="{{ category }}">
+                    <button class="s-btn" type="submit">Search</button>
+                </div>
+            </form>
+        </div>
+    </header>
+
+    <!-- ═══ CATEGORY TABS ═══ -->
+    <nav class="catbar">
+        <div class="catbar-inner">
+            <a class="ctab {% if category == 'general' %}active{% endif %}" href="/search?q={{ query | urlencode }}&category=general">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                All
+            </a>
+            <a class="ctab {% if category == 'images' %}active{% endif %}" href="/search?q={{ query | urlencode }}&category=images">
+                <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                Images
+            </a>
+            <a class="ctab {% if category == 'videos' %}active{% endif %}" href="/search?q={{ query | urlencode }}&category=videos">
+                <svg viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+                Videos
+            </a>
+        </div>
+    </nav>
+
+    <!-- ═══ MAIN LAYOUT ═══ -->
+    <div class="layout">
+        <main class="main-col">
+            <!-- Spell Correction -->
+            {% if spell_correction %}
+            <div class="spell">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                <span class="spell-label">Did you mean:</span>
+                <a href="/search?q={{ spell_correction | urlencode }}&category={{ category }}">{{ spell_correction }}</a>
+            </div>
+            {% endif %}
+
+            <!-- Results Header -->
+            <div class="res-header">
+                <strong>{{ "{:,}".format(total) }}</strong> results for <strong>{{ query }}</strong>
+                {% if category == 'images' %}in Images{% elif category == 'videos' %}in Videos{% endif %}
+                — from our own index
+            </div>
+
+            {% if results %}
+                {% if category == 'general' %}
+                    <!-- ═══ WEB RESULTS ═══ -->
+                    {% for result in results %}
+                    <article class="web-result">
+                        <div class="web-result-body">
+                            <div class="res-url">
+                                <span class="favicon">{{ result.host[:1].upper() if result.host else '?' }}</span>
+                                {{ result.host }}
+                            </div>
+                            <h3 class="res-title">
+                                <a href="{{ result.url }}" target="_blank" rel="noopener noreferrer">
+                                    {{ result.title }}
+                                </a>
+                            </h3>
+                            <div class="res-snippet">{{ result.snippet | safe }}</div>
+                            {% if result.date %}
+                            <div class="res-date">{{ result.date[:10] }}</div>
+                            {% endif %}
+                        </div>
+                        {% if result.images and result.images|length > 0 %}
+                        <div class="web-result-thumb">
+                            <a href="{{ result.url }}" target="_blank" rel="noopener noreferrer">
+                                <img src="{{ result.images[0] }}" alt="" loading="lazy"
+                                     onerror="this.parentElement.innerHTML='<svg viewBox=&quot;0 0 24 24&quot;><path d=&quot;M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z&quot;/></svg>'">
+                            </a>
+                        </div>
+                        {% endif %}
+                    </article>
+                    {% endfor %}
+
+                {% elif category == 'images' %}
+                    <!-- ═══ IMAGE GRID ═══ -->
+                    <div class="img-grid">
+                    {% for result in results %}
+                        <a class="img-card" href="{{ result.source_url }}" target="_blank" rel="noopener noreferrer">
+                            <img src="{{ result.thumbnail }}" alt="{{ result.title }}" loading="lazy"
+                                 onerror="this.style.display='none'">
+                            <div class="img-ov">
+                                <span>{{ result.title }}</span>
+                                {% if result.host %}
+                                <div class="img-src">{{ result.host }}</div>
+                                {% endif %}
+                            </div>
+                        </a>
+                    {% endfor %}
+                    </div>
+
+                {% elif category == 'videos' %}
+                    <!-- ═══ VIDEO GRID ═══ -->
+                    <div class="vid-grid">
+                    {% for result in results %}
+                        <a class="vid-card" href="{{ result.url }}" target="_blank" rel="noopener noreferrer">
+                            <div class="vid-thumb">
+                                {% if result.thumbnail %}
+                                <img src="{{ result.thumbnail }}" alt="{{ result.title }}" loading="lazy"
+                                     onerror="this.style.display='none'">
+                                {% endif %}
+                                <div class="play-btn">
+                                    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                </div>
+                            </div>
+                            <div class="vid-info">
+                                <div class="vid-title">{{ result.title }}</div>
+                                <div class="vid-src">{{ result.host or result.source_url }}</div>
+                            </div>
+                        </a>
+                    {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- ═══ PAGINATION ═══ -->
+                {% if total_pages > 1 %}
+                <nav class="pager" aria-label="Search results pages">
+                    {% if page > 1 %}
+                    <a class="pg-link" href="/search?q={{ query | urlencode }}&category={{ category }}&page={{ page - 1 }}" rel="prev">
+                        &larr; Prev
+                    </a>
+                    {% else %}
+                    <span class="pg-link disabled">&larr; Prev</span>
+                    {% endif %}
+
+                    {% for p in page_range %}
+                        {% if p == page %}
+                        <span class="pg-link active">{{ p }}</span>
+                        {% else %}
+                        <a class="pg-link" href="/search?q={{ query | urlencode }}&category={{ category }}&page={{ p }}">{{ p }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page < total_pages %}
+                    <a class="pg-link" href="/search?q={{ query | urlencode }}&category={{ category }}&page={{ page + 1 }}" rel="next">
+                        Next &rarr;
+                    </a>
+                    {% else %}
+                    <span class="pg-link disabled">Next &rarr;</span>
+                    {% endif %}
+                </nav>
+                {% endif %}
+
+            {% else %}
+                <!-- ═══ EMPTY STATE ═══ -->
+                <div class="empty">
+                    <div class="empty-icon">
+                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                    </div>
+                    <h3>No results found</h3>
+                    <p>
+                        We couldn't find results for "<strong>{{ query }}</strong>" in our independent index.
+                        Try different keywords or check the spelling. Our crawler is always expanding the index.
+                    </p>
+                </div>
+            {% endif %}
+        </main>
+
+        <!-- ═══ SIDEBAR: KNOWLEDGE BOX ═══ -->
+        {% if knowledge_box and category == 'general' %}
+        <aside class="side-col">
+            <div class="kb">
+                <div class="kb-head">
+                    <div class="kb-title">{{ knowledge_box.title }}</div>
+                    <div class="kb-source">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                        From {{ knowledge_box.source }} — via our own index
+                    </div>
+                </div>
+                <div class="kb-body">
+                    <div class="kb-desc">{{ knowledge_box.description | safe }}</div>
+                    {% if knowledge_box.url %}
+                    <a class="kb-link" href="{{ knowledge_box.url }}" target="_blank" rel="noopener noreferrer">
+                        <svg viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
+                        Read more on Wikipedia
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </aside>
+        {% endif %}
+    </div>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer class="footer">
+        Eesha Search v2.0 — Results from our own index
+    </footer>
+</body>
+</html>

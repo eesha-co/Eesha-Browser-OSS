@@ -1,0 +1,47 @@
+# Development Docker Compose — same image as production for full parity.
+# Usage: docker compose up --build
+# Access: http://localhost:3080
+#
+# backend/.env is OPTIONAL. If missing, the entrypoint generates a random
+# SECRET_KEY so the app boots out-of-the-box. Create backend/.env (copy
+# backend/.env.example) only when you need OAuth or want a fixed SECRET_KEY.
+#
+# Render deployment:
+#   1. Push this repo to GitHub
+#   2. Create a new Web Service on Render, linked to the repo
+#   3. Set Root Directory to: eesha-learn
+#   4. Set Docker as the environment
+#   5. Set Dockerfile path to: Dockerfile.standalone
+#   6. Upload .env.render file in Environment settings
+#   7. Add a persistent disk (mount: /app/data)
+
+services:
+  eesha-learn:
+    build:
+      context: .
+      dockerfile: Dockerfile.standalone
+    container_name: eesha-learn-dev
+    restart: unless-stopped
+    ports:
+      - "3080:80"
+    env_file:
+      - path: ./backend/.env
+        required: false
+    environment:
+      - DATABASE_URL=sqlite+aiosqlite:////app/data/eesha-learn.db
+      - DATA_DIR=/app/data
+      - IDF_PATH=/opt/esp-idf
+      - IDF_TOOLS_PATH=/root/.espressif
+      - ARDUINO_ESP32_PATH=/opt/arduino-esp32
+    volumes:
+      - ./data:/app/data
+      - arduino-libs:/root/.arduino15
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+
+volumes:
+  arduino-libs:

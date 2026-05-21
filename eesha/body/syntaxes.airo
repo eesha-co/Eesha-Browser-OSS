@@ -1,0 +1,21 @@
+COMMENTS:
+    COMMENTS are decleard using #.
+    block COMMENTS are decleared using ## at the beginning and at the end.
+        e.g ## this is an example of comments ##
+VARIABLES:
+    all VARIABLES are decleared like this:
+        variable_name = value.
+STATEMENTS:
+    every STATEMENTS should end with .
+CONDITIONS or FUNCTIONS:
+    after every CONDITIONS or FUNCTIONS, put ; then {your CONDITIONS}
+        e.g if distance < 2; {
+            digitalwrite(leg, on). 
+        }
+CASE_SENSITIVITY:
+    should not be CASE_SENSITIVITY
+FUNCTIONS:
+    CALL acts as import(python) or include(c++)
+    call is also used to call a FUNCTIONS
+    if, else, init remains the same
+    

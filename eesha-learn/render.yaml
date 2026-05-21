@@ -1,0 +1,38 @@
+# Render Blueprint — deploy Eesha Learn with Docker
+# https://render.com/docs/blueprint-spec
+#
+# This file defines the Eesha Learn web service so you can deploy
+# with one click from the Render Dashboard → "New" → "Blueprint".
+
+services:
+  - type: web
+    name: eesha-learn
+    runtime: docker
+    dockerfilePath: ./Dockerfile.standalone
+    plan: free          # Change to 'starter' or 'standard' for production
+    region: oregon      # Closest to your users
+    branch: main
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: "10000"
+      - key: DATABASE_URL
+        value: sqlite+aiosqlite:////app/data/eesha-learn.db
+      - key: DATA_DIR
+        value: /app/data
+      # SECRET_KEY is auto-generated on first boot if not set.
+      # Uncomment and set a fixed value if you need stable JWTs across deploys:
+      # - key: SECRET_KEY
+      #   sync: false
+      - key: IDF_PATH
+        value: /opt/esp-idf
+      - key: IDF_TOOLS_PATH
+        value: /root/.espressif
+      - key: ARDUINO_ESP32_PATH
+        value: /opt/arduino-esp32
+    # Persistent disk for SQLite database and arduino-cli cores.
+    # Without this, data is lost on each deploy.
+    disk:
+      name: eesha-learn-data
+      mountPath: /app/data
+      sizeGB: 1

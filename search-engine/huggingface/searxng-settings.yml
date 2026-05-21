@@ -1,0 +1,177 @@
+# Eesha Search — SearXNG Configuration for Hugging Face Spaces
+# Privacy-first search engine powering Eesha Browser
+# Combines multiple search engines for comprehensive results
+
+use_default_settings: true
+
+general:
+  instance_name: "Eesha Search"
+  debug: false
+
+search:
+  safe_search: 0
+  autocomplete: "duckduckgo"
+  autocomplete_min: 2
+  default_lang: "auto"
+  formats:
+    - html
+    - json
+    - csv
+    - rss
+
+server:
+  # IMPORTANT: Change this secret_key before deploying to production!
+  secret_key: "eesha-search-hf-space-prod-2024-change-me"
+  bind_address: "0.0.0.0"
+  port: 7860
+  limiter: false
+  image_proxy: true
+  method: "POST"
+
+ui:
+  static_use_hash: true
+  default_locale: ""
+  query_in_title: false
+  infinite_scroll: false
+  center_alignment: true
+  default_theme: "simple"
+  theme_args:
+    simple_style: "auto"
+
+enabled_plugins:
+  - 'Hash plugin'
+  - 'Self Information'
+  - 'Tracker URL remover'
+  - 'Ahmia blacklist'
+
+# ─── Engine Configuration ────────────────────────────────────────────────
+# Eesha Search aggregates multiple privacy-respecting search engines.
+# When OpenSearch is deployed alongside, add the "eesha index" engine.
+
+engines:
+  # ─── Web Search (General) ────────────────────────────────────────────
+  - name: duckduckgo
+    engine: duckduckgo
+    shortcut: ddg
+    categories: [general]
+
+  - name: brave
+    engine: brave
+    shortcut: br
+    categories: [general]
+
+  - name: qwant
+    engine: qwant
+    shortcut: qw
+    categories: [general]
+
+  - name: mojeek
+    engine: mojeek
+    shortcut: mj
+    categories: [general]
+
+  # ─── Images ──────────────────────────────────────────────────────────
+  - name: duckduckgo images
+    engine: duckduckgo_images
+    shortcut: ddi
+    categories: [images]
+
+  - name: qwant images
+    engine: qwant
+    shortcut: qwi
+    categories: [images]
+    network: qwant
+
+  - name: unsplash
+    engine: unsplash
+    shortcut: us
+    categories: [images]
+
+  - name: flickr
+    engine: flickr
+    shortcut: fl
+    categories: [images]
+
+  - name: pinterest
+    engine: pinterest
+    shortcut: pin
+    categories: [images]
+
+  # ─── Videos ──────────────────────────────────────────────────────────
+  - name: duckduckgo videos
+    engine: duckduckgo_videos
+    shortcut: ddv
+    categories: [videos]
+
+  - name: qwant videos
+    engine: qwant
+    shortcut: qwv
+    categories: [videos]
+    network: qwant
+
+  - name: youtube
+    engine: youtube_noapi
+    shortcut: yt
+    categories: [videos]
+
+  - name: dailymotion
+    engine: dailymotion
+    shortcut: dm
+    categories: [videos]
+
+  - name: peertube
+    engine: peertube
+    shortcut: pt
+    categories: [videos]
+
+  # ─── News ────────────────────────────────────────────────────────────
+  - name: duckduckgo news
+    engine: duckduckgo_news
+    shortcut: ddn
+    categories: [news]
+
+  - name: qwant news
+    engine: qwant
+    shortcut: qwn
+    categories: [news]
+    network: qwant
+
+  # ─── IT / Programming ───────────────────────────────────────────────
+  - name: stackoverflow
+    engine: stackoverflow
+    shortcut: st
+    categories: [it]
+
+  - name: github
+    engine: github
+    shortcut: gh
+    categories: [it]
+
+  # ─── Science / Academic ─────────────────────────────────────────────
+  - name: semantic scholar
+    engine: semantic_scholar
+    shortcut: sem
+    categories: [science]
+
+  - name: wikidata
+    engine: wikidata
+    shortcut: wd
+    categories: [general]
+
+  # ─── Wikipedia ───────────────────────────────────────────────────────
+  - name: wikipedia
+    engine: wikipedia
+    shortcut: wp
+    categories: [general]
+
+  # ─── Maps ────────────────────────────────────────────────────────────
+  - name: openstreetmap
+    engine: openstreetmap
+    shortcut: osm
+    categories: [maps]
+
+  # ─── Music ───────────────────────────────────────────────────────────
+  - name: bandcamp
+    engine: bandcamp
+    shortcut: bc
+    categories: [music]

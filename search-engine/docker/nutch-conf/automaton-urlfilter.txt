@@ -1,0 +1,12 @@
+# Eesha Search - Automaton URL Filter
+# ============================================================
+# Minimal automaton-based URL filter.
+# The regex-urlfilter.txt handles all URL filtering for Eesha Search.
+# This file is intentionally left minimal as a fallback.
+# ============================================================
+
+# Accept all HTTP and HTTPS URLs
++^https?://
+
+# Reject everything else
+-.

@@ -1,0 +1,8 @@
+FROM python:3.11-slim
+
+RUN pip install --no-cache-dir feedparser
+
+WORKDIR /root/scripts
+COPY seed_generator.py .
+
+CMD ["python3", "seed_generator.py"]

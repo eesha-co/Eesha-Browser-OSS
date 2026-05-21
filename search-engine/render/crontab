@@ -1,0 +1,19 @@
+# Eesha Search — Independent Crawler Schedule
+# Deployed on Render.com — Optimized for 512MB RAM free tier
+# Powered by ZincSearch — lightweight Go binary (~256MB RAM)
+
+# Every 6 hours: crawl the web and update our own index
+# Reduced limits for 512MB RAM: 3000 pages, depth 3, 1s delay
+0 */6 * * * ZINC_FIRST_ADMIN_USER=admin ZINC_FIRST_ADMIN_PASSWORD=Complexpass#123 OPENSEARCH_URL=http://localhost:4080 CRAWL_MAX_PAGES=3000 CRAWL_MAX_DEPTH=3 CRAWL_DELAY=1.0 python3 /opt/eesha-scripts/lightweight_crawler.py --once >> /var/log/eesha/crawl.log 2>&1
+
+# Every hour: discover new seed URLs from RSS feeds
+0 * * * * ZINC_FIRST_ADMIN_USER=admin ZINC_FIRST_ADMIN_PASSWORD=Complexpass#123 OPENSEARCH_URL=http://localhost:4080 python3 /opt/eesha-scripts/seed_generator.py --once >> /var/log/eesha/seed.log 2>&1
+
+# Every 30 minutes: extract and index multimedia (lightweight)
+*/30 * * * * ZINC_FIRST_ADMIN_USER=admin ZINC_FIRST_ADMIN_PASSWORD=Complexpass#123 OPENSEARCH_URL=http://localhost:4080 python3 /opt/eesha-scripts/multimedia_extract.py --once >> /var/log/eesha/media.log 2>&1
+
+# Every 15 minutes: index RSS feeds from major news sites
+*/15 * * * * ZINC_FIRST_ADMIN_USER=admin ZINC_FIRST_ADMIN_PASSWORD=Complexpass#123 OPENSEARCH_URL=http://localhost:4080 python3 /opt/eesha-scripts/rss_indexer.py --once >> /var/log/eesha/rss.log 2>&1
+
+# Every Sunday at 2am: import more Wikipedia abstracts (10K at a time, memory-safe)
+0 2 * * 0 ZINC_FIRST_ADMIN_USER=admin ZINC_FIRST_ADMIN_PASSWORD=Complexpass#123 OPENSEARCH_URL=http://localhost:4080 python3 /opt/eesha-scripts/wikipedia_import.py --limit 10000 >> /var/log/eesha/wikipedia.log 2>&1

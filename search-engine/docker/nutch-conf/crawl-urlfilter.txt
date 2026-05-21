@@ -1,0 +1,45 @@
+# Eesha Search - Crawl URL Filter
+# ============================================================
+# Controls which URLs enter the crawl DB (crawl scope).
+# Similar to regex-urlfilter but focused on crawl boundaries.
+# Rules are evaluated top-to-bottom; first match wins.
+# ============================================================
+
+# ─── Skip non-HTTP protocols ─────────────────────────────────
+-^(file|ftp|sftp):;
+
+# ─── Skip URLs with session / tracking parameters ────────────
+-[\?&](jsessionid|phpsessid|aspnet_sessionid|sid|session_id)=
+-[\?&](utm_source|utm_medium|utm_campaign|utm_term|utm_content|fbclid|gclid)=
+
+# ─── Skip non-indexable file extensions ──────────────────────
+-\.(pdf|doc|docx|xls|xlsx|ppt|pptx|odt|ods|odp|rtf)$
+-\.(zip|gz|tar|rar|7z|bz2|tgz|z|arj|iso|dmg)$
+-\.(exe|msi|bin|sh|bat|dll|so|deb|rpm)$
+-\.(jpg|jpeg|png|gif|bmp|tiff|tif|ico|svg|webp|psd)$
+-\.(mp4|avi|mov|wmv|flv|mkv|webm|m4v|3gp)$
+-\.(mp3|wav|ogg|flac|aac|wma|m4a|opus)$
+-\.(woff|woff2|ttf|otf|eot)$
+-\.(css|js|json|xml|rss|atom|swf)$
+
+# ─── Skip social media noise (keep Twitter/X for now) ────────
+-^https?://([a-z0-9-]+\.)?(facebook|fb|instagram|tiktok|snapchat|pinterest|linkedin)\.com/
+
+# ─── Skip admin / auth / account paths ───────────────────────
+-/(login|signin|signup|register|logout|signout|auth|account|admin|dashboard|portal|profile|settings)
+
+# ─── Skip print / mobile / AMP variants ──────────────────────
+-/(print|mobile|amp)/
+
+# ─── Skip API endpoints ──────────────────────────────────────
+-/(api|graphql|rest|oauth|token)(/|$)
+
+# ─── Skip paginated URLs to avoid crawl trap ─────────────────
+-[\?&](page|p|offset|start|from)=\d+
+
+# ─── Allow all domains for broad crawling ─────────────────────
+# Eesha Search is a general-purpose search engine; we crawl broadly.
++.
+
+# ─── Reject everything else ──────────────────────────────────
+-.

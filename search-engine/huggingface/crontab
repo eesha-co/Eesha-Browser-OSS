@@ -1,0 +1,21 @@
+# Eesha Search — Independent Crawler Schedule
+# Powered by ZincSearch — lightweight Go binary (~256MB RAM)
+# ZincSearch auth env vars are set for each job
+
+# Every 6 hours: crawl the web and update our own index
+0 */6 * * * ZINC_FIRST_ADMIN_USER=admin ZINC_FIRST_ADMIN_PASSWORD=Complexpass#123 OPENSEARCH_URL=http://localhost:4080 CRAWL_MAX_PAGES=10000 CRAWL_MAX_DEPTH=4 python3 /opt/eesha-scripts/lightweight_crawler.py --once >> /var/log/eesha/crawl.log 2>&1
+
+# Every hour: discover new seed URLs from RSS feeds
+0 * * * * python3 /opt/eesha-scripts/seed_generator.py --once >> /var/log/eesha/seed.log 2>&1
+
+# Every 30 minutes: extract and index multimedia
+*/30 * * * * ZINC_FIRST_ADMIN_USER=admin ZINC_FIRST_ADMIN_PASSWORD=Complexpass#123 OPENSEARCH_URL=http://localhost:4080 python3 /opt/eesha-scripts/multimedia_extract.py --once >> /var/log/eesha/media.log 2>&1
+
+# Every 15 minutes: index RSS feeds from major news sites
+*/15 * * * * ZINC_FIRST_ADMIN_USER=admin ZINC_FIRST_ADMIN_PASSWORD=Complexpass#123 OPENSEARCH_URL=http://localhost:4080 python3 /opt/eesha-scripts/rss_indexer.py --once >> /var/log/eesha/rss.log 2>&1
+
+# Every Sunday at 2am: import more Wikipedia abstracts (50K at a time)
+0 2 * * 0 ZINC_FIRST_ADMIN_USER=admin ZINC_FIRST_ADMIN_PASSWORD=Complexpass#123 OPENSEARCH_URL=http://localhost:4080 python3 /opt/eesha-scripts/wikipedia_import.py --limit 50000 >> /var/log/eesha/wikipedia.log 2>&1
+
+# Every 1st of the month at 3am: import from top domains via Common Crawl
+0 3 1 * * ZINC_FIRST_ADMIN_USER=admin ZINC_FIRST_ADMIN_PASSWORD=Complexpass#123 OPENSEARCH_URL=http://localhost:4080 python3 /opt/eesha-scripts/common_crawl_import.py --domains 500 --limit 50000 >> /var/log/eesha/commoncrawl.log 2>&1

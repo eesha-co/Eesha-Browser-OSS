@@ -1,0 +1,168 @@
+/**
+ * Eesha Search — Custom Branding CSS
+ * Overrides default SearXNG branding with Eesha Search identity
+ *
+ * AGPLv3 Compliance: Source code attribution is in the About page
+ * and footer. UI is rebranded to Eesha Search identity.
+ */
+
+/* ─── Eesha Brand Colors ─── */
+:root {
+  --eesha-primary: #0d9488;
+  --eesha-primary-hover: #0f766e;
+  --eesha-accent: #14b8a6;
+  --eesha-bg-dark: #0f172a;
+  --eesha-text-light: #f8fafc;
+}
+
+/* ─── Hide Engine Source Labels ─── */
+/* Removes "Google", "DuckDuckGo", "Bing", etc. tags from search results */
+.engines {
+  display: none !important;
+}
+
+/* ─── Search Header Logo ─── */
+/* Style the Eesha logo text in search results page */
+#search_logo .eesha-logo-text {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--eesha-primary);
+  letter-spacing: -0.03em;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  line-height: 1;
+}
+
+#search_logo .eesha-logo-text::before {
+  content: '';
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background-image: url('../img/favicon.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 6px;
+}
+
+/* ─── Homepage title ─── */
+.index .title h1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--eesha-primary);
+  letter-spacing: -0.02em;
+}
+
+.index .title h1::before {
+  content: '';
+  display: inline-block;
+  width: 48px;
+  height: 48px;
+  background-image: url('../img/searxng.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* ─── Header search bar accent ─── */
+.search_box input[type="text"]:focus,
+#q:focus {
+  border-color: var(--eesha-primary) !important;
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15) !important;
+}
+
+/* ─── Search button ─── */
+.search_box button[type="submit"],
+#search_form button[type="submit"],
+#send_search {
+  background-color: var(--eesha-primary) !important;
+  border-color: var(--eesha-primary) !important;
+}
+
+.search_box button[type="submit"]:hover,
+#search_form button[type="submit"]:hover,
+#send_search:hover {
+  background-color: var(--eesha-primary-hover) !important;
+  border-color: var(--eesha-primary-hover) !important;
+}
+
+/* ─── Category tabs ─── */
+.category_checkbox:checked + label {
+  color: var(--eesha-primary) !important;
+  border-bottom-color: var(--eesha-primary) !important;
+}
+
+/* ─── Links ─── */
+a {
+  color: var(--eesha-primary);
+}
+
+a:hover {
+  color: var(--eesha-primary-hover);
+}
+
+/* ─── Footer ─── */
+footer p a[href*="eesha"] {
+  color: var(--eesha-primary);
+  font-weight: 600;
+}
+
+/* ─── Dark mode adjustments ─── */
+.theme-dark .index .title h1 {
+  color: var(--eesha-accent);
+}
+
+.theme-dark #search_logo .eesha-logo-text {
+  color: var(--eesha-accent);
+}
+
+.theme-dark .search_box input[type="text"]:focus,
+.theme-dark #q:focus {
+  border-color: var(--eesha-accent) !important;
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2) !important;
+}
+
+.theme-dark a {
+  color: var(--eesha-accent);
+}
+
+/* ─── Hide any remaining SearXNG branding ─── */
+/* Hide SearXNG version text if visible anywhere */
+[data-version],
+.searxng-version {
+  display: none !important;
+}
+
+/* ─── Hide links to SearXNG project (not relevant for Eesha) ─── */
+a[href*="searxng.org"],
+a[href*="github.com/searxng"] {
+  display: none !important;
+}
+
+/* ─── PWA Theme Color ─── */
+html {
+  --pwa-theme-color: var(--eesha-primary);
+}
+
+/* ─── Result card improvements ─── */
+article.result {
+  border-radius: 8px;
+  transition: box-shadow 0.15s ease;
+}
+
+article.result:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* ─── Image result grid improvements ─── */
+.result-images {
+  border-radius: 8px;
+  overflow: hidden;
+}

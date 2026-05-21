@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Products - Eesha</title>
+  <link rel="icon" type="image/png" href="eesha://resources/icons/eesha-logo.png">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' eesha:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' eesha: https: data:;">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #ffffff;
+      color: #202124;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #ffffff;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 0 24px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+    }
+
+    .back-btn:hover {
+      background: #f1f3f4;
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-logo-icon {
+      width: 32px;
+      height: 32px;
+      background: #1a1a2e;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-logo-text {
+      font-size: 20px;
+      font-weight: 600;
+      color: #202124;
+    }
+
+    .header-logo-text span {
+      color: #10b981;
+    }
+
+    .header-badge {
+      font-size: 11px;
+      color: #5f6368;
+      background: #f1f3f4;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 500;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 64px 24px 48px;
+      background: linear-gradient(180deg, #f8fffe 0%, #ffffff 100%);
+    }
+
+    .hero-title {
+      font-size: 40px;
+      font-weight: 700;
+      color: #202124;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, #10b981, #059669);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-size: 18px;
+      color: #5f6368;
+      max-width: 640px;
+      margin: 0 auto 32px;
+      line-height: 1.6;
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+
+    .hero-stat {
+      text-align: center;
+    }
+
+    .hero-stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #10b981;
+    }
+
+    .hero-stat-label {
+      font-size: 13px;
+      color: #5f6368;
+      margin-top: 2px;
+    }
+
+    /* ── Category Tabs ── */
+    .category-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 24px 32px;
+      flex-wrap: wrap;
+    }
+
+    .category-tab {
+      padding: 8px 20px;
+      border-radius: 20px;
+      border: 1px solid #dadce0;
+      background: #ffffff;
+      color: #3c4043;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .category-tab:hover {
+      background: #f1f3f4;
+      border-color: #dadce0;
+    }
+
+    .category-tab.active {
+      background: #e8f5f0;
+      color: #059669;
+      border-color: #10b981;
+    }
+
+    /* ── Products Grid ── */
+    .products-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px 64px;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    /* ── Product Card ── */
+    .product-card {
+      background: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 16px;
+      padding: 24px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-card:hover {
+      border-color: #10b981;
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .product-card-accent {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+    }
+
+    .product-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .product-icon svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .product-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: #202124;
+      margin-bottom: 4px;
+    }
+
+    .product-tagline {
+      font-size: 13px;
+      color: #10b981;
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+
+    .product-desc {
+      font-size: 14px;
+      color: #5f6368;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .product-features {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .product-feature {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #3c4043;
+    }
+
+    .product-feature-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #10b981;
+      flex-shrink: 0;
+    }
+
+    .product-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 16px;
+    }
+
+    .product-badge {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      background: #f1f3f4;
+      color: #5f6368;
+      font-weight: 500;
+    }
+
+    /* ── Expand Section ── */
+    .product-expand {
+      display: none;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .product-card.expanded .product-expand {
+      display: block;
+    }
+
+    .product-expand-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #10b981;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    .product-expand-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .product-expand-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 13px;
+      color: #3c4043;
+      line-height: 1.4;
+    }
+
+    .product-expand-item span {
+      color: #10b981;
+      font-weight: 600;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── Comparison Section ── */
+    .comparison {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px 64px;
+    }
+
+    .comparison-card {
+      background: linear-gradient(135deg, #f0fdf9, #ecfdf5);
+      border: 1px solid #a7f3d0;
+      border-radius: 20px;
+      padding: 48px;
+      text-align: center;
+    }
+
+    .comparison-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #202124;
+      margin-bottom: 12px;
+    }
+
+    .comparison-desc {
+      font-size: 16px;
+      color: #5f6368;
+      max-width: 600px;
+      margin: 0 auto 32px;
+      line-height: 1.6;
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .comparison-item {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 20px 16px;
+      border: 1px solid #d1fae5;
+    }
+
+    .comparison-item-value {
+      font-size: 15px;
+      font-weight: 700;
+      color: #059669;
+      margin-bottom: 4px;
+    }
+
+    .comparison-item-label {
+      font-size: 12px;
+      color: #5f6368;
+    }
+
+    /* ── Footer ── */
+    .page-footer {
+      margin-top: auto;
+      border-top: 1px solid #e0e0e0;
+      padding: 24px;
+      text-align: center;
+      font-size: 12px;
+      color: #9aa0a6;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 28px;
+      }
+      .hero-subtitle {
+        font-size: 15px;
+      }
+      .hero-stats {
+        gap: 24px;
+      }
+      .hero-stat-value {
+        font-size: 22px;
+      }
+      .products-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .comparison-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .comparison-card {
+        padding: 32px 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .products-grid {
+        grid-template-columns: 1fr;
+      }
+      .comparison-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .header-badge {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <div class="header">
+    <div class="header-left">
+      <button class="back-btn" onclick="window.eesha ? window.eesha.navigate('eesha://newtab') : location.href='eesha://newtab'" title="Back to New Tab">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5f6368" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <div class="header-logo">
+        <div class="header-logo-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M2 12h3l3-9 4 18 4-18 3 9h3"/></svg>
+        </div>
+        <span class="header-logo-text">Eesha<span>Learn</span></span>
+      </div>
+      <span class="header-badge">IoT Platform</span>
+    </div>
+  </div>
+
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <h1 class="hero-title">Our <span>Products</span></h1>
+    <p class="hero-subtitle">
+      Everything you need to design, simulate, and deploy IoT projects — entirely in your browser. 
+      No installation. No hardware needed to start.
+    </p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-value">19+</div>
+        <div class="hero-stat-label">Supported Boards</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-value">5</div>
+        <div class="hero-stat-label">CPU Architectures</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-value">30,000+</div>
+        <div class="hero-stat-label">Components</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-value">100+</div>
+        <div class="hero-stat-label">SPICE Parts</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Category Tabs ── -->
+  <div class="category-tabs">
+    <button class="category-tab active" data-category="all">All Products</button>
+    <button class="category-tab" data-category="simulation">Simulation</button>
+    <button class="category-tab" data-category="development">Development</button>
+    <button class="category-tab" data-category="ai">AI Powered</button>
+    <button class="category-tab" data-category="education">Education</button>
+    <button class="category-tab" data-category="export">Export & Share</button>
+  </div>
+
+  <!-- ── Products Grid ── -->
+  <div class="products-section">
+    <div class="products-grid" id="productsGrid">
+      <!-- Products are injected by JS below -->
+    </div>
+  </div>
+
+  <!-- ── Why Eesha Learn ── -->
+  <div class="comparison">
+    <div class="comparison-card">
+      <h2 class="comparison-title">Why Eesha Learn?</h2>
+      <p class="comparison-desc">
+        Combining the SPICE simulation power of Velxio with the AI design intelligence of Cirkit Designer — 
+        reimagined as one seamless platform.
+      </p>
+      <div class="comparison-grid">
+        <div class="comparison-item">
+          <div class="comparison-item-value">100% Browser</div>
+          <div class="comparison-item-label">No Install Required</div>
+        </div>
+        <div class="comparison-item">
+          <div class="comparison-item-value">Auto-Wire + Code Gen</div>
+          <div class="comparison-item-label">AI Powered Design</div>
+        </div>
+        <div class="comparison-item">
+          <div class="comparison-item-value">Real Silicon Behavior</div>
+          <div class="comparison-item-label">SPICE Accurate</div>
+        </div>
+        <div class="comparison-item">
+          <div class="comparison-item-value">AGPL v3 License</div>
+          <div class="comparison-item-label">Open Source</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Footer ── -->
+  <div class="page-footer">Eesha Learn &mdash; The Ultimate IoT Simulation Platform</div>
+
+  <script>
+    var PRODUCTS = [
+      {
+        id: "simulator",
+        name: "Eesha Simulator",
+        tagline: "Real-time circuit simulation",
+        category: "simulation",
+        color: "#10b981",
+        accent: "linear-gradient(90deg, #10b981, #059669)",
+        iconBg: "#ecfdf5",
+        desc: "SPICE-accurate analog simulation powered by ngspice WebAssembly. Run real firmware for 19+ microcontroller boards with cycle-accurate emulation.",
+        features: [
+          "SPICE analog simulation (ngspice WASM) at 60 Hz solve rate",
+          "Hybrid digital + analog co-simulation",
+          "100+ SPICE-accurate components (BJTs, MOSFETs, op-amps, regulators)",
+          "Live oscilloscope, voltmeter, ammeter, signal generator",
+          "Non-linear device behavior (real silicon response)"
+        ],
+        badges: ["ngspice WASM", "60 Hz solve", "100+ parts", "Oscilloscope"]
+      },
+      {
+        id: "emulator",
+        name: "Eesha Emulator",
+        tagline: "19 boards, 5 architectures",
+        category: "simulation",
+        color: "#8b5cf6",
+        accent: "linear-gradient(90deg, #8b5cf6, #7c3aed)",
+        iconBg: "#f5f3ff",
+        desc: "Cycle-accurate and instruction-accurate microcontroller emulation across AVR8, ARM Cortex-M0+, RISC-V, Xtensa, and ARM Cortex-A53.",
+        features: [
+          "AVR8: Arduino Uno, Nano, Mega, ATtiny85, Leonardo, Pro Mini",
+          "ARM M0+: Raspberry Pi Pico, Pico W",
+          "RISC-V: ESP32-C3, CH32V003, XIAO ESP32-C3",
+          "Xtensa: ESP32, ESP32-S3, ESP32-CAM (Rust/WASM)",
+          "ARM A53: Raspberry Pi 3B with full Linux + Python"
+        ],
+        badges: ["19 boards", "5 architectures", "ESP32-S3 Rust", "RPi 3B Linux"]
+      },
+      {
+        id: "ai",
+        name: "Eesha AI",
+        tagline: "AI-powered electronics design",
+        category: "ai",
+        color: "#f43f5e",
+        accent: "linear-gradient(90deg, #f43f5e, #e11d48)",
+        iconBg: "#fff1f2",
+        desc: "Let AI wire your circuits, generate code, and answer questions about your design. Auto-wiring, code generation, and circuit-aware Q&A.",
+        features: [
+          "AI auto-wiring: place parts and let AI connect them",
+          "Code generation for Arduino, ESP32, RPi Pico",
+          "Circuit-aware Q&A: ask about your design in context",
+          "AI-generated custom part simulation behavior",
+          "Debug assistance and circuit optimization suggestions"
+        ],
+        badges: ["Auto-wiring", "Code gen", "Circuit Q&A", "Debug assist"]
+      },
+      {
+        id: "editor",
+        name: "Eesha Editor",
+        tagline: "Professional code editor",
+        category: "development",
+        color: "#0ea5e9",
+        accent: "linear-gradient(90deg, #0ea5e9, #0284c7)",
+        iconBg: "#f0f9ff",
+        desc: "Monaco-powered code editor with C++, Python syntax highlighting, autocomplete, multi-file workspace, serial monitor, and library manager.",
+        features: [
+          "Monaco Editor (VS Code engine) with full intellisense",
+          "arduino-cli backend: real .hex / .uf2 / .bin compilation",
+          "Multi-file workspace: .ino, .h, .cpp, .py",
+          "Serial Monitor with auto baud-rate detection",
+          "Full Arduino Library Manager integration"
+        ],
+        badges: ["Monaco Editor", "arduino-cli", "Serial Monitor", "Libraries"]
+      },
+      {
+        id: "iot",
+        name: "Eesha IoT",
+        tagline: "Wi-Fi & IoT simulation",
+        category: "simulation",
+        color: "#f59e0b",
+        accent: "linear-gradient(90deg, #f59e0b, #d97706)",
+        iconBg: "#fffbeb",
+        desc: "Simulate Wi-Fi workflows, MQTT, HTTP, WebSocket, and UDP protocols in the browser. Test IoT projects end-to-end before touching real hardware.",
+        features: [
+          "Wi-Fi simulation for ESP32 and ESP32-S3",
+          "MQTT protocol testing with broker simulation",
+          "HTTP/HTTPS request simulation",
+          "WebSocket and UDP protocol support",
+          "End-to-end IoT workflow prototyping"
+        ],
+        badges: ["Wi-Fi sim", "MQTT", "HTTP/S", "WebSocket"]
+      },
+      {
+        id: "instruments",
+        name: "Eesha Instruments",
+        tagline: "Live measurement tools",
+        category: "simulation",
+        color: "#06b6d4",
+        accent: "linear-gradient(90deg, #06b6d4, #0891b2)",
+        iconBg: "#ecfeff",
+        desc: "Professional-grade virtual instruments for real-time circuit analysis. Multi-channel oscilloscope, precision voltmeter/ammeter, and signal generator.",
+        features: [
+          "Multi-channel real-time oscilloscope",
+          "Precision voltmeter (node voltage measurement)",
+          "Ammeter (branch current measurement)",
+          "Signal generator: sine, square, DC, triangle",
+          "Frequency and phase analysis"
+        ],
+        badges: ["Oscilloscope", "Voltmeter", "Ammeter", "Signal Gen"]
+      },
+      {
+        id: "classroom",
+        name: "Eesha Classroom",
+        tagline: "Learn electronics interactively",
+        category: "education",
+        color: "#84cc16",
+        accent: "linear-gradient(90deg, #84cc16, #65a30d)",
+        iconBg: "#f7fee7",
+        desc: "Chromebook-compatible, AI-assisted learning platform for students and classrooms. Interactive lessons, guided projects, and real-time feedback.",
+        features: [
+          "Works on Chromebooks — no desktop IDE needed",
+          "AI tutor for students when instructors are busy",
+          "Interactive guided lessons with real simulation",
+          "40+ analog & hybrid example projects",
+          "Classroom management & assignments (coming soon)"
+        ],
+        badges: ["Chromebook", "AI Tutor", "40+ Examples", "Classrooms"]
+      },
+      {
+        id: "export",
+        name: "Eesha Export",
+        tagline: "From browser to hardware",
+        category: "export",
+        color: "#d946ef",
+        accent: "linear-gradient(90deg, #d946ef, #c026d3)",
+        iconBg: "#fdf4ff",
+        desc: "Generate professional wiring diagrams, share projects via link, and flash firmware directly to connected Arduino, ESP32, or Raspberry Pi Pico.",
+        features: [
+          "Professional wiring diagram generation",
+          "Project sharing via URL",
+          "Direct firmware flash to real hardware",
+          "Custom parts editor with pin definitions",
+          "Project documentation export"
+        ],
+        badges: ["Wiring Diagrams", "Share Links", "Flash Firmware", "Custom Parts"]
+      }
+    ];
+
+    var ICONS = {
+      simulator: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h3l3-9 4 18 4-18 3 9h3"/></svg>',
+      emulator: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>',
+      ai: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 1 4 4v1a1 1 0 0 0 1 1h1a4 4 0 0 1 0 8h-1a1 1 0 0 0-1 1v1a4 4 0 0 1-8 0v-1a1 1 0 0 0-1-1H6a4 4 0 0 1 0-8h1a1 1 0 0 0 1-1V6a4 4 0 0 1 4-4z"/><circle cx="12" cy="12" r="2"/></svg>',
+      editor: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',
+      iot: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg>',
+      instruments: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M6 10h2l2-3 3 6 2-3h3"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
+      classroom: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.657 2.686 3 6 3s6-1.343 6-3v-5"/></svg>',
+      export: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>'
+    };
+
+    function renderProducts(category) {
+      var grid = document.getElementById('productsGrid');
+      var filtered = category === 'all' ? PRODUCTS : PRODUCTS.filter(function(p) { return p.category === category; });
+      var html = '';
+
+      filtered.forEach(function(product) {
+        html += '<div class="product-card" data-id="' + product.id + '" data-category="' + product.category + '">';
+        html += '  <div class="product-card-accent" style="background:' + product.accent + '"></div>';
+        html += '  <div class="product-icon" style="background:' + product.iconBg + ';color:' + product.color + '">' + ICONS[product.id] + '</div>';
+        html += '  <div class="product-name">' + product.name + '</div>';
+        html += '  <div class="product-tagline">' + product.tagline + '</div>';
+        html += '  <div class="product-desc">' + product.desc + '</div>';
+        html += '  <div class="product-features">';
+        product.features.slice(0, 3).forEach(function(f) {
+          html += '    <div class="product-feature"><span class="product-feature-dot"></span>' + f + '</div>';
+        });
+        html += '  </div>';
+        html += '  <div class="product-badges">';
+        product.badges.forEach(function(b) {
+          html += '    <span class="product-badge">' + b + '</span>';
+        });
+        html += '  </div>';
+        html += '  <div class="product-expand">';
+        html += '    <div class="product-expand-title">All Features</div>';
+        html += '    <div class="product-expand-list">';
+        product.features.forEach(function(f) {
+          html += '      <div class="product-expand-item"><span>&#10003;</span>' + f + '</div>';
+        });
+        html += '    </div>';
+        html += '  </div>';
+        html += '</div>';
+      });
+
+      grid.innerHTML = html;
+
+      // Click to expand
+      grid.querySelectorAll('.product-card').forEach(function(card) {
+        card.addEventListener('click', function() {
+          var wasExpanded = this.classList.contains('expanded');
+          grid.querySelectorAll('.product-card.expanded').forEach(function(c) { c.classList.remove('expanded'); });
+          if (!wasExpanded) this.classList.add('expanded');
+        });
+      });
+    }
+
+    // Category tab switching
+    document.querySelectorAll('.category-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.category-tab').forEach(function(t) { t.classList.remove('active'); });
+        this.classList.add('active');
+        renderProducts(this.getAttribute('data-category'));
+      });
+    });
+
+    // Initial render
+    renderProducts('all');
+  </script>
+</body>
+</html>

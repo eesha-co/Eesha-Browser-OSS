@@ -1,0 +1,199 @@
+# ---- Stage 0: QEMU .so + ROM binaries ----
+# Downloads arch-specific .so from GitHub Release (e.g. libqemu-xtensa-amd64.so)
+# and renames to libqemu-xtensa.so so the backend needs no changes.
+# Local prebuilt files (prebuilt/qemu/) are used if present.
+FROM ubuntu:22.04 AS qemu-provider
+
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+ARG TARGETARCH
+ARG QEMU_RELEASE_URL=https://github.com/davidmonterocrespo24/velxio/releases/download/qemu-prebuilt
+
+# Copy the prebuilt directory (may contain .so+ROM files or just the .gitkeep)
+RUN mkdir -p /qemu
+COPY prebuilt/qemu/ /qemu/
+
+# Download arch-specific .so and arch-independent ROM files
+RUN cd /qemu \
+ && for base in libqemu-xtensa libqemu-riscv32; do \
+      f="${base}.so" ; \
+      if [ ! -f "$f" ]; then \
+        echo "Downloading ${base}-${TARGETARCH}.so → $f ..." ; \
+        curl -fSL -o "$f" "${QEMU_RELEASE_URL}/${base}-${TARGETARCH}.so" ; \
+      else \
+        echo "Using local $f ($(stat -c%s "$f") bytes)" ; \
+      fi ; \
+    done \
+ && for f in esp32-v3-rom.bin esp32-v3-rom-app.bin esp32c3-rom.bin; do \
+      if [ ! -f "$f" ]; then \
+        echo "Downloading $f ..." ; \
+        curl -fSL -o "$f" "${QEMU_RELEASE_URL}/$f" ; \
+      else \
+        echo "Using local $f ($(stat -c%s "$f") bytes)" ; \
+      fi ; \
+    done \
+ && ls -lh /qemu/
+
+
+# ---- Stage 0.5: ESP-IDF toolchain for ESP32 compilation ----
+FROM ubuntu:22.04 AS espidf-builder
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git wget flex bison gperf python3 python3-pip python3-venv \
+    cmake ninja-build ccache libffi-dev libssl-dev \
+    libusb-1.0-0 ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install ESP-IDF 4.4.7 (matches Arduino ESP32 core 2.0.17 / lcgamboa QEMU ROM)
+RUN git clone -b v4.4.7 --recursive --depth=1 --shallow-submodules \
+    https://github.com/espressif/esp-idf.git /opt/esp-idf
+
+WORKDIR /opt/esp-idf
+
+# Install toolchains for esp32 (Xtensa) and esp32c3 (RISC-V) only
+RUN ./install.sh esp32,esp32c3
+
+# Clean up large unnecessary files to reduce image size
+RUN rm -rf .git docs examples \
+    && find /root/.espressif -name '*.tar.*' -delete 2>/dev/null || true
+
+# Install Arduino-as-component for full Arduino API support in ESP-IDF builds
+RUN git clone --branch 2.0.17 --depth=1 --recursive --shallow-submodules \
+    https://github.com/espressif/arduino-esp32.git /opt/arduino-esp32 \
+ && rm -rf /opt/arduino-esp32/.git
+
+
+# ---- Stage 1: Build frontend and third-party ----
+FROM node:20 AS frontend-builder
+
+WORKDIR /app
+
+# avr8js, rp2040js and @wokwi/elements are pulled directly from the npm
+# registry (see frontend/package.json) — no upstream git clones needed.
+# Board SVGs live in frontend/public/boards/, component SVGs in
+# frontend/public/component-svgs/, and components-metadata.json is committed.
+COPY frontend/ frontend/
+COPY scripts/ scripts/
+WORKDIR /app/frontend
+# Lock files aren't committed in this repo (they're gitignored) — see the
+# note in .gitignore. The `rm -f` below is defense-in-depth in case
+# someone runs `docker build .` from a tree where a local lock exists.
+RUN rm -f package-lock.json \
+ && npm install --include=optional \
+ && npm run build:docker \
+ && ls -la dist/ || (echo "❌ vite build failed — dist/ not found" && exit 1)
+
+
+# ---- Stage 2: Final Production Image ----
+FROM python:3.12-slim
+
+# Install system dependencies, nginx, and QEMU .so runtime libraries
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    ca-certificates \
+    nginx \
+    libglib2.0-0 \
+    libgcrypt20 \
+    libslirp0 \
+    libpixman-1-0 \
+    libfdt1 \
+    cmake \
+    ninja-build \
+    libusb-1.0-0 \
+    git \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && pip install --no-cache-dir packaging
+
+# Install arduino-cli and all cores during build phase so the container
+# starts listening immediately (previously done at runtime in entrypoint.sh,
+# which took 14+ minutes and caused Render's port scan to timeout).
+RUN curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh \
+    | BINDIR=/usr/local/bin sh
+
+# Initialize arduino-cli config and add board manager URLs
+RUN arduino-cli config init \
+    && arduino-cli config add board_manager.additional_urls \
+        https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json \
+    && arduino-cli config add board_manager.additional_urls \
+        https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json \
+    && arduino-cli config add board_manager.additional_urls \
+        http://drazzy.com/package_drazzy.com_index.json
+
+# Install cores during build (baked into the image).
+# ESP32 core is pinned to 2.0.17 (IDF 4.4.x — newer 3.x is incompatible with QEMU ROM bins).
+# ATTinyCore is NOT installed here — its download server (azduino.com) is frequently
+# down, which breaks the entire build. It's attempted as a best-effort in entrypoint.sh.
+RUN arduino-cli core update-index \
+    && arduino-cli core install arduino:avr \
+    && arduino-cli core install rp2040:rp2040 \
+    && arduino-cli core install esp32:esp32@2.0.17
+
+WORKDIR /app
+
+# Data directory for persistent SQLite database (mounted as a volume at runtime)
+RUN mkdir -p /app/data
+
+# Install Python backend dependencies
+COPY backend/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy backend application code
+COPY backend/app/ ./app/
+
+# One-off maintenance scripts (e.g. backfill_boards_2026_05). Pure stdlib —
+# run with: docker exec eesha-learn-app python /app/scripts/<script> --apply
+COPY backend/scripts/ ./scripts/
+
+# Setup Nginx configuration. Remove Debian's stock site so it doesn't shadow
+# ours as the default_server (was Issue #108: users behind reverse proxies got
+# the "Welcome to nginx" page because the stock site claimed default_server).
+RUN rm -f /etc/nginx/sites-enabled/default
+COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy built frontend assets from builder stage
+COPY --from=frontend-builder /app/frontend/dist /usr/share/nginx/html
+
+# Copy and configure entrypoint script (fix Windows CRLF → LF)
+COPY docker/entrypoint.sh /app/entrypoint.sh
+RUN sed -i 's/\r$//' /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+
+# ── ESP32 emulation: pre-built QEMU .so + ROM binaries ──────────────────────
+# Downloaded from GitHub Release (public — no access to qemu-lcgamboa needed)
+# libqemu-xtensa.so    → ESP32 / ESP32-S3 (Xtensa LX6/LX7)
+# libqemu-riscv32.so   → ESP32-C3 (RISC-V RV32IMC)
+# esp32-v3-rom*.bin    → boot/app ROM images required by esp32-picsimlab machine
+# esp32c3-rom.bin      → ROM image required by esp32c3-picsimlab machine
+# NOTE: ROM files must live in the same directory as the .so (worker passes -L
+#       to QEMU pointing at os.path.dirname(lib_path))
+RUN mkdir -p /app/lib
+COPY --from=qemu-provider /qemu/ /app/lib/
+
+# Activate ESP32 emulation
+# QEMU_ESP32_LIB    → Xtensa library (ESP32, ESP32-S3)
+# QEMU_RISCV32_LIB  → RISC-V library (ESP32-C3 and variants)
+ENV QEMU_ESP32_LIB=/app/lib/libqemu-xtensa.so
+ENV QEMU_RISCV32_LIB=/app/lib/libqemu-riscv32.so
+
+# ── ESP-IDF toolchain for ESP32 compilation ──────────────────────────────────
+# Copied from espidf-builder stage: IDF framework + cross-compiler toolchains
+COPY --from=espidf-builder /opt/esp-idf /opt/esp-idf
+COPY --from=espidf-builder /root/.espressif /root/.espressif
+
+COPY --from=espidf-builder /opt/arduino-esp32 /opt/arduino-esp32
+
+ENV IDF_PATH=/opt/esp-idf
+ENV IDF_TOOLS_PATH=/root/.espressif
+ENV ARDUINO_ESP32_PATH=/opt/arduino-esp32
+
+# Install ESP-IDF Python dependencies using the final image's Python
+# The requirements.txt has version constraints required by ESP-IDF 4.4.x
+RUN grep -v 'esp-windows-curses' /opt/esp-idf/requirements.txt \
+    | pip install --no-cache-dir -r /dev/stdin
+
+# Render sets PORT env var (default 10000); the entrypoint adapts nginx to listen on it.
+# Local docker-compose defaults to mapping 3080→80. Either way the entrypoint handles it.
+EXPOSE 80
+
+CMD ["/app/entrypoint.sh"]

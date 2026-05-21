@@ -1,0 +1,209 @@
+# Eesha Search — SearXNG Settings for Render.com Deployment
+#
+# With use_default_settings: true, 70+ default engines are loaded.
+# This file OVERRIDES specific engines by name (merges with defaults)
+# and ADDS new engines with unique shortcuts.
+#
+# Category assignments are explicit to prevent the "same results across tabs" bug.
+#
+# JSON API:       /search?q=...&format=json&categories=general|images|videos|news
+# HTML Web UI:    /search?q=...
+# Suggestions:    /autocompleter?q=...
+# Health check:   /healthz
+
+use_default_settings: true
+
+general:
+  instance_name: "Eesha Search"
+  debug: false
+  privacypolicy_url: "https://eesha.co/privacy"
+  contact_url: "https://eesha.co/contact"
+
+brand:
+  issue_url: "https://github.com/eesha-co/Eesha-Search/issues"
+  docs_url: "https://github.com/eesha-co/Eesha-Search"
+  public_instances: ""
+  wiki_url: ""
+  new_issue_url: "https://github.com/eesha-co/Eesha-Search/issues/new"
+  custom:
+    links:
+      Eesha: "https://eesha.co"
+  pwa_colors:
+    theme_color_light: "#0d9488"
+    background_color_light: "#fff"
+    theme_color_dark: "#14b8a6"
+    background_color_dark: "#222428"
+    theme_color_black: "#0d9488"
+    background_color_black: "#000"
+
+search:
+  safe_search: 0
+  autocomplete: "duckduckgo"
+  autocomplete_min: 2
+  default_lang: "auto"
+  formats:
+    - html
+    - json
+
+server:
+  secret_key: "1121fdbbb30dc9bbdd345e5bc5aa8ed02909e58aaa008f70746f0fd5374b956c"
+  bind_address: "0.0.0.0"
+  port: 10000
+  limiter: false
+  image_proxy: true
+  method: "POST"
+
+ui:
+  static_use_hash: true
+  default_locale: ""
+  query_in_title: false
+  infinite_scroll: false
+  center_alignment: true
+  default_theme: "simple"
+  theme_args:
+    simple_style: "auto"
+
+enabled_plugins:
+  - 'Hash plugin'
+  - 'Self Information'
+  - 'Tracker URL remover'
+
+engines:
+  # ─── Web Search (General) ────────────────────────────────────────
+  # These override default engines by NAME — shortcuts must match defaults
+  - name: duckduckgo
+    categories: [general]
+    disabled: false
+
+  - name: brave
+    categories: [general]
+    disabled: false
+
+  - name: qwant
+    categories: [general]
+    disabled: false
+
+  - name: mojeek
+    categories: [general]
+    disabled: false
+
+  - name: wikipedia
+    categories: [general]
+    disabled: false
+
+  - name: wikidata
+    categories: [general]
+    disabled: true
+
+  # ─── Images ──────────────────────────────────────────────────────
+  - name: google images
+    categories: [images]
+    disabled: false
+
+  - name: bing images
+    shortcut: bimg
+    categories: [images]
+    disabled: false
+
+  - name: duckduckgo images
+    categories: [images]
+    disabled: false
+
+  - name: unsplash
+    categories: [images]
+    disabled: false
+
+  - name: flickr
+    categories: [images]
+    disabled: false
+
+  - name: deviantart
+    categories: [images]
+    disabled: false
+
+  - name: pinterest
+    categories: [images]
+    disabled: false
+
+  # ─── Additional Image Engines (not in defaults) ─────────────────
+  - name: qwant images
+    engine: qwant
+    shortcut: qwi
+    categories: [images]
+    network: qwant
+    disabled: false
+
+  # ─── Videos ──────────────────────────────────────────────────────
+  - name: youtube
+    categories: [videos]
+    disabled: false
+
+  - name: dailymotion
+    categories: [videos]
+    disabled: false
+
+  - name: vimeo
+    categories: [videos]
+    disabled: false
+
+  - name: peertube
+    categories: [videos]
+    disabled: false
+
+  - name: duckduckgo videos
+    categories: [videos]
+    disabled: false
+
+  # ─── Additional Video Engines (not in defaults) ─────────────────
+  - name: qwant videos
+    engine: qwant
+    shortcut: qwv
+    categories: [videos]
+    network: qwant
+    disabled: false
+
+  # ─── News ────────────────────────────────────────────────────────
+  - name: google news
+    categories: [news]
+    disabled: false
+
+  - name: bing news
+    categories: [news]
+    disabled: false
+
+  - name: duckduckgo news
+    categories: [news]
+    disabled: false
+
+  # ─── Additional News Engines (not in defaults) ──────────────────
+  - name: qwant news
+    engine: qwant
+    shortcut: qwn
+    categories: [news]
+    network: qwant
+    disabled: false
+
+  # ─── IT / Programming ───────────────────────────────────────────
+  - name: stackoverflow
+    categories: [it]
+    disabled: false
+
+  - name: github
+    categories: [it]
+    disabled: false
+
+  # ─── Science / Academic ─────────────────────────────────────────
+  - name: semantic scholar
+    categories: [science]
+    disabled: true
+
+  # ─── Disable noisy/unwanted/broken engines ──────────────────────
+  - name: scanr structures
+    engine: scanr_structures
+    disabled: true
+
+  - name: ahmia
+    disabled: true
+
+  - name: torch
+    disabled: true

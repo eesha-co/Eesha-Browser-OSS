@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Modern Tab Card Item - Grid Layout -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/tab_card_bg"
+    android:layout_margin="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Tab Preview Area (thumbnail placeholder) -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:background="#0D1B2A">
+
+            <!-- Watermark icon for empty tabs -->
+            <ImageView
+                android:id="@+id/tabPreviewPlaceholder"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:src="@drawable/eesha_logo"
+                android:alpha="0.15" />
+
+            <!-- Close button -->
+            <ImageButton
+                android:id="@+id/btnCloseTab"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="top|end"
+                android:layout_margin="6dp"
+                android:src="@drawable/ic_close_tab"
+                android:background="@drawable/menu_grid_item_bg"
+                android:contentDescription="Close tab"
+                app:tint="@color/eesha_text_secondary"
+                android:padding="4dp" />
+
+            <!-- Private mode indicator -->
+            <ImageView
+                android:id="@+id/tabPrivateIndicator"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="top|start"
+                android:layout_margin="6dp"
+                android:src="@drawable/ic_private"
+                app:tint="#CE93D8"
+                android:visibility="gone" />
+
+        </FrameLayout>
+
+        <!-- Tab Info Bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="10dp">
+
+            <ImageView
+                android:id="@+id/tabFavicon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/ic_home"
+                app:tint="@color/eesha_text_secondary"
+                android:layout_marginEnd="8dp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tabTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="New Tab"
+                    android:textSize="13sp"
+                    android:textColor="@color/eesha_text_primary"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif-medium" />
+
+                <TextView
+                    android:id="@+id/tabUrl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="11sp"
+                    android:textColor="@color/eesha_text_secondary"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

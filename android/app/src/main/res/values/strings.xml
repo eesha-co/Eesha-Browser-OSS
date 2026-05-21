@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Eesha</string>
+    <string name="search_hint">Search or enter URL</string>
+    <string name="settings_title">Settings</string>
+    <string name="privacy_section">Privacy</string>
+    <string name="ad_blocking_title">Ad &amp; Tracker Blocking</string>
+    <string name="ad_blocking_desc">Block ads, trackers, and malware domains</string>
+    <string name="https_only_title">HTTPS-Only Mode</string>
+    <string name="https_only_desc">Upgrade all HTTP connections to HTTPS</string>
+    <string name="fingerprint_title">Fingerprint Protection</string>
+    <string name="fingerprint_desc">Prevent browser fingerprinting and tracking</string>
+    <string name="search_engine_section">Search Engine</string>
+    <string name="data_section">Data</string>
+    <string name="clear_history">Clear Browsing History</string>
+    <string name="clear_cookies">Clear Cookies &amp; Cache</string>
+    <string name="clear_all">Clear All Data</string>
+    <string name="about_section">About</string>
+    <string name="private_mode_banner">🛡 Private Browsing — History &amp; cookies won\'t be saved</string>
+    <string name="menu_bookmarks">Bookmarks</string>
+    <string name="menu_history">History</string>
+    <string name="menu_new_private_tab">New Private Tab</string>
+    <string name="menu_desktop_site">Desktop Site</string>
+    <string name="menu_settings">Settings</string>
+</resources>

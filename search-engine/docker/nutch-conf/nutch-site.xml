@@ -1,0 +1,158 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<!-- Nutch Site Configuration for Eesha Search Engine -->
+<!-- Mounted into container at /root/nutch/conf/nutch-site.xml -->
+
+<configuration>
+
+  <!-- ─── HTTP Agent Identity ──────────────────────────────────────────── -->
+  <property>
+    <name>http.agent.name</name>
+    <value>EeshaSearch</value>
+    <description>HTTP agent name identifying the Eesha Search crawler.
+    Must be set; otherwise Nutch refuses to start crawling.</description>
+  </property>
+
+  <property>
+    <name>http.agent.description</name>
+    <value>Eesha Browser Search Engine Crawler</value>
+    <description>Descriptive text for the crawler user-agent.</description>
+  </property>
+
+  <property>
+    <name>http.agent.url</name>
+    <value>https://eesha.search</value>
+    <description>URL where webmasters can learn about this crawler.</description>
+  </property>
+
+  <property>
+    <name>http.agent.email</name>
+    <value>crawler@eesha.search</value>
+    <description>Contact email for the crawler.</description>
+  </property>
+
+  <!-- ─── Plugin Configuration ─────────────────────────────────────────── -->
+  <property>
+    <name>plugin.includes</name>
+    <value>protocol-httpclient|urlfilter-regex|parse-html|parse-metatags|index-basic|index-more|index-opensearch|scoring-opic|urlnormalizer-(pass|regex|basic)</value>
+    <description>Regular expression naming plugin directories to include.
+    Covers HTTP fetching, HTML parsing, meta-tag extraction, OpenSearch
+    indexing, OPIC scoring, and URL normalization.</description>
+  </property>
+
+  <!-- ─── OpenSearch / Indexing Backend ───────────────────────────────── -->
+  <property>
+    <name>opensearch.server.url</name>
+    <value>http://opensearch:9200</value>
+    <description>OpenSearch cluster endpoint inside the Docker network.</description>
+  </property>
+
+  <property>
+    <name>opensearch.index</name>
+    <value>nutch</value>
+    <description>Name of the OpenSearch index to write documents into.</description>
+  </property>
+
+  <property>
+    <name>opensearch.max.docs</name>
+    <value>-1</value>
+    <description>Maximum number of documents per batch (-1 = unlimited).</description>
+  </property>
+
+  <!-- ─── Meta-Tag Extraction (parse-metatags plugin) ─────────────────── -->
+  <property>
+    <name>metatags.names</name>
+    <value>img,video,og:image,og:video,thumbnail</value>
+    <description>HTML meta-tag names to extract during parsing.
+    Used by the parse-metatags plugin for image/video discovery.</description>
+  </property>
+
+  <property>
+    <name>parser.html.impl</name>
+    <value>neko</value>
+    <description>HTML parser implementation (neko is the default).</description>
+  </property>
+
+  <!-- ─── Fetcher Settings ─────────────────────────────────────────────── -->
+  <property>
+    <name>fetcher.threads.fetch</name>
+    <value>10</value>
+    <description>Number of fetcher threads per task.</description>
+  </property>
+
+  <property>
+    <name>fetcher.threads.per.queue</name>
+    <value>2</value>
+    <description>Number of fetcher threads per host queue.</description>
+  </property>
+
+  <property>
+    <name>fetcher.server.delay</name>
+    <value>1.0</value>
+    <description>Minimum delay (seconds) between successive requests
+    to the same server. Respects politeness.</description>
+  </property>
+
+  <!-- ─── Database / Crawl Settings ────────────────────────────────────── -->
+  <property>
+    <name>db.fetch.interval.default</name>
+    <value>21600</value>
+    <description>Default re-fetch interval in seconds (21600 = 6 hours).
+    Pages will be re-crawled every 6 hours by default.</description>
+  </property>
+
+  <property>
+    <name>db.max.outlinks.per.page</name>
+    <value>100</value>
+    <description>Maximum number of outlinks to follow per page.
+    Limits crawl breadth while preserving depth.</description>
+  </property>
+
+  <property>
+    <name>db.fetch.schedule.adaptive.sync_rate</name>
+    <value>0.3</value>
+    <description>Sync rate for adaptive fetch schedule.</description>
+  </property>
+
+  <!-- ─── Content Limits ───────────────────────────────────────────────── -->
+  <property>
+    <name>http.content.limit</name>
+    <value>65536</value>
+    <description>Maximum content length (bytes) to fetch.
+    Pages larger than 64 KB are truncated.</description>
+  </property>
+
+  <property>
+    <name>file.content.ignored</name>
+    <value>true</value>
+    <description>Ignore file:// URLs entirely. We only crawl HTTP/HTTPS.</description>
+  </property>
+
+  <!-- ─── Parser Settings ──────────────────────────────────────────────── -->
+  <property>
+    <name>parser.character.encoding.default</name>
+    <value>utf-8</value>
+    <description>Default character encoding when not specified by the server.</description>
+  </property>
+
+  <property>
+    <name>parser.timeout</name>
+    <value>30</value>
+    <description>Parser timeout in seconds.</description>
+  </property>
+
+  <!-- ─── URL Filtering & Normalization ────────────────────────────────── -->
+  <property>
+    <name>urlfilter.regex.file</name>
+    <value>regex-urlfilter.txt</value>
+    <description>Name of the regex URL filter file.</description>
+  </property>
+
+  <property>
+    <name>urlfilter.automaton.file</name>
+    <value>automaton-urlfilter.txt</value>
+    <description>Name of the automaton URL filter file.</description>
+  </property>
+
+</configuration>
